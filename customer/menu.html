@@ -37,7 +37,6 @@
         .variant-option.border-orange-500 {
             border-width: 2px;
         }
-
     </style>
 </head>
 <body class="bg-gray-50">
@@ -52,6 +51,20 @@
                     <h1 class="text-xl font-bold text-gray-900" id="restaurantName">Restaurant Menu</h1>
                 </div>
                 <div class="flex items-center gap-4">
+                    <!-- Session Info -->
+                    <div id="sessionInfo" class="hidden bg-green-50 border border-green-200 rounded-lg px-3 py-1">
+                        <div class="flex items-center gap-2 text-green-700 text-sm">
+                            <span class="material-symbols-outlined text-base">lock</span>
+                            <span>Private Session</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Tracking Button -->
+                    <button id="orderTrackingBtn" class="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined text-lg">track_changes</span>
+                        <span class="text-sm font-medium hidden sm:block">Track Order</span>
+                    </button>
+                    
                     <button id="cartButton" class="relative p-2 rounded-lg hover:bg-gray-100">
                         <span class="material-symbols-outlined text-gray-600">shopping_cart</span>
                         <span id="cartCount" class="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
@@ -69,9 +82,19 @@
                 <div>
                     <h2 class="text-lg font-semibold text-gray-900">Table <span id="tableNumber">-</span></h2>
                     <p class="text-gray-600 text-sm">Scan the QR code to view this menu</p>
+                    <div id="sessionStatus" class="mt-2 text-sm">
+                        <div class="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1 rounded-lg inline-flex">
+                            <span class="material-symbols-outlined text-base">verified_user</span>
+                            <span>Your session is private and secure</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="text-right">
                     <p class="text-sm text-gray-600">Order will be sent directly to the kitchen</p>
+                    <button id="newSessionBtn" class="mt-2 text-sm text-orange-600 hover:text-orange-700 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">refresh</span>
+                        Start New Session
+                    </button>
                 </div>
             </div>
         </div>
@@ -186,6 +209,53 @@
         </div>
     </div>
 
+    <!-- Order Tracking Modal -->
+    <div id="orderTrackingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[80vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">Order Tracking</h3>
+                <button id="closeOrderTracking" class="p-1 rounded-lg hover:bg-gray-100">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <div id="orderTrackingContent">
+                <!-- Order tracking will be loaded here -->
+                <div class="text-center py-8">
+                    <span class="material-symbols-outlined text-4xl text-gray-300 mb-4">schedule</span>
+                    <p class="text-gray-500">Loading order status...</p>
+                </div>
+            </div>
+            
+            <div class="flex justify-end mt-6 pt-4 border-t">
+                <button id="refreshOrderStatus" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">refresh</span>
+                    Refresh
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Session Modal -->
+    <div id="newSessionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="text-center">
+                <span class="material-symbols-outlined text-6xl text-orange-500 mb-4">warning</span>
+                <h3 class="text-xl font-semibold mb-2">Start New Session?</h3>
+                <p class="text-gray-600 mb-4">This will create a new private session. Your current cart will be cleared and you won't see previous orders from this table.</p>
+                <p class="text-sm text-gray-500 mb-6">This is useful if multiple people are using the same table QR code.</p>
+                <div class="flex gap-3 justify-center">
+                    <button id="cancelNewSession" class="px-6 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg">
+                        Cancel
+                    </button>
+                    <button id="confirmNewSession" class="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+                        Start New Session
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Floating Cart Button -->
     <button id="floatingCartBtn" class="fixed bottom-6 right-6 bg-orange-500 text-white p-4 rounded-full shadow-lg hover:bg-orange-600 transition-colors z-30 hidden">
         <span class="material-symbols-outlined">shopping_cart</span>
@@ -201,6 +271,7 @@
                 <p class="text-gray-600 mb-6">Your order has been sent to the kitchen. You'll be notified when it's ready.</p>
                 <div class="space-y-2 text-sm text-gray-500 mb-6">
                     <p>Order #: <span id="confirmationOrderNumber" class="font-semibold">-</span></p>
+                    <p>Session ID: <span id="confirmationSessionId" class="font-mono text-xs">-</span></p>
                     <p>Estimated wait time: <span id="estimatedWaitTime" class="font-semibold">15-20 minutes</span></p>
                 </div>
                 <button id="closeConfirmation" class="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600">
@@ -232,10 +303,14 @@
                 this.restaurantUserId = null;
                 this.tableId = null;
 
+                // 🔐 Session management
+                this.customerSessionId = null;
+                this.sessionStorageKey = 'dineflow_customer_session';
+
                 // 🗂️ Menu and cart state
                 this.categories = [];
                 this.menuItems = [];
-                this.menuItemVariants = {}; // Store variants by menu item ID
+                this.menuItemVariants = {};
                 this.cart = [];
 
                 // 🧠 UI and interaction state
@@ -265,12 +340,102 @@
                     this.showError('Invalid table QR code format. Please scan a valid QR code.');
                     return;
                 }
+
+                // Initialize or restore session
+                await this.initializeSession();
                 
                 await this.loadTableInfo();
                 await this.loadMenuData();
                 this.setupEventListeners();
+                this.setupRealtimeOrderUpdates();
             }
 
+            // 🔐 Session Management Methods
+            async initializeSession() {
+                // Check if we have an existing session for this table
+                const storedSession = localStorage.getItem(this.sessionStorageKey);
+                
+                if (storedSession) {
+                    const sessionData = JSON.parse(storedSession);
+                    
+                    // If the stored session is for the same table, reuse it
+                    if (sessionData.tableId === this.tableId) {
+                        this.customerSessionId = sessionData.sessionId;
+                        console.log('📱 Restored existing session:', this.customerSessionId);
+                        this.updateSessionUI();
+                        return;
+                    }
+                }
+
+                // Create new session
+                await this.createNewSession();
+            }
+
+            async createNewSession() {
+                // Generate unique session ID
+                this.customerSessionId = this.generateSessionId();
+                
+                // Store session in localStorage
+                const sessionData = {
+                    sessionId: this.customerSessionId,
+                    tableId: this.tableId,
+                    createdAt: new Date().toISOString()
+                };
+                
+                localStorage.setItem(this.sessionStorageKey, JSON.stringify(sessionData));
+                
+                console.log('📱 Created new session:', this.customerSessionId);
+                this.updateSessionUI();
+                
+                this.showToast('New private session started', 'success');
+            }
+
+            generateSessionId() {
+                // Generate a unique session ID (combination of timestamp and random string)
+                const timestamp = Date.now().toString(36);
+                const randomStr = Math.random().toString(36).substring(2, 15);
+                return `session_${timestamp}_${randomStr}`;
+            }
+
+            updateSessionUI() {
+                // Show session info in header
+                document.getElementById('sessionInfo').classList.remove('hidden');
+                
+                // Update session status
+                const sessionStatus = document.getElementById('sessionStatus');
+                sessionStatus.innerHTML = `
+                    <div class="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1 rounded-lg">
+                        <span class="material-symbols-outlined text-base">verified_user</span>
+                        <span>Private Session: ${this.customerSessionId.substring(0, 8)}...</span>
+                    </div>
+                `;
+            }
+
+            async startNewSession() {
+                // Clear current cart
+                this.cart = [];
+                this.updateCartUI();
+                
+                // Create new session
+                await this.createNewSession();
+                
+                // Reload order tracking to show only new session orders
+                if (!document.getElementById('orderTrackingModal').classList.contains('hidden')) {
+                    await this.loadOrderTracking();
+                }
+                
+                this.hideNewSessionModal();
+            }
+
+            showNewSessionModal() {
+                document.getElementById('newSessionModal').classList.remove('hidden');
+            }
+
+            hideNewSessionModal() {
+                document.getElementById('newSessionModal').classList.add('hidden');
+            }
+
+            // 🏪 Restaurant & Menu Methods
             async loadTableInfo() {
                 try {
                     const { data: table, error } = await supabase
@@ -374,6 +539,7 @@
                 }
             }
 
+            // 🛒 Cart & Order Methods
             async loadAddonsForVariant(variantId) {
                 try {
                     // First try to get addon groups for the variant
@@ -477,145 +643,146 @@
             }
 
             showVariantModal(itemId) {
-    const item = this.menuItems.find(i => i.id === itemId);
-    if (!item) {
-        console.error('Menu item not found:', itemId);
-        return;
-    }
+                const item = this.menuItems.find(i => i.id === itemId);
+                if (!item) {
+                    console.error('Menu item not found:', itemId);
+                    return;
+                }
 
-    this.currentMenuItem = item;
-    this.selectedVariant = null;
-
-    const variants = this.menuItemVariants[itemId] || [];
-    
-    document.getElementById('variantModalTitle').textContent = `Choose ${item.name} Option`;
-
-    const content = document.getElementById('variantContent');
-    
-    if (variants.length === 0) {
-        // If no variants, go directly to add-ons
-        this.hideVariantModal();
-        this.showAddonsModal(itemId);
-        return;
-    }
-
-    content.innerHTML = variants.map(variant => {
-        // Use variant image if available, otherwise use item image, otherwise use placeholder
-        const imageUrl = variant.image_url || item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80';
-        const finalPrice = (parseFloat(item.price) + parseFloat(variant.additional_price || 0)).toFixed(2);
-        
-        return `
-        <label class="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:border-orange-300 transition-colors variant-option">
-            <input type="radio" name="variant" value="${variant.id}" class="mt-1 variant-radio">
-            <div class="flex items-start gap-3 flex-1">
-                <!-- Variant Image -->
-                <div class="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
-                    <img src="${imageUrl}" alt="${variant.name}" class="w-full h-full object-cover">
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-start">
-                        <span class="font-medium text-gray-900 truncate">${variant.name}</span>
-                        <span class="font-semibold text-orange-500 whitespace-nowrap ml-2">
-                            $${finalPrice}
-                        </span>
-                    </div>
-                    ${variant.additional_price > 0 ? `
-                        <p class="text-sm text-gray-600 mt-1">
-                            +$${parseFloat(variant.additional_price).toFixed(2)} additional
-                        </p>
-                    ` : ''}
-                </div>
-            </div>
-        </label>
-        `;
-    }).join('');
-
-    // Clear any previous event listeners and add new ones
-    this.setupVariantEventListeners(variants);
-    
-    document.getElementById('variantModal').classList.remove('hidden');
-}
-
-setupVariantEventListeners(variants) {
-    const content = document.getElementById('variantContent');
-    
-    // Remove any existing event listeners first
-    content.querySelectorAll('.variant-option').forEach(option => {
-        option.replaceWith(option.cloneNode(true));
-    });
-
-    // Add new event listeners
-    content.querySelectorAll('.variant-option').forEach(option => {
-        option.addEventListener('click', (e) => {
-            // Remove selection from other options
-            content.querySelectorAll('.variant-option').forEach(opt => {
-                opt.classList.remove('border-orange-500', 'bg-orange-50');
-                opt.classList.add('border-gray-200');
-            });
-            
-            // Select this option
-            option.classList.remove('border-gray-200');
-            option.classList.add('border-orange-500', 'bg-orange-50');
-            
-            const radio = option.querySelector('.variant-radio');
-            radio.checked = true;
-            
-            // Update selected variant
-            const variantId = radio.value;
-            const variant = variants.find(v => v.id === variantId);
-            
-            if (variant) {
-                this.selectedVariant = variant;
-                console.log('Variant selected:', variant);
-            } else {
-                console.error('Variant not found:', variantId);
+                this.currentMenuItem = item;
                 this.selectedVariant = null;
+
+                const variants = this.menuItemVariants[itemId] || [];
+                
+                document.getElementById('variantModalTitle').textContent = `Choose ${item.name} Option`;
+
+                const content = document.getElementById('variantContent');
+                
+                if (variants.length === 0) {
+                    // If no variants, go directly to add-ons
+                    this.hideVariantModal();
+                    this.showAddonsModal(itemId);
+                    return;
+                }
+
+                content.innerHTML = variants.map(variant => {
+                    // Use variant image if available, otherwise use item image, otherwise use placeholder
+                    const imageUrl = variant.image_url || item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80';
+                    const finalPrice = (parseFloat(item.price) + parseFloat(variant.additional_price || 0)).toFixed(2);
+                    
+                    return `
+                    <label class="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:border-orange-300 transition-colors variant-option">
+                        <input type="radio" name="variant" value="${variant.id}" class="mt-1 variant-radio">
+                        <div class="flex items-start gap-3 flex-1">
+                            <!-- Variant Image -->
+                            <div class="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+                                <img src="${imageUrl}" alt="${variant.name}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start">
+                                    <span class="font-medium text-gray-900 truncate">${variant.name}</span>
+                                    <span class="font-semibold text-orange-500 whitespace-nowrap ml-2">
+                                        $${finalPrice}
+                                    </span>
+                                </div>
+                                ${variant.additional_price > 0 ? `
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        +$${parseFloat(variant.additional_price).toFixed(2)} additional
+                                    </p>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </label>
+                    `;
+                }).join('');
+
+                // Clear any previous event listeners and add new ones
+                this.setupVariantEventListeners(variants);
+                
+                document.getElementById('variantModal').classList.remove('hidden');
             }
-        });
-    });
-}
+
+            setupVariantEventListeners(variants) {
+                const content = document.getElementById('variantContent');
+                
+                // Remove any existing event listeners first
+                content.querySelectorAll('.variant-option').forEach(option => {
+                    option.replaceWith(option.cloneNode(true));
+                });
+
+                // Add new event listeners
+                content.querySelectorAll('.variant-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        // Remove selection from other options
+                        content.querySelectorAll('.variant-option').forEach(opt => {
+                            opt.classList.remove('border-orange-500', 'bg-orange-50');
+                            opt.classList.add('border-gray-200');
+                        });
+                        
+                        // Select this option
+                        option.classList.remove('border-gray-200');
+                        option.classList.add('border-orange-500', 'bg-orange-50');
+                        
+                        const radio = option.querySelector('.variant-radio');
+                        radio.checked = true;
+                        
+                        // Update selected variant
+                        const variantId = radio.value;
+                        const variant = variants.find(v => v.id === variantId);
+                        
+                        if (variant) {
+                            this.selectedVariant = variant;
+                            console.log('Variant selected:', variant);
+                        } else {
+                            console.error('Variant not found:', variantId);
+                            this.selectedVariant = null;
+                        }
+                    });
+                });
+            }
+
             async showAddonsModal(itemId, variantId = null) {
-    // Validate input parameters
-    if (!itemId) {
-        console.error('No itemId provided to showAddonsModal');
-        return;
-    }
+                // Validate input parameters
+                if (!itemId) {
+                    console.error('No itemId provided to showAddonsModal');
+                    return;
+                }
 
-    const item = this.menuItems.find(i => i.id === itemId);
-    if (!item) {
-        console.error('Menu item not found:', itemId);
-        this.showToast('Error: Menu item not found', 'error');
-        return;
-    }
+                const item = this.menuItems.find(i => i.id === itemId);
+                if (!item) {
+                    console.error('Menu item not found:', itemId);
+                    this.showToast('Error: Menu item not found', 'error');
+                    return;
+                }
 
-    this.currentMenuItem = item;
-    this.selectedAddons = [];
+                this.currentMenuItem = item;
+                this.selectedAddons = [];
 
-    let addonGroups = [];
-    let finalPrice = parseFloat(item.price);
-    let variantName = '';
+                let addonGroups = [];
+                let finalPrice = parseFloat(item.price);
+                let variantName = '';
 
-    if (variantId) {
-        // Validate variant
-        const variants = this.menuItemVariants[itemId] || [];
-        const variant = variants.find(v => v.id === variantId);
-        
-        if (variant) {
-            addonGroups = await this.loadAddonsForVariant(variantId);
-            finalPrice += parseFloat(variant.additional_price || 0);
-            variantName = variant.name;
-            this.selectedVariant = variant;
-        } else {
-            console.error('Variant not found:', variantId);
-            // Fallback to menu item addons
-            addonGroups = await this.loadAddonsForMenuItem(itemId);
-            this.selectedVariant = null;
-        }
-    } else {
-        // Load addons for the menu item (no variants)
-        addonGroups = await this.loadAddonsForMenuItem(itemId);
-        this.selectedVariant = null;
-    }
+                if (variantId) {
+                    // Validate variant
+                    const variants = this.menuItemVariants[itemId] || [];
+                    const variant = variants.find(v => v.id === variantId);
+                    
+                    if (variant) {
+                        addonGroups = await this.loadAddonsForVariant(variantId);
+                        finalPrice += parseFloat(variant.additional_price || 0);
+                        variantName = variant.name;
+                        this.selectedVariant = variant;
+                    } else {
+                        console.error('Variant not found:', variantId);
+                        // Fallback to menu item addons
+                        addonGroups = await this.loadAddonsForMenuItem(itemId);
+                        this.selectedVariant = null;
+                    }
+                } else {
+                    // Load addons for the menu item (no variants)
+                    addonGroups = await this.loadAddonsForMenuItem(itemId);
+                    this.selectedVariant = null;
+                }
 
                 // Update modal title and show variant info if applicable
                 document.getElementById('addonsModalTitle').textContent = `Customize ${item.name}`;
@@ -707,75 +874,75 @@ setupVariantEventListeners(variants) {
             }
 
             addToCartWithAddons() {
-    if (!this.currentMenuItem) return;
+                if (!this.currentMenuItem) return;
 
-    // Validate required addons
-    for (const group of this.addonGroups) {
-        if (group.is_required) {
-            const checked = document.querySelectorAll(`[name="addon-group-${group.id}"]:checked`);
-            if (checked.length === 0) {
-                this.showToast(`${group.name} is required`, 'error');
-                return;
+                // Validate required addons
+                for (const group of this.addonGroups) {
+                    if (group.is_required) {
+                        const checked = document.querySelectorAll(`[name="addon-group-${group.id}"]:checked`);
+                        if (checked.length === 0) {
+                            this.showToast(`${group.name} is required`, 'error');
+                            return;
+                        }
+                    }
+                }
+
+                // Get selected addons
+                const selectedAddons = [];
+                document.querySelectorAll('.addon-checkbox:checked').forEach(checkbox => {
+                    const addonData = JSON.parse(checkbox.getAttribute('data-addon').replace(/&#39;/g, "'"));
+                    selectedAddons.push({
+                        id: addonData.id,
+                        name: addonData.name,
+                        price: parseFloat(addonData.price),
+                        quantity: 1
+                    });
+                });
+
+                // Calculate final price and get variant image
+                let finalPrice = parseFloat(this.currentMenuItem.price);
+                let variantInfo = null;
+                let variantImageUrl = null;
+
+                if (this.selectedVariant) {
+                    finalPrice += parseFloat(this.selectedVariant.additional_price || 0);
+                    variantInfo = {
+                        id: this.selectedVariant.id,
+                        name: this.selectedVariant.name,
+                        additional_price: parseFloat(this.selectedVariant.additional_price || 0),
+                        image_url: this.selectedVariant.image_url // Store variant image
+                    };
+                    variantImageUrl = this.selectedVariant.image_url;
+                }
+
+                const item = this.currentMenuItem;
+                const cartItemKey = this.generateCartItemKey(item.id, variantInfo, selectedAddons);
+
+                const existingItemIndex = this.cart.findIndex(cartItem => 
+                    cartItem.key === cartItemKey
+                );
+
+                if (existingItemIndex !== -1) {
+                    this.cart[existingItemIndex].quantity += 1;
+                } else {
+                    this.cart.push({
+                        key: cartItemKey,
+                        id: item.id,
+                        name: item.name,
+                        base_price: parseFloat(item.price),
+                        final_price: finalPrice,
+                        quantity: 1,
+                        special_instructions: '',
+                        selectedAddons: selectedAddons,
+                        variant: variantInfo,
+                        image_url: variantImageUrl || item.image_url // Use variant image if available
+                    });
+                }
+
+                this.updateCartUI();
+                this.showToast(`Added ${item.name} to cart`, 'success');
+                this.hideAddonsModal();
             }
-        }
-    }
-
-    // Get selected addons
-    const selectedAddons = [];
-    document.querySelectorAll('.addon-checkbox:checked').forEach(checkbox => {
-        const addonData = JSON.parse(checkbox.getAttribute('data-addon').replace(/&#39;/g, "'"));
-        selectedAddons.push({
-            id: addonData.id,
-            name: addonData.name,
-            price: parseFloat(addonData.price),
-            quantity: 1
-        });
-    });
-
-    // Calculate final price and get variant image
-    let finalPrice = parseFloat(this.currentMenuItem.price);
-    let variantInfo = null;
-    let variantImageUrl = null;
-
-    if (this.selectedVariant) {
-        finalPrice += parseFloat(this.selectedVariant.additional_price || 0);
-        variantInfo = {
-            id: this.selectedVariant.id,
-            name: this.selectedVariant.name,
-            additional_price: parseFloat(this.selectedVariant.additional_price || 0),
-            image_url: this.selectedVariant.image_url // Store variant image
-        };
-        variantImageUrl = this.selectedVariant.image_url;
-    }
-
-    const item = this.currentMenuItem;
-    const cartItemKey = this.generateCartItemKey(item.id, variantInfo, selectedAddons);
-
-    const existingItemIndex = this.cart.findIndex(cartItem => 
-        cartItem.key === cartItemKey
-    );
-
-    if (existingItemIndex !== -1) {
-        this.cart[existingItemIndex].quantity += 1;
-    } else {
-        this.cart.push({
-            key: cartItemKey,
-            id: item.id,
-            name: item.name,
-            base_price: parseFloat(item.price),
-            final_price: finalPrice,
-            quantity: 1,
-            special_instructions: '',
-            selectedAddons: selectedAddons,
-            variant: variantInfo,
-            image_url: variantImageUrl || item.image_url // Use variant image if available
-        });
-    }
-
-    this.updateCartUI();
-    this.showToast(`Added ${item.name} to cart`, 'success');
-    this.hideAddonsModal();
-}
 
             generateCartItemKey(itemId, variant, selectedAddons) {
                 const variantId = variant ? variant.id : 'no-variant';
@@ -808,76 +975,77 @@ setupVariantEventListeners(variants) {
             }
 
             displayMenuItems() {
-    const container = document.getElementById('menuItemsGrid');
-    
-    let filteredItems = this.menuItems;
-    if (this.currentCategory !== 'all') {
-        filteredItems = this.menuItems.filter(item => item.category_id === this.currentCategory);
-    }
+                const container = document.getElementById('menuItemsGrid');
+                
+                let filteredItems = this.menuItems;
+                if (this.currentCategory !== 'all') {
+                    filteredItems = this.menuItems.filter(item => item.category_id === this.currentCategory);
+                }
 
-    if (filteredItems.length === 0) {
-        container.innerHTML = `
-            <div class="col-span-full text-center py-12">
-                <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">search_off</span>
-                <p class="text-gray-500">No items found in this category</p>
-            </div>
-        `;
-        return;
-    }
+                if (filteredItems.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">search_off</span>
+                            <p class="text-gray-500">No items found in this category</p>
+                        </div>
+                    `;
+                    return;
+                }
 
-    container.innerHTML = filteredItems.map(item => {
-        const variants = this.menuItemVariants[item.id] || [];
-        const hasVariants = variants.length > 0;
-        
-        // Calculate price range if there are variants
-        let priceDisplay = `$${parseFloat(item.price).toFixed(2)}`;
-        if (hasVariants) {
-            const prices = variants.map(v => parseFloat(item.price) + parseFloat(v.additional_price || 0));
-            const minPrice = Math.min(...prices);
-            const maxPrice = Math.max(...prices);
-            if (minPrice !== maxPrice) {
-                priceDisplay = `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
-            }
-        }
+                container.innerHTML = filteredItems.map(item => {
+                    const variants = this.menuItemVariants[item.id] || [];
+                    const hasVariants = variants.length > 0;
+                    
+                    // Calculate price range if there are variants
+                    let priceDisplay = `$${parseFloat(item.price).toFixed(2)}`;
+                    if (hasVariants) {
+                        const prices = variants.map(v => parseFloat(item.price) + parseFloat(v.additional_price || 0));
+                        const minPrice = Math.min(...prices);
+                        const maxPrice = Math.max(...prices);
+                        if (minPrice !== maxPrice) {
+                            priceDisplay = `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
+                        }
+                    }
 
-        // Use the first variant image if available, otherwise use item image
-        const displayImage = item.image_url
-        return `
-        <div class="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
-            <div class="h-48 bg-gray-200 bg-cover bg-center" style="background-image: url('${displayImage}')"></div>
-            <div class="p-4">
-                <div class="flex justify-between items-start mb-2">
-                    <h3 class="font-semibold text-gray-900 text-lg">${item.name}</h3>
-                    <span class="font-bold text-orange-500">${priceDisplay}</span>
-                </div>
-                <p class="text-gray-600 text-sm mb-4">${item.description || 'Delicious menu item'}</p>
-                ${hasVariants ? `
-                    <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                        <span class="material-symbols-outlined text-base">layers</span>
-                        <span>${variants.length} option${variants.length !== 1 ? 's' : ''} available</span>
+                    // Use ONLY the base item image for the menu grid
+                    const displayImage = item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80';
+
+                    return `
+                    <div class="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="h-48 bg-gray-200 bg-cover bg-center" style="background-image: url('${displayImage}')"></div>
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-semibold text-gray-900 text-lg">${item.name}</h3>
+                                <span class="font-bold text-orange-500">${priceDisplay}</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-4">${item.description || 'Delicious menu item'}</p>
+                            ${hasVariants ? `
+                                <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                                    <span class="material-symbols-outlined text-base">layers</span>
+                                    <span>${variants.length} option${variants.length !== 1 ? 's' : ''} available</span>
+                                </div>
+                            ` : ''}
+                            <button class="add-to-cart-btn w-full bg-orange-500 text-white py-2 rounded-lg font-medium hover:bg-orange-600 transition-colors" data-item-id="${item.id}">
+                                ${hasVariants ? 'Choose Options' : 'Add to Cart'}
+                            </button>
+                        </div>
                     </div>
-                ` : ''}
-                <button class="add-to-cart-btn w-full bg-orange-500 text-white py-2 rounded-lg font-medium hover:bg-orange-600 transition-colors" data-item-id="${item.id}">
-                    ${hasVariants ? 'Choose Options' : 'Add to Cart'}
-                </button>
-            </div>
-        </div>
-        `;
-    }).join('');
+                    `;
+                }).join('');
 
-    container.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const itemId = e.target.getAttribute('data-item-id');
-            const variants = this.menuItemVariants[itemId] || [];
-            
-            if (variants.length > 0) {
-                this.showVariantModal(itemId);
-            } else {
-                this.showAddonsModal(itemId);
+                container.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const itemId = e.target.getAttribute('data-item-id');
+                        const variants = this.menuItemVariants[itemId] || [];
+                        
+                        if (variants.length > 0) {
+                            this.showVariantModal(itemId);
+                        } else {
+                            this.showAddonsModal(itemId);
+                        }
+                    });
+                });
             }
-        });
-    });
-}
 
             filterByCategory(categoryId) {
                 this.currentCategory = categoryId;
@@ -939,114 +1107,115 @@ setupVariantEventListeners(variants) {
             }
 
             displayCartItems() {
-    const container = document.getElementById('cartItems');
-    
-    if (this.cart.length === 0) {
-        container.innerHTML = `
-            <div class="text-center py-12 text-gray-500">
-                <span class="material-symbols-outlined text-4xl mb-2">shopping_cart</span>
-                <p>Your cart is empty</p>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = this.cart.map((item, index) => {
-        const addonsTotal = (item.selectedAddons || []).reduce((sum, addon) => 
-            sum + (parseFloat(addon.price) * parseInt(addon.quantity || 1)), 0
-        );
-        const itemTotal = (item.final_price * item.quantity) + addonsTotal;
-
-        // Use variant image if available, otherwise use item image
-        const imageUrl = item.variant?.image_url || item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80';
-
-        return `
-        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <!-- Item Image -->
-            <div class="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
-                <img src="${imageUrl}" alt="${item.name}" class="w-full h-full object-cover">
-            </div>
-            
-            <div class="flex-1 min-w-0">
-                <h4 class="font-medium text-gray-900 truncate">${item.name}</h4>
-                ${item.variant ? `
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-sm text-orange-600 bg-orange-50 px-2 py-1 rounded">
-                            ${item.variant.name}
-                        </span>
-                        ${item.variant.additional_price > 0 ? `
-                            <span class="text-xs text-gray-500">+$${item.variant.additional_price.toFixed(2)}</span>
-                        ` : ''}
-                    </div>
-                ` : ''}
+                const container = document.getElementById('cartItems');
                 
-                <div class="flex items-center justify-between mt-2">
-                    <span class="text-orange-500 font-semibold">$${item.final_price.toFixed(2)} × ${item.quantity}</span>
-                    ${addonsTotal > 0 ? `
-                        <span class="text-sm text-green-600">+$${addonsTotal.toFixed(2)}</span>
-                    ` : ''}
-                </div>
-                
-                ${item.selectedAddons && item.selectedAddons.length > 0 ? `
-                    <div class="mt-2">
-                        <p class="text-xs text-gray-500 font-medium">Add-ons:</p>
-                        <div class="flex flex-wrap gap-1 mt-1">
-                            ${item.selectedAddons.map(addon => `
-                                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                                    ${addon.name} (+$${parseFloat(addon.price).toFixed(2)})
-                                </span>
-                            `).join('')}
+                if (this.cart.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-12 text-gray-500">
+                            <span class="material-symbols-outlined text-4xl mb-2">shopping_cart</span>
+                            <p>Your cart is empty</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.cart.map((item, index) => {
+                    const addonsTotal = (item.selectedAddons || []).reduce((sum, addon) => 
+                        sum + (parseFloat(addon.price) * parseInt(addon.quantity || 1)), 0
+                    );
+                    const itemTotal = (item.final_price * item.quantity) + addonsTotal;
+
+                    // Use variant image if available, otherwise use item image
+                    const imageUrl = item.variant?.image_url || item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80';
+
+                    return `
+                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <!-- Item Image -->
+                        <div class="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+                            <img src="${imageUrl}" alt="${item.name}" class="w-full h-full object-cover">
+                        </div>
+                        
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-medium text-gray-900 truncate">${item.name}</h4>
+                            ${item.variant ? `
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-sm text-orange-600 bg-orange-50 px-2 py-1 rounded">
+                                        ${item.variant.name}
+                                    </span>
+                                    ${item.variant.additional_price > 0 ? `
+                                        <span class="text-xs text-gray-500">+$${item.variant.additional_price.toFixed(2)}</span>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+                            
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-orange-500 font-semibold">$${item.final_price.toFixed(2)} × ${item.quantity}</span>
+                                ${addonsTotal > 0 ? `
+                                    <span class="text-sm text-green-600">+$${addonsTotal.toFixed(2)}</span>
+                                ` : ''}
+                            </div>
+                            
+                            ${item.selectedAddons && item.selectedAddons.length > 0 ? `
+                                <div class="mt-2">
+                                    <p class="text-xs text-gray-500 font-medium">Add-ons:</p>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${item.selectedAddons.map(addon => `
+                                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                                ${addon.name} (+$${parseFloat(addon.price).toFixed(2)})
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            ${item.special_instructions ? `
+                                <p class="text-sm text-gray-600 mt-2 border-l-2 border-orange-500 pl-2">
+                                    ${item.special_instructions}
+                                </p>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="flex items-center gap-2">
+                                <button class="decrease-quantity p-1 rounded hover:bg-gray-200 transition-colors" data-item-index="${index}">
+                                    <span class="material-symbols-outlined text-lg">remove</span>
+                                </button>
+                                <span class="w-8 text-center font-medium">${item.quantity}</span>
+                                <button class="increase-quantity p-1 rounded hover:bg-gray-200 transition-colors" data-item-index="${index}">
+                                    <span class="material-symbols-outlined text-lg">add</span>
+                                </button>
+                            </div>
+                            <button class="remove-item p-1 rounded hover:bg-red-100 text-red-500 transition-colors" data-item-index="${index}">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
                         </div>
                     </div>
-                ` : ''}
-                
-                ${item.special_instructions ? `
-                    <p class="text-sm text-gray-600 mt-2 border-l-2 border-orange-500 pl-2">
-                        ${item.special_instructions}
-                    </p>
-                ` : ''}
-            </div>
-            
-            <div class="flex flex-col items-center gap-2">
-                <div class="flex items-center gap-2">
-                    <button class="decrease-quantity p-1 rounded hover:bg-gray-200 transition-colors" data-item-index="${index}">
-                        <span class="material-symbols-outlined text-lg">remove</span>
-                    </button>
-                    <span class="w-8 text-center font-medium">${item.quantity}</span>
-                    <button class="increase-quantity p-1 rounded hover:bg-gray-200 transition-colors" data-item-index="${index}">
-                        <span class="material-symbols-outlined text-lg">add</span>
-                    </button>
-                </div>
-                <button class="remove-item p-1 rounded hover:bg-red-100 text-red-500 transition-colors" data-item-index="${index}">
-                    <span class="material-symbols-outlined text-lg">delete</span>
-                </button>
-            </div>
-        </div>
-        `;
-    }).join('');
+                    `;
+                }).join('');
 
-    // Add event listeners for quantity buttons
-    container.querySelectorAll('.increase-quantity').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
-            this.updateQuantity(index, 1);
-        });
-    });
+                // Add event listeners for quantity buttons
+                container.querySelectorAll('.increase-quantity').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
+                        this.updateQuantity(index, 1);
+                    });
+                });
 
-    container.querySelectorAll('.decrease-quantity').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
-            this.updateQuantity(index, -1);
-        });
-    });
+                container.querySelectorAll('.decrease-quantity').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
+                        this.updateQuantity(index, -1);
+                    });
+                });
 
-    container.querySelectorAll('.remove-item').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
-            this.removeFromCart(index);
-        });
-    });
-}
+                container.querySelectorAll('.remove-item').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
+                        this.removeFromCart(index);
+                    });
+                });
+            }
+
             updateQuantity(index, change) {
                 const item = this.cart[index];
                 if (!item) return;
@@ -1065,93 +1234,7 @@ setupVariantEventListeners(variants) {
                 this.updateCartUI();
             }
 
-            setupEventListeners() {
-                document.getElementById('cartButton').addEventListener('click', () => this.toggleCart());
-                document.getElementById('floatingCartBtn').addEventListener('click', () => this.toggleCart());
-                document.getElementById('closeCart').addEventListener('click', () => this.closeCart());
-                document.getElementById('placeOrderBtn').addEventListener('click', () => this.placeOrder());
-                document.getElementById('closeConfirmation').addEventListener('click', () => this.closeConfirmationModal());
-                
-                // Variant modal events
-                document.getElementById('closeVariantModal').addEventListener('click', () => this.hideVariantModal());
-                document.getElementById('cancelVariant').addEventListener('click', () => {
-    this.selectedVariant = null;
-    this.currentMenuItem = null;
-    this.hideVariantModal();
-});
-
-                document.getElementById('confirmVariant').addEventListener('click', () => this.confirmVariantSelection());
-                
-                // Addons modal events
-                document.getElementById('closeAddonsModal').addEventListener('click', () => this.hideAddonsModal());
-                document.getElementById('cancelAddons').addEventListener('click', () => this.hideAddonsModal());
-                document.getElementById('confirmAddons').addEventListener('click', () => this.addToCartWithAddons());
-
-                // Modal backdrop clicks
-                document.getElementById('variantModal').addEventListener('click', (e) => {
-    if (e.target.id === 'variantModal') {
-        this.selectedVariant = null;
-        this.currentMenuItem = null;
-        this.hideVariantModal();
-    }
-});
-                document.getElementById('addonsModal').addEventListener('click', (e) => {
-                    if (e.target.id === 'addonsModal') this.hideAddonsModal();
-                });
-                document.getElementById('cartDrawer').addEventListener('click', (e) => {
-                    if (e.target.id === 'cartDrawer') this.closeCart();
-                });
-                document.getElementById('orderConfirmationModal').addEventListener('click', (e) => {
-                    if (e.target.id === 'orderConfirmationModal') this.closeConfirmationModal();
-                });
-            }
-
-            confirmVariantSelection() {
-    // Check if a variant is selected
-    if (!this.selectedVariant) {
-        this.showToast('Please select an option', 'error');
-        return;
-    }
-
-    // Check if currentMenuItem exists
-    if (!this.currentMenuItem || !this.currentMenuItem.id) {
-        console.error('Current menu item is not set properly');
-        this.showToast('Error: Menu item not found', 'error');
-        return;
-    }
-
-    // Safely access the variant ID
-    const variantId = this.selectedVariant.id;
-    const menuItemId = this.currentMenuItem.id;
-
-    console.log('Selected variant:', this.selectedVariant);
-    console.log('Current menu item:', this.currentMenuItem);
-
-    this.hideVariantModal();
-    this.showAddonsModal(menuItemId, variantId);
-}
-
-            toggleCart() {
-                document.getElementById('cartDrawer').classList.toggle('hidden');
-            }
-
-            closeCart() {
-                document.getElementById('cartDrawer').classList.add('hidden');
-            }
-
-            hideVariantModal() {
-                document.getElementById('variantModal').classList.add('hidden');
-                ///this.selectedVariant = null;
-            }
-
-            hideAddonsModal() {
-                document.getElementById('addonsModal').classList.add('hidden');
-                this.currentMenuItem = null;
-                this.selectedVariant = null;
-                this.selectedAddons = [];
-                this.addonGroups = [];
-            }
-
+            // 🔒 Secure Order Methods
             async placeOrder() {
                 if (this.isPlacingOrder) {
                     console.warn('⏳ Order is already being placed. Ignoring duplicate call.');
@@ -1181,6 +1264,7 @@ setupVariantEventListeners(variants) {
                     const orderData = {
                         restaurant_id: this.restaurantId,
                         table_id: this.tableId,
+                        customer_session_id: this.customerSessionId, // 🔐 Include session ID
                         order_number: 'DF-' + new Date().toISOString().slice(0,10).replace(/-/g, '') + '-' + Math.random().toString().slice(2, 8),
                         status: 'pending',
                         total_amount: finalTotal,
@@ -1201,14 +1285,18 @@ setupVariantEventListeners(variants) {
 
                     console.log('✅ Order created with ID:', order.id);
 
-                    // Insert order items with variants
+                    // Insert order items - use selected_variant instead of variant_id
                     const orderItems = this.cart.map(cartItem => ({
                         order_id: order.id,
                         menu_item_id: cartItem.id,
-                        variant_id: cartItem.variant?.id || null,
                         quantity: cartItem.quantity,
                         special_instructions: cartItem.special_instructions || '',
-                        item_price: cartItem.final_price
+                        item_price: cartItem.final_price,
+                        selected_variant: cartItem.variant ? JSON.stringify({
+                            id: cartItem.variant.id,
+                            name: cartItem.variant.name,
+                            additional_price: cartItem.variant.additional_price
+                        }) : null
                     }));
 
                     const { data: orderItemsData, error: orderItemsError } = await supabase
@@ -1280,8 +1368,224 @@ setupVariantEventListeners(variants) {
                 }
             }
 
+            // 📊 Order Tracking Methods
+            async showOrderTracking() {
+                document.getElementById('orderTrackingModal').classList.remove('hidden');
+                await this.loadOrderTracking();
+            }
+
+            hideOrderTracking() {
+                document.getElementById('orderTrackingModal').classList.add('hidden');
+            }
+
+            async loadOrderTracking() {
+                try {
+                    const refreshBtn = document.getElementById('refreshOrderStatus');
+                    refreshBtn.innerHTML = '<span class="loading-spinner"></span> Refreshing...';
+                    refreshBtn.disabled = true;
+
+                    // Get orders for this table AND this session only
+                    const { data: orders, error } = await supabase
+                        .from('orders')
+                        .select(`
+                            *,
+                            order_items(
+                                *,
+                                menu_items(name, image_url),
+                                order_item_addons(
+                                    *,
+                                    addons(name)
+                                )
+                            )
+                        `)
+                        .eq('table_id', this.tableId)
+                        .eq('customer_session_id', this.customerSessionId) // 🔐 Filter by session
+                        .order('created_at', { ascending: false })
+                        .limit(5);
+
+                    if (error) throw error;
+
+                    const content = document.getElementById('orderTrackingContent');
+                    
+                    if (!orders || orders.length === 0) {
+                        content.innerHTML = `
+                            <div class="text-center py-8">
+                                <span class="material-symbols-outlined text-4xl text-gray-300 mb-4">receipt_long</span>
+                                <p class="text-gray-500">No orders in your current session</p>
+                                <p class="text-sm text-gray-400 mt-2">Orders placed in this private session will appear here</p>
+                                <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                                    <p class="text-sm text-blue-700">
+                                        <span class="material-symbols-outlined text-base mr-1">info</span>
+                                        Session ID: ${this.customerSessionId}
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    content.innerHTML = orders.map(order => {
+                        const statusConfig = {
+                            'pending': { color: 'bg-yellow-100 text-yellow-800', icon: 'schedule', text: 'Order Received' },
+                            'confirmed': { color: 'bg-blue-100 text-blue-800', icon: 'task_alt', text: 'Preparing' },
+                            'preparing': { color: 'bg-orange-100 text-orange-800', icon: 'restaurant', text: 'Cooking' },
+                            'ready': { color: 'bg-green-100 text-green-800', icon: 'check_circle', text: 'Ready for Pickup' },
+                            'completed': { color: 'bg-gray-100 text-gray-800', icon: 'done_all', text: 'Completed' },
+                            'cancelled': { color: 'bg-red-100 text-red-800', icon: 'cancel', text: 'Cancelled' }
+                        };
+                        
+                        const status = statusConfig[order.status] || statusConfig.pending;
+                        const orderTime = new Date(order.order_time).toLocaleTimeString();
+                        const totalItems = order.order_items.reduce((sum, item) => sum + item.quantity, 0);
+
+                        return `
+                        <div class="border rounded-lg p-4 mb-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">Order #${order.order_number}</h4>
+                                    <p class="text-sm text-gray-500">Placed at ${orderTime}</p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-medium ${status.color} flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">${status.icon}</span>
+                                    ${status.text}
+                                </span>
+                            </div>
+                            
+                            <div class="space-y-2 mb-3">
+                                ${order.order_items.map(item => {
+                                    let variantInfo = '';
+                                    if (item.selected_variant) {
+                                        try {
+                                            const variant = JSON.parse(item.selected_variant);
+                                            variantInfo = ` (${variant.name})`;
+                                        } catch (e) {
+                                            variantInfo = ` (${item.selected_variant})`;
+                                        }
+                                    }
+                                    
+                                    return `
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-700">
+                                            ${item.quantity}× ${item.menu_items?.name || 'Item'}${variantInfo}
+                                        </span>
+                                        <span class="text-gray-900 font-medium">$${(item.item_price * item.quantity).toFixed(2)}</span>
+                                    </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            
+                            <div class="flex justify-between items-center pt-3 border-t">
+                                <span class="text-sm text-gray-600">${totalItems} item${totalItems !== 1 ? 's' : ''}</span>
+                                <span class="font-semibold text-gray-900">$${order.total_amount}</span>
+                            </div>
+                            
+                            ${order.estimated_completion_time ? `
+                                <div class="mt-3 p-3 bg-blue-50 rounded-lg">
+                                    <div class="flex items-center gap-2 text-sm text-blue-700">
+                                        <span class="material-symbols-outlined text-base">schedule</span>
+                                        <span>Estimated ready: ${new Date(order.estimated_completion_time).toLocaleTimeString()}</span>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        `;
+                    }).join('');
+
+                } catch (error) {
+                    console.error('Error loading order tracking:', error);
+                    const content = document.getElementById('orderTrackingContent');
+                    content.innerHTML = `
+                        <div class="text-center py-8 text-red-500">
+                            <span class="material-symbols-outlined text-4xl mb-4">error</span>
+                            <p>Error loading order status</p>
+                            <p class="text-sm">Please try again later</p>
+                        </div>
+                    `;
+                } finally {
+                    const refreshBtn = document.getElementById('refreshOrderStatus');
+                    refreshBtn.innerHTML = '<span class="material-symbols-outlined text-lg">refresh</span> Refresh';
+                    refreshBtn.disabled = false;
+                }
+            }
+
+            setupRealtimeOrderUpdates() {
+                // Subscribe to order status changes for this table and session
+                const subscription = supabase
+                    .channel('table-orders')
+                    .on(
+                        'postgres_changes',
+                        {
+                            event: '*',
+                            schema: 'public',
+                            table: 'orders',
+                            filter: `table_id=eq.${this.tableId}`
+                        },
+                        (payload) => {
+                            console.log('Order update received:', payload);
+                            // Check if this order belongs to our session
+                            if (payload.new && payload.new.customer_session_id === this.customerSessionId) {
+                                // Refresh order tracking if modal is open
+                                if (!document.getElementById('orderTrackingModal').classList.contains('hidden')) {
+                                    this.loadOrderTracking();
+                                }
+                            }
+                        }
+                    )
+                    .subscribe();
+
+                // Store subscription for cleanup if needed
+                this.orderSubscription = subscription;
+            }
+
+            // 🎯 UI Interaction Methods
+            confirmVariantSelection() {
+                // Check if a variant is selected
+                if (!this.selectedVariant) {
+                    this.showToast('Please select an option', 'error');
+                    return;
+                }
+
+                // Check if currentMenuItem exists
+                if (!this.currentMenuItem || !this.currentMenuItem.id) {
+                    console.error('Current menu item is not set properly');
+                    this.showToast('Error: Menu item not found', 'error');
+                    return;
+                }
+
+                // Safely access the variant ID
+                const variantId = this.selectedVariant.id;
+                const menuItemId = this.currentMenuItem.id;
+
+                console.log('Selected variant:', this.selectedVariant);
+                console.log('Current menu item:', this.currentMenuItem);
+
+                this.hideVariantModal();
+                this.showAddonsModal(menuItemId, variantId);
+            }
+
+            toggleCart() {
+                document.getElementById('cartDrawer').classList.toggle('hidden');
+            }
+
+            closeCart() {
+                document.getElementById('cartDrawer').classList.add('hidden');
+            }
+
+            hideVariantModal() {
+                document.getElementById('variantModal').classList.add('hidden');
+            }
+
+            hideAddonsModal() {
+                document.getElementById('addonsModal').classList.add('hidden');
+                this.currentMenuItem = null;
+                this.selectedVariant = null;
+                this.selectedAddons = [];
+                this.addonGroups = [];
+            }
+
             showOrderConfirmation(orderNumber) {
                 document.getElementById('confirmationOrderNumber').textContent = orderNumber;
+                document.getElementById('confirmationSessionId').textContent = this.customerSessionId;
                 document.getElementById('orderConfirmationModal').classList.remove('hidden');
             }
 
@@ -1289,6 +1593,64 @@ setupVariantEventListeners(variants) {
                 document.getElementById('orderConfirmationModal').classList.add('hidden');
             }
 
+            // 🎪 Event Listeners
+            setupEventListeners() {
+                document.getElementById('cartButton').addEventListener('click', () => this.toggleCart());
+                document.getElementById('floatingCartBtn').addEventListener('click', () => this.toggleCart());
+                document.getElementById('closeCart').addEventListener('click', () => this.closeCart());
+                document.getElementById('placeOrderBtn').addEventListener('click', () => this.placeOrder());
+                document.getElementById('closeConfirmation').addEventListener('click', () => this.closeConfirmationModal());
+                
+                // Session management
+                document.getElementById('newSessionBtn').addEventListener('click', () => this.showNewSessionModal());
+                document.getElementById('cancelNewSession').addEventListener('click', () => this.hideNewSessionModal());
+                document.getElementById('confirmNewSession').addEventListener('click', () => this.startNewSession());
+                
+                // Order tracking events
+                document.getElementById('orderTrackingBtn').addEventListener('click', () => this.showOrderTracking());
+                document.getElementById('closeOrderTracking').addEventListener('click', () => this.hideOrderTracking());
+                document.getElementById('refreshOrderStatus').addEventListener('click', () => this.loadOrderTracking());
+                
+                // Variant modal events
+                document.getElementById('closeVariantModal').addEventListener('click', () => this.hideVariantModal());
+                document.getElementById('cancelVariant').addEventListener('click', () => {
+                    this.selectedVariant = null;
+                    this.currentMenuItem = null;
+                    this.hideVariantModal();
+                });
+                document.getElementById('confirmVariant').addEventListener('click', () => this.confirmVariantSelection());
+                
+                // Addons modal events
+                document.getElementById('closeAddonsModal').addEventListener('click', () => this.hideAddonsModal());
+                document.getElementById('cancelAddons').addEventListener('click', () => this.hideAddonsModal());
+                document.getElementById('confirmAddons').addEventListener('click', () => this.addToCartWithAddons());
+
+                // Modal backdrop clicks
+                document.getElementById('variantModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'variantModal') {
+                        this.selectedVariant = null;
+                        this.currentMenuItem = null;
+                        this.hideVariantModal();
+                    }
+                });
+                document.getElementById('addonsModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'addonsModal') this.hideAddonsModal();
+                });
+                document.getElementById('cartDrawer').addEventListener('click', (e) => {
+                    if (e.target.id === 'cartDrawer') this.closeCart();
+                });
+                document.getElementById('orderConfirmationModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'orderConfirmationModal') this.closeConfirmationModal();
+                });
+                document.getElementById('orderTrackingModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'orderTrackingModal') this.hideOrderTracking();
+                });
+                document.getElementById('newSessionModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'newSessionModal') this.hideNewSessionModal();
+                });
+            }
+
+            // 💬 Utility Methods
             showToast(message, type = 'info') {
                 const bgColor = type === 'error' ? 'bg-red-500' : 
                               type === 'success' ? 'bg-green-500' : 
