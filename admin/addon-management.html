@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>DineFlow - Manage Add-ons</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff7b00",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#23190f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-[#1F2937] dark:text-gray-200">
+    <div class="relative flex min-h-screen w-full flex-col">
+        <div class="flex h-full w-full grow">
+            <!-- SideNavBar -->
+            <!-- Standardized Sidebar - Use this across ALL pages -->
+            <aside class="flex w-64 flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark p-4">
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-3 px-3 py-2">
+                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="DineFlow company logo" style='background-image: url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80");'></div>
+                        <div class="flex flex-col">
+                            <h1 class="text-gray-900 dark:text-white text-base font-medium leading-normal">DineFlow</h1>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal" id="restaurantName">Restaurant Admin</p>
+                        </div>
+                    </div>
+                    <nav class="flex flex-col gap-2 mt-4">
+                        <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="dashboard.html">
+                            <span class="material-symbols-outlined">dashboard</span>
+                            <p class="text-sm font-medium leading-normal">Dashboard</p>
+                        </a>
+                        <a class="flex items-center gap-3 px-3 py-2 text-gray-900 dark:text-white rounded-lg bg-primary/10 dark:bg-primary/20 ring-1 ring-primary/20" href="order-management.html">
+                            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+                            <p class="text-sm font-medium leading-normal text-primary">Orders</p>
+                        </a>
+                        <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="menu-management.html">
+                            <span class="material-symbols-outlined">menu_book</span>
+                            <p class="text-sm font-medium leading-normal">Menu</p>
+                        </a>
+                        <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="table-management.html">
+                            <span class="material-symbols-outlined">table_restaurant</span>
+                            <p class="text-sm font-medium leading-normal">Tables</p>
+                        </a>
+                        <!-- New Analytics Button -->
+                        <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="analytics.html">
+                            <span class="material-symbols-outlined">analytics</span>
+                            <p class="text-sm font-medium leading-normal">Analytics</p>
+                        </a>
+                        <!-- New Add-ons Button -->
+                        <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="addon-management.html">
+                            <span class="material-symbols-outlined">extension</span>
+                            <p class="text-sm font-medium leading-normal">Add-ons</p>
+                        </a>
+                    </nav>
+                </div>
+                <div class="mt-auto flex flex-col gap-1">
+                    <button id="logoutBtn" class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
+                        <span class="material-symbols-outlined">logout</span>
+                        <p class="text-sm font-medium leading-normal">Logout</p>
+                    </button>
+                </div>
+            </aside>
+                        
+            <!-- Main Content -->
+            <main class="flex flex-1 flex-col">
+                <!-- TopNavBar -->
+                <header class="flex items-center justify-between whitespace-nowrap border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark px-10 py-3">
+                    <div class="flex items-center gap-8">
+                        <div class="flex items-center gap-4 text-[#181410] dark:text-gray-100">
+                            <span class="material-symbols-outlined text-2xl text-primary">drag_indicator</span>
+                            <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Manage Add-ons</h2>
+                        </div>
+                        <label class="flex flex-col min-w-40 !h-10 max-w-64">
+                            <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                                <div class="text-[#8d755e] dark:text-gray-400 flex border-none bg-background-light dark:bg-white/10 items-center justify-center pl-4 rounded-l-lg border-r-0">
+                                    <span class="material-symbols-outlined text-xl">search</span>
+                                </div>
+                                <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#181410] dark:text-gray-200 focus:outline-0 focus:ring-0 border-none bg-background-light dark:bg-white/10 focus:border-none h-full placeholder:text-[#8d755e] dark:placeholder:text-gray-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search add-ons..." value=""/>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="flex flex-1 justify-end gap-4">
+                        <div class="flex gap-2">
+                            <button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-background-light dark:bg-white/10 text-[#181410] dark:text-gray-200">
+                                <span class="material-symbols-outlined text-xl">notifications</span>
+                            </button>
+                            <button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-background-light dark:bg-white/10 text-[#181410] dark:text-gray-200">
+                                <span class="material-symbols-outlined text-xl">help_outline</span>
+                            </button>
+                        </div>
+                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuByWF5oBxMjy14kUQBp3pLA6XU71589gfDZp-O7e-pxGXQFwDRc1h5g4SrCr_6MPY5hq8oi9RqChGn_ZNBvkqvtS4-bz_Xb5y8QdZHXtFinX0SP_8FxNNyQbydiHy4rajvLTkLGntrnvq72adxZGUNJ6ySBXVLl_I5jtC1k-qI05Op4KF9HS0PCLWnkou5s1U-C3S1Cs6lirvIxGcp9rqZw0nb9jLp0zZXxylMJlbeGFr6_kBp2T-4b0hdKNQIxCg9gHkaqkLa6EHk");'></div>
+                    </div>
+                </header>
+                
+                <div class="flex-1 p-8">
+                    <div class="grid grid-cols-12 gap-8">
+                        <!-- Left Column: Add-on Groups -->
+                        <div class="col-span-12 md:col-span-5">
+                            <!-- PageHeading -->
+                            <div class="flex flex-wrap justify-between gap-3 items-center">
+                                <p class="text-[#181410] dark:text-white text-2xl font-bold leading-tight tracking-tight min-w-72">Add-on Groups</p>
+                                <button id="createGroupBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 shadow-sm hover:bg-primary/90">
+                                    <span class="material-symbols-outlined text-lg">add</span>
+                                    <span class="truncate">Create Group</span>
+                                </button>
+                            </div>
+                            <!-- Add-on Group Cards -->
+                            <div id="addonGroupsContainer" class="flex flex-col gap-4 mt-6">
+                                <!-- Groups will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <!-- Right Column: Add-on Items -->
+                        <div class="col-span-12 md:col-span-7">
+                            <div class="bg-white dark:bg-white/10 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm min-h-[400px]">
+                                <!-- SectionHeader -->
+                                <div class="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
+                                    <h3 id="sectionTitle" class="text-[#181410] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Select an add-on group</h3>
+                                    <button id="addItemBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary/20 text-primary dark:bg-primary/30 dark:text-primary gap-2 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/30 dark:hover:bg-primary/40">
+                                        <span class="material-symbols-outlined text-lg">add</span>
+                                        <span class="truncate">Add New Item</span>
+                                    </button>
+                                </div>
+                                <!-- Add-on Items Table/List -->
+                                <div class="mt-4 flow-root">
+                                    <div class="-mx-6 -my-2 overflow-x-auto">
+                                        <div class="inline-block min-w-full py-2 align-middle sm:px-6">
+                                            <table class="min-w-full">
+                                                <thead class="text-xs text-gray-500 dark:text-gray-400 uppercase">
+                                                    <tr>
+                                                        <th class="py-3.5 pl-4 pr-3 text-left font-semibold sm:pl-0" scope="col">Item Name</th>
+                                                        <th class="px-3 py-3.5 text-left font-semibold" scope="col">Price</th>
+                                                        <th class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right font-semibold" scope="col">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="addonItemsContainer" class="dark:divide-gray-700">
+                                                    <!-- Items will be populated by JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Add Group Modal -->
+    <div id="addGroupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-xl p-6 w-full max-w-md">
+            <h3 class="text-lg font-bold mb-4">Create Add-on Group</h3>
+            <form id="addGroupForm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Group Name</label>
+                        <input type="text" id="groupName" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-gray-700" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Description</label>
+                        <textarea id="groupDescription" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-gray-700" rows="3"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Max Selections</label>
+                            <input type="number" id="groupMaxSelections" min="1" max="10" value="1" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-gray-700">
+                        </div>
+                        <div class="flex items-center gap-2 mt-6">
+                            <input type="checkbox" id="groupRequired" class="rounded border-gray-300 text-primary focus:ring-primary">
+                            <label for="groupRequired" class="text-sm font-medium">Required</label>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" id="cancelGroupBtn" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Create Group</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Group Modal -->
+    <div id="editGroupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-xl p-6 w-full max-w-md">
+            <h3 class="text-lg font-bold mb-4">Edit Add-on Group</h3>
+            <form id="editGroupForm">
+                <input type="hidden" id="editGroupId">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Group Name</label>
+                        <input type="text" id="editGroupName" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-gray-700" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Description</label>
+                        <textarea id="editGroupDescription" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-gray-700" rows="3"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Max Selections</label>
+                            <input type="number" id="editGroupMaxSelections" min="1" max="10" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-gray-700">
+                        </div>
+                        <div class="flex items-center gap-2 mt-6">
+                            <input type="checkbox" id="editGroupRequired" class="rounded border-gray-300 text-primary focus:ring-primary">
+                            <label for="editGroupRequired" class="text-sm font-medium">Required</label>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" id="cancelEditGroupBtn" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Update Group</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div id="addItemModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-xl p-6 w-full max-w-md">
+            <h3 class="text-lg font-bold mb-4">Add Add-on Item</h3>
+            <form id="addItemForm">
+                <input type="hidden" id="itemGroupId">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Item Name</label>
+                        <input type="text" id="itemName" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-gray-700" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Price ($)</label>
+                        <input type="number" step="0.01" min="0" id="itemPrice" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-gray-700" value="0">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="itemAvailable" class="rounded border-gray-300 text-primary focus:ring-primary" checked>
+                        <label for="itemAvailable" class="text-sm font-medium">Available</label>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" id="cancelItemBtn" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Add Item</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Item Modal -->
+    <div id="editItemModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-xl p-6 w-full max-w-md">
+            <h3 class="text-lg font-bold mb-4">Edit Add-on Item</h3>
+            <form id="editItemForm">
+                <input type="hidden" id="editItemId">
+                <input type="hidden" id="editItemGroupId">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Item Name</label>
+                        <input type="text" id="editItemName" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-gray-700" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Price ($)</label>
+                        <input type="number" step="0.01" min="0" id="editItemPrice" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-gray-700">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="editItemAvailable" class="rounded border-gray-300 text-primary focus:ring-primary">
+                        <label for="editItemAvailable" class="text-sm font-medium">Available</label>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" id="cancelEditItemBtn" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Update Item</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { AuthService } from '../js/auth.js';
+        import { AddonService } from '../js/addon.js';
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            class AddonManagement {
+                constructor() {
+                    this.user = null;
+                    this.restaurant = null;
+                    this.addonGroups = [];
+                    this.selectedGroup = null;
+                    this.addons = [];
+                    this.init();
+                }
+    
+                async init() {
+                    console.log('Initializing addon management...');
+                    
+                    // Check authentication
+                    this.user = await AuthService.getCurrentUser();
+                    if (!this.user) {
+                        console.log('No user, redirecting to login...');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+    
+                    console.log('User authenticated:', this.user);
+    
+                    // Load restaurant data
+                    await this.loadRestaurantData();
+                    
+                    // Load addon groups from Supabase
+                    await this.loadAddonGroups();
+                        
+                    // Set up event listeners
+                    this.setupEventListeners();
+    
+                    // Set up logout
+                    document.getElementById('logoutBtn').addEventListener('click', this.logout.bind(this));
+                }
+    
+                async loadRestaurantData() {
+                    try {
+                        console.log('Loading restaurant data...');
+                        this.restaurant = await AuthService.getRestaurant();
+                        
+                        if (this.restaurant) {
+                            console.log('Restaurant loaded:', this.restaurant);
+                            document.getElementById('restaurantName').textContent = this.restaurant.name;
+                        } else {
+                            console.error('No restaurant found for user:', this.user.id);
+                            this.showNotification('No restaurant found. Please contact support.', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error loading restaurant data:', error);
+                        this.showNotification('Error loading restaurant data: ' + error.message, 'error');
+                    }
+                }
+    
+                async loadAddonGroups() {
+                    try {
+                        if (!this.restaurant) {
+                            console.error('Cannot load addon groups: No restaurant data');
+                            return;
+                        }
+                        
+                        console.log('Loading addon groups for restaurant:', this.restaurant.id);
+                        this.addonGroups = await AddonService.getAddonGroups(this.restaurant.id);
+                        console.log('Addon groups loaded:', this.addonGroups);
+                        
+                        this.displayAddonGroups();
+                        
+                        // Select the first group by default if available
+                        if (this.addonGroups.length > 0) {
+                            this.selectGroup(this.addonGroups[0].id);
+                        }
+                    } catch (error) {
+                        console.error('Error loading addon groups:', error);
+                        this.showNotification('Error loading addon groups: ' + error.message, 'error');
+                    }
+                }
+    
+                displayAddonGroups() {
+                    const container = document.getElementById('addonGroupsContainer');
+                    
+                    if (this.addonGroups.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                                <span class="material-symbols-outlined text-4xl mb-2">extension</span>
+                                <p>No add-on groups yet</p>
+                                <p class="text-sm">Create your first add-on group to get started</p>
+                            </div>
+                        `;
+                        return;
+                    }
+    
+                    container.innerHTML = this.addonGroups.map(group => `
+                        <div class="p-4 bg-white dark:bg-white/10 rounded-xl border-2 ${
+                            this.selectedGroup?.id === group.id ? 'border-primary' : 'border-gray-200 dark:border-gray-700'
+                        } cursor-pointer transition-all duration-200 shadow-sm" data-group-id="${group.id}">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white">${group.name}</h4>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        ${group.item_count || 0} items • 
+                                        ${group.max_selections || 1} max selection${group.max_selections !== 1 ? 's' : ''}
+                                        ${group.is_required ? ' • Required' : ' • Optional'}
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                                    <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 edit-group-btn" data-group-id="${group.id}">
+                                        <span class="material-symbols-outlined text-lg">edit</span>
+                                    </button>
+                                    <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-red-500 delete-group-btn" data-group-id="${group.id}">
+                                        <span class="material-symbols-outlined text-lg">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                            ${group.description ? `<p class="text-sm text-gray-600 dark:text-gray-300 mt-2">${group.description}</p>` : ''}
+                        </div>
+                    `).join('');
+    
+                    // Add click event to groups
+                    container.querySelectorAll('[data-group-id]').forEach(element => {
+                        element.addEventListener('click', (e) => {
+                            if (!e.target.closest('.edit-group-btn') && !e.target.closest('.delete-group-btn')) {
+                                const groupId = element.getAttribute('data-group-id');
+                                this.selectGroup(groupId);
+                            }
+                        });
+                    });
+    
+                    // Add edit button events
+                    container.querySelectorAll('.edit-group-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const groupId = button.getAttribute('data-group-id');
+                            this.editGroup(groupId);
+                        });
+                    });
+    
+                    // Add delete button events
+                    container.querySelectorAll('.delete-group-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const groupId = button.getAttribute('data-group-id');
+                            this.deleteGroup(groupId);
+                        });
+                    });
+                }
+    
+                async selectGroup(groupId) {
+                    this.selectedGroup = this.addonGroups.find(group => group.id === groupId);
+                    
+                    // Update UI to show selected group
+                    document.querySelectorAll('[data-group-id]').forEach(element => {
+                        element.classList.remove('border-primary');
+                        element.classList.add('border-gray-200', 'dark:border-gray-700');
+                        if (element.getAttribute('data-group-id') === groupId) {
+                            element.classList.remove('border-gray-200', 'dark:border-gray-700');
+                            element.classList.add('border-primary');
+                        }
+                    });
+    
+                    // Update section header
+                    document.getElementById('sectionTitle').textContent = `Items for '${this.selectedGroup.name}'`;
+    
+                    // Load addons for this group
+                    await this.loadAddons(groupId);
+                }
+    
+                async loadAddons(groupId) {
+                    try {
+                        this.addons = await AddonService.getAddonsByGroup(groupId);
+                        this.displayAddons();
+                    } catch (error) {
+                        console.error('Error loading addons:', error);
+                        this.showNotification('Error loading addons: ' + error.message, 'error');
+                    }
+                }
+    
+                displayAddons() {
+                    const tbody = document.getElementById('addonItemsContainer');
+                    
+                    if (this.addons.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="3" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                    <span class="material-symbols-outlined text-4xl mb-2">inventory_2</span>
+                                    <p>No add-on items yet</p>
+                                    <button id="addFirstItemBtn" class="text-primary hover:underline mt-2">Add your first item</button>
+                                </td>
+                            </tr>
+                        `;
+    
+                        document.getElementById('addFirstItemBtn')?.addEventListener('click', () => {
+                            this.showAddItemModal();
+                        });
+                        return;
+                    }
+    
+                    tbody.innerHTML = this.addons.map(addon => `
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-white sm:pl-0">
+                                ${addon.name}
+                                ${!addon.is_available ? '<span class="ml-2 text-xs text-red-500">(Unavailable)</span>' : ''}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">$${addon.price.toFixed(2)}</td>
+                            <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                                <div class="flex items-center justify-end gap-2 text-gray-500 dark:text-gray-400">
+                                    <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 edit-item-btn" data-item-id="${addon.id}">
+                                        <span class="material-symbols-outlined text-lg">edit</span>
+                                    </button>
+                                    <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-red-500 delete-item-btn" data-item-id="${addon.id}">
+                                        <span class="material-symbols-outlined text-lg">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+    
+                    // Add event listeners to edit and delete buttons
+                    tbody.querySelectorAll('.edit-item-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const itemId = button.getAttribute('data-item-id');
+                            this.editItem(itemId);
+                        });
+                    });
+    
+                    tbody.querySelectorAll('.delete-item-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const itemId = button.getAttribute('data-item-id');
+                            this.deleteItem(itemId);
+                        });
+                    });
+                }
+    
+                setupEventListeners() {
+                    // Create group button
+                    document.getElementById('createGroupBtn').addEventListener('click', () => {
+                        this.showAddGroupModal();
+                    });
+    
+                    // Add item button
+                    document.getElementById('addItemBtn').addEventListener('click', () => {
+                        this.showAddItemModal();
+                    });
+    
+                    // Group modal events
+                    document.getElementById('cancelGroupBtn').addEventListener('click', () => {
+                        this.hideAddGroupModal();
+                    });
+    
+                    document.getElementById('addGroupForm').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.addGroup();
+                    });
+    
+                    // Edit group modal events
+                    document.getElementById('cancelEditGroupBtn').addEventListener('click', () => {
+                        this.hideEditGroupModal();
+                    });
+    
+                    document.getElementById('editGroupForm').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.updateGroup();
+                    });
+    
+                    // Add item modal events
+                    document.getElementById('cancelItemBtn').addEventListener('click', () => {
+                        this.hideAddItemModal();
+                    });
+    
+                    document.getElementById('addItemForm').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.addItem();
+                    });
+    
+                    // Edit item modal events
+                    document.getElementById('cancelEditItemBtn').addEventListener('click', () => {
+                        this.hideEditItemModal();
+                    });
+    
+                    document.getElementById('editItemForm').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.updateItem();
+                    });
+                }
+    
+                // Modal Management
+                showAddGroupModal() {
+                    document.getElementById('addGroupModal').classList.remove('hidden');
+                }
+    
+                hideAddGroupModal() {
+                    document.getElementById('addGroupModal').classList.add('hidden');
+                    document.getElementById('addGroupForm').reset();
+                }
+    
+                showEditGroupModal() {
+                    document.getElementById('editGroupModal').classList.remove('hidden');
+                }
+    
+                hideEditGroupModal() {
+                    document.getElementById('editGroupModal').classList.add('hidden');
+                    document.getElementById('editGroupForm').reset();
+                }
+    
+                showAddItemModal() {
+                    if (!this.selectedGroup) {
+                        this.showNotification('Please select an add-on group first', 'error');
+                        return;
+                    }
+                    document.getElementById('itemGroupId').value = this.selectedGroup.id;
+                    document.getElementById('addItemModal').classList.remove('hidden');
+                }
+    
+                hideAddItemModal() {
+                    document.getElementById('addItemModal').classList.add('hidden');
+                    document.getElementById('addItemForm').reset();
+                }
+    
+                showEditItemModal() {
+                    document.getElementById('editItemModal').classList.remove('hidden');
+                }
+    
+                hideEditItemModal() {
+                    document.getElementById('editItemModal').classList.add('hidden');
+                    document.getElementById('editItemForm').reset();
+                }
+    
+                // Group Operations
+                async addGroup() {
+                    const name = document.getElementById('groupName').value;
+                    const description = document.getElementById('groupDescription').value;
+                    const maxSelections = parseInt(document.getElementById('groupMaxSelections').value) || 1;
+                    const isRequired = document.getElementById('groupRequired').checked;
+    
+                    try {
+                        if (!this.restaurant) {
+                            console.error('No restaurant data available');
+                            this.showNotification('No restaurant data available. Please refresh the page.', 'error');
+                            return;
+                        }
+    
+                        const newGroup = await AddonService.createAddonGroup({
+                            restaurant_id: this.restaurant.id,
+                            user_id: this.user.id,
+                            name,
+                            description,
+                            max_selections: maxSelections,
+                            is_required: isRequired
+                        });
+    
+                        this.addonGroups.push(newGroup);
+                        this.displayAddonGroups();
+                        this.hideAddGroupModal();
+                        this.showNotification('Add-on group created successfully!', 'success');
+                    } catch (error) {
+                        console.error('Error creating addon group:', error);
+                        this.showNotification('Error creating addon group: ' + error.message, 'error');
+                    }
+                }
+    
+                editGroup(groupId) {
+                    const group = this.addonGroups.find(g => g.id === groupId);
+                    if (!group) {
+                        this.showNotification('Group not found', 'error');
+                        return;
+                    }
+    
+                    document.getElementById('editGroupId').value = group.id;
+                    document.getElementById('editGroupName').value = group.name;
+                    document.getElementById('editGroupDescription').value = group.description || '';
+                    document.getElementById('editGroupMaxSelections').value = group.max_selections || 1;
+                    document.getElementById('editGroupRequired').checked = group.is_required || false;
+    
+                    this.showEditGroupModal();
+                }
+    
+                async updateGroup() {
+                    const groupId = document.getElementById('editGroupId').value;
+                    const name = document.getElementById('editGroupName').value;
+                    const description = document.getElementById('editGroupDescription').value;
+                    const maxSelections = parseInt(document.getElementById('editGroupMaxSelections').value) || 1;
+                    const isRequired = document.getElementById('editGroupRequired').checked;
+    
+                    try {
+                        const updatedGroup = await AddonService.updateAddonGroup(groupId, {
+                            name,
+                            description,
+                            max_selections: maxSelections,
+                            is_required: isRequired
+                        });
+    
+                        // Update local state
+                        const index = this.addonGroups.findIndex(g => g.id === groupId);
+                        if (index !== -1) {
+                            this.addonGroups[index] = updatedGroup;
+                        }
+    
+                        // Update selected group if it's the one being edited
+                        if (this.selectedGroup && this.selectedGroup.id === groupId) {
+                            this.selectedGroup = updatedGroup;
+                            document.getElementById('sectionTitle').textContent = `Items for '${this.selectedGroup.name}'`;
+                        }
+    
+                        this.displayAddonGroups();
+                        this.hideEditGroupModal();
+                        this.showNotification('Add-on group updated successfully!', 'success');
+                    } catch (error) {
+                        console.error('Error updating addon group:', error);
+                        this.showNotification('Error updating addon group: ' + error.message, 'error');
+                    }
+                }
+    
+                async deleteGroup(groupId) {
+                    if (!confirm('Are you sure you want to delete this add-on group? All items in this group will also be deleted.')) {
+                        return;
+                    }
+    
+                    try {
+                        await AddonService.deleteAddonGroup(groupId);
+                        
+                        // Remove from local state
+                        this.addonGroups = this.addonGroups.filter(g => g.id !== groupId);
+                        
+                        // If the deleted group was selected, clear selection
+                        if (this.selectedGroup && this.selectedGroup.id === groupId) {
+                            this.selectedGroup = null;
+                            this.addons = [];
+                            this.displayAddons();
+                            document.getElementById('sectionTitle').textContent = 'Select an add-on group';
+                        }
+                        
+                        this.displayAddonGroups();
+                        this.showNotification('Add-on group deleted successfully!', 'success');
+                    } catch (error) {
+                        console.error('Error deleting addon group:', error);
+                        this.showNotification('Error deleting addon group: ' + error.message, 'error');
+                    }
+                }
+    
+                // Item Operations
+                async addItem() {
+                    const groupId = document.getElementById('itemGroupId').value;
+                    const name = document.getElementById('itemName').value;
+                    const price = parseFloat(document.getElementById('itemPrice').value) || 0;
+                    const isAvailable = document.getElementById('itemAvailable').checked;
+    
+                    try {
+                        const newItem = await AddonService.createAddon({
+                            addon_group_id: groupId,
+                            user_id: this.user.id,
+                            name,
+                            price,
+                            is_available: isAvailable
+                        });
+    
+                        this.addons.push(newItem);
+                        
+                        // Update item count in the group
+                        const groupIndex = this.addonGroups.findIndex(g => g.id === groupId);
+                        if (groupIndex !== -1) {
+                            this.addonGroups[groupIndex].item_count = (this.addonGroups[groupIndex].item_count || 0) + 1;
+                        }
+                        
+                        this.displayAddons();
+                        this.displayAddonGroups();
+                        this.hideAddItemModal();
+                        this.showNotification('Add-on item created successfully!', 'success');
+                    } catch (error) {
+                        console.error('Error creating addon item:', error);
+                        this.showNotification('Error creating addon item: ' + error.message, 'error');
+                    }
+                }
+    
+                async editItem(itemId) {
+                    try {
+                        const item = await AddonService.getAddon(itemId);
+                        if (!item) {
+                            this.showNotification('Item not found', 'error');
+                            return;
+                        }
+    
+                        document.getElementById('editItemId').value = item.id;
+                        document.getElementById('editItemGroupId').value = item.addon_group_id;
+                        document.getElementById('editItemName').value = item.name;
+                        document.getElementById('editItemPrice').value = item.price;
+                        document.getElementById('editItemAvailable').checked = item.is_available;
+    
+                        this.showEditItemModal();
+                    } catch (error) {
+                        console.error('Error loading addon item:', error);
+                        this.showNotification('Error loading addon item: ' + error.message, 'error');
+                    }
+                }
+    
+                async updateItem() {
+                    const itemId = document.getElementById('editItemId').value;
+                    const name = document.getElementById('editItemName').value;
+                    const price = parseFloat(document.getElementById('editItemPrice').value) || 0;
+                    const isAvailable = document.getElementById('editItemAvailable').checked;
+    
+                    try {
+                        const updatedItem = await AddonService.updateAddon(itemId, {
+                            name,
+                            price,
+                            is_available: isAvailable
+                        });
+    
+                        // Update local state
+                        const index = this.addons.findIndex(a => a.id === itemId);
+                        if (index !== -1) {
+                            this.addons[index] = updatedItem;
+                        }
+    
+                        this.displayAddons();
+                        this.hideEditItemModal();
+                        this.showNotification('Add-on item updated successfully!', 'success');
+                    } catch (error) {
+                        console.error('Error updating addon item:', error);
+                        this.showNotification('Error updating addon item: ' + error.message, 'error');
+                    }
+                }
+    
+                async deleteItem(itemId) {
+                    if (!confirm('Are you sure you want to delete this add-on item?')) {
+                        return;
+                    }
+    
+                    try {
+                        // Get the item to know which group it belongs to
+                        const item = this.addons.find(a => a.id === itemId);
+                        
+                        // Delete the item
+                        await AddonService.deleteAddon(itemId);
+                        
+                        // Remove from local state
+                        this.addons = this.addons.filter(a => a.id !== itemId);
+                        
+                        // Update item count in the group
+                        if (item) {
+                            const groupIndex = this.addonGroups.findIndex(g => g.id === item.addon_group_id);
+                            if (groupIndex !== -1 && this.addonGroups[groupIndex].item_count > 0) {
+                                this.addonGroups[groupIndex].item_count -= 1;
+                            }
+                        }
+                        
+                        this.displayAddons();
+                        this.displayAddonGroups();
+                        this.showNotification('Add-on item deleted successfully!', 'success');
+                    } catch (error) {
+                        console.error('Error deleting addon item:', error);
+                        this.showNotification('Error deleting addon item: ' + error.message, 'error');
+                    }
+                }
+    
+                showNotification(message, type = 'info') {
+                    // Remove existing notification
+                    const existingNotification = document.querySelector('.notification-toast');
+                    if (existingNotification) {
+                        existingNotification.remove();
+                    }
+    
+                    // Create notification
+                    const notification = document.createElement('div');
+                    notification.className = `notification-toast fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg ${
+                        type === 'success' ? 'bg-green-500 text-white' : 
+                        type === 'error' ? 'bg-red-500 text-white' : 
+                        'bg-blue-500 text-white'
+                    }`;
+                    notification.textContent = message;
+                    
+                    document.body.appendChild(notification);
+                    
+                    // Auto remove after 5 seconds
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 5000);
+                }
+    
+                async logout() {
+                    try {
+                        await AuthService.logout();
+                        window.location.href = 'login.html';
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                    }
+                }
+            }
+    
+            // Initialize addon management
+            const addonManagement = new AddonManagement();
+        });
+    </script>

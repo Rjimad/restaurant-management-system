@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>DineFlow - Analytics</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        
+        .notification-toast {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#ff8000",
+                "background-light": "#f8f7f5",
+                "background-dark": "#23190f",
+              },
+              fontFamily: {
+                "display": ["Inter", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200">
+    <div class="flex h-screen w-full">
+        <!-- SideNavBar -->
+        <aside class="flex w-64 flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark p-4">
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-3 px-3 py-2">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="DineFlow company logo" style='background-image: url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80");'></div>
+                    <div class="flex flex-col">
+                        <h1 class="text-gray-900 dark:text-white text-base font-medium leading-normal">DineFlow</h1>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal" id="restaurantName">Restaurant Admin</p>
+                    </div>
+                </div>
+                <nav class="flex flex-col gap-2 mt-4">
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="dashboard.html">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <p class="text-sm font-medium leading-normal">Dashboard</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="order-management.html">
+                        <span class="material-symbols-outlined">receipt_long</span>
+                        <p class="text-sm font-medium leading-normal">Orders</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="menu-management.html">
+                        <span class="material-symbols-outlined">menu_book</span>
+                        <p class="text-sm font-medium leading-normal">Menu</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="table-management.html">
+                        <span class="material-symbols-outlined">table_restaurant</span>
+                        <p class="text-sm font-medium leading-normal">Tables</p>
+                    </a>
+                    <!-- Analytics Button - Active -->
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-900 dark:text-white rounded-lg bg-primary/10 dark:bg-primary/20 ring-1 ring-primary/20" href="analytics.html">
+                        <span class="material-symbols-outlined text-primary">analytics</span>
+                        <p class="text-sm font-medium leading-normal text-primary">Analytics</p>
+                    </a>
+                    <!-- Add-ons Button -->
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="addon-management.html">
+                        <span class="material-symbols-outlined">extension</span>
+                        <p class="text-sm font-medium leading-normal">Add-ons</p>
+                    </a>
+                </nav>
+            </div>
+            <div class="mt-auto flex flex-col gap-1">
+                <button id="logoutBtn" class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
+                    <span class="material-symbols-outlined">logout</span>
+                    <p class="text-sm font-medium leading-normal">Logout</p>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex flex-1 flex-col overflow-y-auto">
+            <!-- TopNavBar -->
+            <header class="flex sticky top-0 z-10 items-center justify-between whitespace-nowrap border-b border-gray-200 dark:border-gray-700 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm px-10 py-3">
+                <div class="flex items-center gap-8">
+                    <h2 class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Analytics</h2>
+                </div>
+                <div class="flex flex-1 justify-end items-center gap-4">
+                    <label class="flex flex-col min-w-40 h-10 w-full max-w-sm">
+                        <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                            <div class="text-gray-500 dark:text-gray-400 flex bg-white dark:bg-gray-800 items-center justify-center pl-4 rounded-l-lg border border-gray-200 dark:border-gray-700 border-r-0">
+                                <span class="material-symbols-outlined">search</span>
+                            </div>
+                            <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-1 focus:ring-primary border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 h-full placeholder:text-gray-500 dark:placeholder:text-gray-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search analytics..." value=""/>
+                        </div>
+                    </label>
+                    <div class="flex gap-2">
+                        <button class="flex cursor-pointer items-center justify-center rounded-lg h-10 w-10 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <span class="material-symbols-outlined">notifications</span>
+                        </button>
+                        <button class="flex cursor-pointer items-center justify-center rounded-lg h-10 w-10 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <span class="material-symbols-outlined">help_outline</span>
+                        </button>
+                    </div>
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-offset-2 ring-offset-background-light dark:ring-offset-background-dark ring-primary/50" data-alt="User's profile avatar" style='background-image: url("https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80");'></div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="flex-1 p-8 space-y-8">
+                <!-- Filters and Actions -->
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex h-10 items-center justify-center rounded-lg bg-white dark:bg-gray-800 p-1 border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-4 has-[:checked]:bg-gray-100 has-[:checked]:dark:bg-gray-700 text-gray-600 dark:text-gray-400 has-[:checked]:text-gray-900 has-[:checked]:dark:text-white text-sm font-medium">
+                            <span>Today</span>
+                            <input class="invisible w-0" name="date-range" type="radio" value="today"/>
+                        </label>
+                        <label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-4 has-[:checked]:bg-gray-100 has-[:checked]:dark:bg-gray-700 text-gray-600 dark:text-gray-400 has-[:checked]:text-gray-900 has-[:checked]:dark:text-white text-sm font-medium">
+                            <span class="truncate">This Week</span>
+                            <input checked class="invisible w-0" name="date-range" type="radio" value="week"/>
+                        </label>
+                        <label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-4 has-[:checked]:bg-gray-100 has-[:checked]:dark:bg-gray-700 text-gray-600 dark:text-gray-400 has-[:checked]:text-gray-900 has-[:checked]:dark:text-white text-sm font-medium">
+                            <span class="truncate">This Month</span>
+                            <input class="invisible w-0" name="date-range" type="radio" value="month"/>
+                        </label>
+                        <label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-4 has-[:checked]:bg-gray-100 has-[:checked]:dark:bg-gray-700 text-gray-600 dark:text-gray-400 has-[:checked]:text-gray-900 has-[:checked]:dark:text-white text-sm font-medium">
+                            <span class="truncate">This Year</span>
+                            <input class="invisible w-0" name="date-range" type="radio" value="year"/>
+                        </label>
+                    </div>
+                    <div class="flex flex-wrap gap-3 justify-end">
+                        <button id="exportPdfBtn" class="flex min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm">
+                            <span class="material-symbols-outlined text-base">picture_as_pdf</span>
+                            <span>Export PDF</span>
+                        </button>
+                        <button id="exportExcelBtn" class="flex min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-semibold hover:bg-primary/90 shadow-sm">
+                            <span class="material-symbols-outlined text-base">grid_on</span>
+                            <span class="truncate">Export Excel</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    <div class="flex flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <p class="text-base font-medium text-gray-600 dark:text-gray-400">Total Revenue</p>
+                        <div class="flex items-baseline gap-2">
+                            <p id="totalRevenue" class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">$0</p>
+                            <p id="revenueChange" class="text-sm font-semibold text-green-500 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">arrow_upward</span>
+                                <span>0%</span>
+                            </p>
+                        </div>
+                        <p id="revenuePeriod" class="text-sm text-gray-500 dark:text-gray-400">This week</p>
+                    </div>
+                    <div class="flex flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <p class="text-base font-medium text-gray-600 dark:text-gray-400">Total Orders</p>
+                        <div class="flex items-baseline gap-2">
+                            <p id="totalOrders" class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">0</p>
+                            <p id="ordersChange" class="text-sm font-semibold text-red-500 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">arrow_downward</span>
+                                <span>0%</span>
+                            </p>
+                        </div>
+                        <p id="ordersPeriod" class="text-sm text-gray-500 dark:text-gray-400">This week</p>
+                    </div>
+                    <div class="flex flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <p class="text-base font-medium text-gray-600 dark:text-gray-400">Average Order Value</p>
+                        <div class="flex items-baseline gap-2">
+                            <p id="averageOrder" class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">$0</p>
+                            <p id="averageChange" class="text-sm font-semibold text-green-500 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">arrow_upward</span>
+                                <span>0%</span>
+                            </p>
+                        </div>
+                        <p id="averagePeriod" class="text-sm text-gray-500 dark:text-gray-400">This week</p>
+                    </div>
+                    <div class="flex flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <p class="text-base font-medium text-gray-600 dark:text-gray-400">Popular Item</p>
+                        <div class="flex items-baseline gap-2">
+                            <p id="popularItem" class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">-</p>
+                            <p id="itemOrders" class="text-sm font-semibold text-gray-500">
+                                <span>0 orders</span>
+                            </p>
+                        </div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Most ordered</p>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <!-- Revenue Chart -->
+                    <div class="flex flex-col gap-4 rounded-xl p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Revenue Over Time</h3>
+                        <div class="h-80">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Top Items Chart -->
+                    <div class="flex flex-col gap-4 rounded-xl p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Top Selling Items</h3>
+                        <div class="h-80">
+                            <canvas id="topItemsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Analytics -->
+                <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                    <!-- Order Status Distribution -->
+                    <div class="flex flex-col gap-4 rounded-xl p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm lg:col-span-1">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Order Status</h3>
+                        <div class="h-64">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Hourly Performance -->
+                    <div class="flex flex-col gap-4 rounded-xl p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm lg:col-span-2">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Peak Hours</h3>
+                        <div class="h-64">
+                            <canvas id="hourlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Stats Table -->
+                <div class="flex flex-col gap-4 rounded-xl p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Detailed Performance</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Metric</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Current Period</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Previous Period</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Change</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailedStats" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Stats will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { AuthService } from '../js/auth.js';
+        import { supabase } from '../js/supabase.js';
+
+        class Analytics {
+            constructor() {
+                this.user = null;
+                this.restaurant = null;
+                this.orders = [];
+                this.menuItems = [];
+                this.currentPeriod = 'week';
+                this.charts = {};
+                this.init();
+            }
+
+            async init() {
+                // Check authentication
+                this.user = await AuthService.getCurrentUser();
+                if (!this.user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                console.log('User authenticated:', this.user);
+
+                // Load restaurant data
+                await this.loadRestaurantData();
+                
+                // Load analytics data
+                await this.loadAnalyticsData();
+
+                // Set up event listeners
+                this.setupEventListeners();
+
+                // Set up logout
+                document.getElementById('logoutBtn').addEventListener('click', this.logout.bind(this));
+            }
+
+            async loadRestaurantData() {
+                try {
+                    console.log('Loading restaurant data...');
+                    this.restaurant = await AuthService.getRestaurant();
+                    
+                    if (this.restaurant) {
+                        console.log('Restaurant loaded:', this.restaurant);
+                        document.getElementById('restaurantName').textContent = this.restaurant.name;
+                    } else {
+                        console.error('No restaurant found for user:', this.user.id);
+                        this.showNotification('No restaurant found. Please contact support.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error loading restaurant data:', error);
+                    this.showNotification('Error loading restaurant data: ' + error.message, 'error');
+                }
+            }
+
+            async loadAnalyticsData() {
+                try {
+                    if (!this.restaurant) {
+                        console.error('Cannot load analytics: No restaurant data');
+                        return;
+                    }
+
+                    console.log('Loading analytics data for restaurant:', this.restaurant.id);
+                    
+                    // Load orders and menu items
+                    const [orders, menuItems] = await Promise.all([
+                        this.loadOrders(),
+                        this.loadMenuItems()
+                    ]);
+
+                    this.orders = orders;
+                    this.menuItems = menuItems;
+
+                    // Update analytics
+                    this.updateAnalytics();
+
+                } catch (error) {
+                    console.error('Error loading analytics data:', error);
+                    this.showNotification('Error loading analytics data: ' + error.message, 'error');
+                }
+            }
+
+            async loadOrders() {
+                try {
+                    const { data: orders, error } = await supabase
+                        .from('orders')
+                        .select(`
+                            *,
+                            order_items (
+                                *,
+                                menu_items ( name ),
+                                order_item_addons ( addon_name, addon_price, quantity )
+                            ),
+                            tables ( table_number )
+                        `)
+                        .eq('restaurant_id', this.restaurant.id)
+                        .order('order_time', { ascending: false });
+
+                    if (error) throw error;
+                    return orders || [];
+                } catch (error) {
+                    console.error('Error loading orders:', error);
+                    return [];
+                }
+            }
+
+            async loadMenuItems() {
+                try {
+                    const { data: menuItems, error } = await supabase
+                        .from('menu_items')
+                        .select('*')
+                        .eq('restaurant_id', this.restaurant.id)
+                        .order('name');
+
+                    if (error) throw error;
+                    return menuItems || [];
+                } catch (error) {
+                    console.error('Error loading menu items:', error);
+                    return [];
+                }
+            }
+
+            setupEventListeners() {
+                // Period filter buttons
+                document.querySelectorAll('input[name="date-range"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        this.currentPeriod = e.target.value;
+                        this.updateAnalytics();
+                    });
+                });
+
+                // Export buttons
+                document.getElementById('exportPdfBtn').addEventListener('click', () => {
+                    this.exportPDF();
+                });
+
+                document.getElementById('exportExcelBtn').addEventListener('click', () => {
+                    this.exportExcel();
+                });
+            }
+
+            updateAnalytics() {
+                const filteredOrders = this.filterOrdersByPeriod(this.orders, this.currentPeriod);
+                const previousOrders = this.getPreviousPeriodOrders(this.orders, this.currentPeriod);
+
+                this.updateStats(filteredOrders, previousOrders);
+                this.updateCharts(filteredOrders);
+                this.updateDetailedStats(filteredOrders, previousOrders);
+            }
+
+            filterOrdersByPeriod(orders, period) {
+                const now = new Date();
+                let startDate;
+
+                switch (period) {
+                    case 'today':
+                        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        break;
+                    case 'week':
+                        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+                        break;
+                    case 'month':
+                        startDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                        break;
+                    case 'year':
+                        startDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+                        break;
+                    default:
+                        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+                }
+
+                return orders.filter(order => new Date(order.order_time) >= startDate);
+            }
+
+            getPreviousPeriodOrders(orders, period) {
+                const now = new Date();
+                let startDate, endDate;
+
+                switch (period) {
+                    case 'today':
+                        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+                        endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        break;
+                    case 'week':
+                        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 14);
+                        endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+                        break;
+                    case 'month':
+                        startDate = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate());
+                        endDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                        break;
+                    case 'year':
+                        startDate = new Date(now.getFullYear() - 2, now.getMonth(), now.getDate());
+                        endDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+                        break;
+                    default:
+                        return [];
+                }
+
+                return orders.filter(order => {
+                    const orderTime = new Date(order.order_time);
+                    return orderTime >= startDate && orderTime < endDate;
+                });
+            }
+
+            updateStats(currentOrders, previousOrders) {
+                // Calculate current period stats
+                const currentRevenue = currentOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+                const currentOrderCount = currentOrders.length;
+                const currentAverage = currentOrderCount > 0 ? currentRevenue / currentOrderCount : 0;
+
+                // Calculate previous period stats
+                const previousRevenue = previousOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+                const previousOrderCount = previousOrders.length;
+                const previousAverage = previousOrderCount > 0 ? previousRevenue / previousOrderCount : 0;
+
+                // Calculate changes
+                const revenueChange = previousRevenue > 0 ? ((currentRevenue - previousRevenue) / previousRevenue) * 100 : 0;
+                const ordersChange = previousOrderCount > 0 ? ((currentOrderCount - previousOrderCount) / previousOrderCount) * 100 : 0;
+                const averageChange = previousAverage > 0 ? ((currentAverage - previousAverage) / previousAverage) * 100 : 0;
+
+                // Find popular item
+                const itemCounts = {};
+                currentOrders.forEach(order => {
+                    order.order_items?.forEach(item => {
+                        const itemName = item.menu_items?.name || 'Unknown Item';
+                        itemCounts[itemName] = (itemCounts[itemName] || 0) + item.quantity;
+                    });
+                });
+
+                const popularItem = Object.keys(itemCounts).reduce((a, b) => itemCounts[a] > itemCounts[b] ? a : b, '');
+                const popularItemCount = itemCounts[popularItem] || 0;
+
+                // Update DOM
+                document.getElementById('totalRevenue').textContent = `$${currentRevenue.toFixed(2)}`;
+                document.getElementById('totalOrders').textContent = currentOrderCount.toString();
+                document.getElementById('averageOrder').textContent = `$${currentAverage.toFixed(2)}`;
+                document.getElementById('popularItem').textContent = popularItem || '-';
+
+                // Update changes
+                this.updateChangeElement('revenueChange', revenueChange);
+                this.updateChangeElement('ordersChange', ordersChange);
+                this.updateChangeElement('averageChange', averageChange);
+                document.getElementById('itemOrders').textContent = `${popularItemCount} orders`;
+
+                // Update period labels
+                const periodLabel = this.getPeriodLabel(this.currentPeriod);
+                document.getElementById('revenuePeriod').textContent = periodLabel;
+                document.getElementById('ordersPeriod').textContent = periodLabel;
+                document.getElementById('averagePeriod').textContent = periodLabel;
+            }
+
+            updateChangeElement(elementId, change) {
+                const element = document.getElementById(elementId);
+                const isPositive = change >= 0;
+                const arrow = isPositive ? 'arrow_upward' : 'arrow_downward';
+                const colorClass = isPositive ? 'text-green-500' : 'text-red-500';
+
+                element.innerHTML = `
+                    <span class="material-symbols-outlined text-base">${arrow}</span>
+                    <span>${Math.abs(change).toFixed(1)}%</span>
+                `;
+                element.className = `text-sm font-semibold ${colorClass} flex items-center gap-1`;
+            }
+
+            getPeriodLabel(period) {
+                const labels = {
+                    'today': 'Today',
+                    'week': 'This week',
+                    'month': 'This month',
+                    'year': 'This year'
+                };
+                return labels[period] || 'This week';
+            }
+
+            updateCharts(orders) {
+                this.createRevenueChart(orders);
+                this.createTopItemsChart(orders);
+                this.createStatusChart(orders);
+                this.createHourlyChart(orders);
+            }
+
+            createRevenueChart(orders) {
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                
+                // Destroy existing chart if it exists
+                if (this.charts.revenue) {
+                    this.charts.revenue.destroy();
+                }
+
+                // Group revenue by day
+                const revenueByDay = {};
+                orders.forEach(order => {
+                    const date = new Date(order.order_time).toLocaleDateString();
+                    revenueByDay[date] = (revenueByDay[date] || 0) + (order.total_amount || 0);
+                });
+
+                const labels = Object.keys(revenueByDay);
+                const data = Object.values(revenueByDay);
+
+                this.charts.revenue = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Revenue',
+                            data: data,
+                            borderColor: '#ff8000',
+                            backgroundColor: 'rgba(255, 128, 0, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createTopItemsChart(orders) {
+                const ctx = document.getElementById('topItemsChart').getContext('2d');
+                
+                if (this.charts.topItems) {
+                    this.charts.topItems.destroy();
+                }
+
+                // Count items
+                const itemCounts = {};
+                orders.forEach(order => {
+                    order.order_items?.forEach(item => {
+                        const itemName = item.menu_items?.name || 'Unknown Item';
+                        itemCounts[itemName] = (itemCounts[itemName] || 0) + item.quantity;
+                    });
+                });
+
+                // Get top 5 items
+                const topItems = Object.entries(itemCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+
+                const labels = topItems.map(item => item[0]);
+                const data = topItems.map(item => item[1]);
+
+                this.charts.topItems = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Orders',
+                            data: data,
+                            backgroundColor: '#ff8000',
+                            borderColor: '#ff8000',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            createStatusChart(orders) {
+                const ctx = document.getElementById('statusChart').getContext('2d');
+                
+                if (this.charts.status) {
+                    this.charts.status.destroy();
+                }
+
+                const statusCounts = {
+                    'completed': 0,
+                    'preparing': 0,
+                    'pending': 0
+                };
+
+                orders.forEach(order => {
+                    statusCounts[order.status] = (statusCounts[order.status] || 0) + 1;
+                });
+
+                this.charts.status = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completed', 'Preparing', 'Pending'],
+                        datasets: [{
+                            data: [statusCounts.completed, statusCounts.preparing, statusCounts.pending],
+                            backgroundColor: [
+                                '#10B981',
+                                '#F59E0B',
+                                '#EF4444'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            createHourlyChart(orders) {
+                const ctx = document.getElementById('hourlyChart').getContext('2d');
+                
+                if (this.charts.hourly) {
+                    this.charts.hourly.destroy();
+                }
+
+                const hourlyCounts = Array(24).fill(0);
+                orders.forEach(order => {
+                    const hour = new Date(order.order_time).getHours();
+                    hourlyCounts[hour]++;
+                });
+
+                const labels = Array.from({length: 24}, (_, i) => {
+                    const hour = i % 12 || 12;
+                    const period = i < 12 ? 'AM' : 'PM';
+                    return `${hour}${period}`;
+                });
+
+                this.charts.hourly = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Orders',
+                            data: hourlyCounts,
+                            borderColor: '#ff8000',
+                            backgroundColor: 'rgba(255, 128, 0, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            updateDetailedStats(currentOrders, previousOrders) {
+                const container = document.getElementById('detailedStats');
+                
+                const metrics = [
+                    {
+                        name: 'Total Revenue',
+                        current: currentOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0),
+                        previous: previousOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0)
+                    },
+                    {
+                        name: 'Total Orders',
+                        current: currentOrders.length,
+                        previous: previousOrders.length
+                    },
+                    {
+                        name: 'Average Order Value',
+                        current: currentOrders.length > 0 ? currentOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0) / currentOrders.length : 0,
+                        previous: previousOrders.length > 0 ? previousOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0) / previousOrders.length : 0
+                    },
+                    {
+                        name: 'Completed Orders',
+                        current: currentOrders.filter(order => order.status === 'completed').length,
+                        previous: previousOrders.filter(order => order.status === 'completed').length
+                    }
+                ];
+
+                container.innerHTML = metrics.map(metric => {
+                    const change = metric.previous > 0 ? ((metric.current - metric.previous) / metric.previous) * 100 : 0;
+                    const isPositive = change >= 0;
+                    const changeColor = isPositive ? 'text-green-500' : 'text-red-500';
+                    const changeIcon = isPositive ? 'arrow_upward' : 'arrow_downward';
+
+                    const formatValue = (value, isCurrency = false) => {
+                        if (isCurrency) {
+                            return `$${value.toFixed(2)}`;
+                        }
+                        return value.toFixed(0);
+                    };
+
+                    return `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${metric.name}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${formatValue(metric.current, metric.name.includes('Revenue') || metric.name.includes('Value'))}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${formatValue(metric.previous, metric.name.includes('Revenue') || metric.name.includes('Value'))}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm ${changeColor}">
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-base">${changeIcon}</span>
+                                    ${Math.abs(change).toFixed(1)}%
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            exportPDF() {
+                this.showNotification('PDF export feature coming soon!', 'info');
+                // In a real implementation, this would generate a PDF report
+            }
+
+            exportExcel() {
+                this.showNotification('Excel export feature coming soon!', 'info');
+                // In a real implementation, this would generate an Excel file
+            }
+
+            showNotification(message, type = 'info') {
+                // Remove existing notification
+                const existingNotification = document.querySelector('.notification-toast');
+                if (existingNotification) {
+                    existingNotification.remove();
+                }
+
+                // Create notification
+                const notification = document.createElement('div');
+                notification.className = `notification-toast fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg ${
+                    type === 'success' ? 'bg-green-500 text-white' : 
+                    type === 'error' ? 'bg-red-500 text-white' : 
+                    'bg-blue-500 text-white'
+                }`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            }
+
+            async logout() {
+                try {
+                    await AuthService.logout();
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            }
+        }
+
+        // Initialize analytics
+        new Analytics();
+    </script>
+</body>
+</html>

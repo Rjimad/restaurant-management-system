@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>DineFlow - Menu Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#ff8000",
+                "background-light": "#f8f7f5",
+                "background-dark": "#23190f",
+              },
+              fontFamily: {
+                "display": ["Inter", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+        }
+        .material-symbols-outlined.fill {
+          font-variation-settings: 'FILL' 1;
+        }
+        .variant-item {
+            transition: all 0.3s ease;
+        }
+        .loading-spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #ff8000;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-[#181410] dark:text-background-light">
+    <div class="flex h-screen w-full">
+        <!-- SideNavBar -->
+        <aside class="flex w-64 flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark p-4">
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-3 px-3 py-2">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="DineFlow company logo" style='background-image: url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80");'></div>
+                    <div class="flex flex-col">
+                        <h1 class="text-gray-900 dark:text-white text-base font-medium leading-normal">DineFlow</h1>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal" id="restaurantName">Restaurant Admin</p>
+                    </div>
+                </div>
+                <nav class="flex flex-col gap-2 mt-4">
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="dashboard.html">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <p class="text-sm font-medium leading-normal">Dashboard</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="order-management.html">
+                        <span class="material-symbols-outlined">receipt_long</span>
+                        <p class="text-sm font-medium leading-normal">Orders</p>
+                    </a>
+                    <!-- Menu Button - Active -->
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-900 dark:text-white rounded-lg bg-primary/10 dark:bg-primary/20 ring-1 ring-primary/20" href="menu-management.html">
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+                        <p class="text-sm font-medium leading-normal text-primary">Menu</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="table-management.html">
+                        <span class="material-symbols-outlined">table_restaurant</span>
+                        <p class="text-sm font-medium leading-normal">Tables</p>
+                    </a>
+                    <!-- New Analytics Button -->
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="analytics.html">
+                        <span class="material-symbols-outlined">analytics</span>
+                        <p class="text-sm font-medium leading-normal">Analytics</p>
+                    </a>
+                    <!-- New Add-ons Button -->
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="addon-management.html">
+                        <span class="material-symbols-outlined">extension</span>
+                        <p class="text-sm font-medium leading-normal">Add-ons</p>
+                    </a>
+                </nav>
+            </div>
+            <div class="mt-auto flex flex-col gap-1">
+                <button id="logoutBtn" class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
+                    <span class="material-symbols-outlined">logout</span>
+                    <p class="text-sm font-medium leading-normal">Logout</p>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+            <!-- TopNavBar -->
+            <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#f5f2f0] dark:border-[#2f271f] bg-white dark:bg-background-dark px-10 py-3 sticky top-0 z-10">
+                <div class="flex items-center gap-8">
+                    <label class="flex flex-col w-80 !h-10">
+                        <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                            <div class="text-[#8d755e] flex bg-[#f5f2f0] dark:bg-[#2f271f] items-center justify-center pl-4 rounded-l-lg">
+                                <span class="material-symbols-outlined text-2xl">search</span>
+                            </div>
+                            <input id="searchInput" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#181410] dark:text-white focus:outline-0 focus:ring-0 border-none bg-[#f5f2f0] dark:bg-[#2f271f] h-full placeholder:text-[#8d755e] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search menu items..." value=""/>
+                        </div>
+                    </label>
+                </div>
+                <div class="flex flex-1 justify-end items-center gap-4">
+                    <button class="flex cursor-pointer items-center justify-center rounded-lg h-10 w-10 bg-white dark:bg-background-dark text-[#8d755e] hover:bg-[#f5f2f0] dark:hover:bg-[#2f271f]">
+                        <span class="material-symbols-outlined text-2xl">notifications</span>
+                    </button>
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User profile avatar" style='background-image: url("https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80");'></div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="flex flex-col gap-6 p-10">
+                <!-- PageHeading -->
+                <div class="flex flex-wrap justify-between gap-4 items-center">
+                    <div class="flex flex-col gap-1">
+                        <p class="text-[#181410] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Menu Management</p>
+                        <p class="text-[#8d755e] dark:text-[#a1907c] text-base font-normal leading-normal">Manage your categories, items, and variants.</p>
+                    </div>
+                    <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 hover:bg-primary/90">
+                        <span class="material-symbols-outlined text-xl">visibility</span>
+                        <span class="truncate">Preview Menu</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                    <!-- Categories Column -->
+                    <div class="lg:col-span-1 flex flex-col gap-4">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-[#181410] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em]">Menu Categories</h2>
+                            <button id="addCategoryBtn" class="flex items-center justify-center size-8 rounded-lg bg-primary text-white hover:bg-primary/90">
+                                <span class="material-symbols-outlined text-xl">add</span>
+                            </button>
+                        </div>
+                        <div id="categoriesList" class="flex flex-col gap-2 bg-white dark:bg-[#2a2116] p-2 rounded-xl border border-[#f5f2f0] dark:border-[#2f271f] shadow-sm">
+                            <!-- Categories will be loaded here -->
+                            <div class="text-center text-[#8d755e] dark:text-[#a1907c] py-8">
+                                <span class="material-symbols-outlined text-4xl mb-2">category</span>
+                                <p>No categories yet</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Items / Addons Column -->
+                    <div class="lg:col-span-2 flex flex-col gap-4">
+                        <div class="flex justify-between items-center">
+                            <div class="flex border border-[#f5f2f0] dark:border-[#2f271f] rounded-lg p-1 bg-white dark:bg-[#2a2116]">
+                                <button id="menuItemsTab" class="px-4 py-1.5 rounded text-sm font-bold bg-primary text-white">Menu Items</button>
+                                <button id="addonsTab" class="px-4 py-1.5 rounded text-sm font-medium text-[#8d755e] dark:text-[#a1907c] hover:bg-[#f5f2f0] dark:hover:bg-[#2f271f]">Add-on Groups</button>
+                            </div>
+                            <button id="addItemBtn" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 hover:bg-primary/90">
+                                <span class="material-symbols-outlined text-xl">add</span>
+                                <span class="truncate">Add New Item</span>
+                            </button>
+                        </div>
+
+                        <!-- Menu Items Section -->
+                        <div id="menuItemsSection" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Menu items will be loaded here -->
+                            <div class="text-center text-[#8d755e] dark:text-[#a1907c] py-8 col-span-full">
+                                <span class="material-symbols-outlined text-4xl mb-2">restaurant</span>
+                                <p>No menu items yet</p>
+                                <p class="text-sm">Select a category to view items</p>
+                            </div>
+                        </div>
+
+                        <!-- Addons Section (Hidden by default) -->
+                        <div id="addonsSection" class="hidden">
+                            <div class="text-center text-[#8d755e] dark:text-[#a1907c] py-8">
+                                <span class="material-symbols-outlined text-4xl mb-2">extension</span>
+                                <p>Add-on Groups Management</p>
+                                <p class="text-sm mb-4">Manage your add-on groups and items in the dedicated add-ons page</p>
+                                <a href="addon-management.html" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm font-bold transition-colors">
+                                    <span class="material-symbols-outlined text-lg">open_in_new</span>
+                                    Go to Add-ons Management
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div id="addCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-xl p-6 w-full max-w-md">
+            <h3 class="text-lg font-bold mb-4">Add New Category</h3>
+            <form id="addCategoryForm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Category Name</label>
+                        <input type="text" id="categoryName" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Description</label>
+                        <textarea id="categoryDescription" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" rows="3"></textarea>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" id="cancelCategoryBtn" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Add Category</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div id="editCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-xl p-6 w-full max-w-md">
+            <h3 class="text-lg font-bold mb-4">Edit Category</h3>
+            <form id="editCategoryForm">
+                <input type="hidden" id="editCategoryId">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Category Name</label>
+                        <input type="text" id="editCategoryName" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Description</label>
+                        <textarea id="editCategoryDescription" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" rows="3"></textarea>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" id="cancelEditCategoryBtn" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Update Category</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Menu Item Modal with Variants -->
+    <div id="itemModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <h3 class="text-lg font-bold mb-4" id="itemModalTitle">Add New Menu Item</h3>
+            <form id="itemForm">
+                <input type="hidden" id="editItemId">
+                <input type="hidden" id="itemCategoryId">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Item Name</label>
+                            <input type="text" id="itemName" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Base Price ($)</label>
+                            <input type="number" step="0.01" min="0" id="itemPrice" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Preparation Time (minutes)</label>
+                            <input type="number" min="1" id="itemPreparationTime" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" value="15">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="itemAvailable" class="rounded border-gray-300 text-primary focus:ring-primary" checked>
+                            <label for="itemAvailable" class="text-sm font-medium">Available</label>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Description</label>
+                            <textarea id="itemDescription" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" rows="4" placeholder="Describe your menu item..."></textarea>
+                        </div>
+                        <!-- Item Image Upload -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Item Image</label>
+                            <div id="imagePreview" class="mb-3 hidden">
+                                <img id="previewImage" class="w-32 h-32 object-cover rounded-lg border border-gray-300">
+                                <button type="button" id="removeImage" class="mt-2 text-sm text-red-600 hover:text-red-800">Remove Image</button>
+                            </div>
+                            <div class="flex items-center justify-center w-full">
+                                <label for="itemImage" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <span class="material-symbols-outlined text-3xl text-gray-400 mb-2">cloud_upload</span>
+                                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                            <span class="font-semibold">Click to upload</span> or drag and drop
+                                        </p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, WEBP (Max. 5MB)</p>
+                                    </div>
+                                    <input id="itemImage" type="file" class="hidden" accept="image/*">
+                                </label>
+                            </div>
+                            <div class="mt-3">
+                                <label class="block text-sm font-medium mb-2">Or enter image URL</label>
+                                <input type="url" id="itemImageUrl" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" placeholder="https://example.com/image.jpg">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Variants Section -->
+                <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center mb-3">
+                        <div>
+                            <label class="block text-sm font-medium">Sizes / Variants</label>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Add different sizes or options with their own prices and images</p>
+                        </div>
+                        <button type="button" id="addVariantBtn" class="flex items-center gap-2 px-3 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm font-medium">
+                            <span class="material-symbols-outlined text-lg">add</span>
+                            Add Variant
+                        </button>
+                    </div>
+                    
+                    <div id="variantsContainer" class="space-y-4 mt-4">
+                        <!-- Variant fields will be added here dynamically -->
+                    </div>
+                </div>
+
+                <!-- Addon Groups Section -->
+                <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700" id="mainAddonSection">
+                    <label class="block text-sm font-medium mb-3">Addon Groups</label>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Select which addon groups can be used with this menu item</p>
+                    <div id="addonGroupsContainer" class="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <!-- Addon groups will be loaded here -->
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 justify-end mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" id="cancelItemBtn" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script type="module">
+    import { AuthService } from '../js/auth.js';
+    import { MenuService } from '../js/menu.js';
+    import { StorageService } from '../js/storage.js';
+    import { AddonService } from '../js/addon.js';
+
+    class MenuManagement {
+        constructor() {
+            this.user = null;
+            this.restaurant = null;
+            this.categories = [];
+            this.selectedCategory = null;
+            this.menuItems = [];
+            this.currentImageFile = null;
+            this.addonGroups = [];
+            this.variants = [];
+            this.variantImageFiles = {};
+            this.init();
+        }
+
+        async init() {
+            console.log('Initializing menu management...');
+            
+            // Check authentication
+            this.user = await AuthService.getCurrentUser();
+            if (!this.user) {
+                console.log('No user, redirecting to login...');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            console.log('User authenticated:', this.user);
+
+            // Initialize storage bucket
+            await StorageService.initializeBucket();
+
+            // Load restaurant data
+            await this.loadRestaurantData();
+            
+            // Load categories
+            await this.loadCategories();
+            
+            // Load addon groups 
+            await this.loadAddonGroups();
+
+            // Set up event listeners
+            this.setupEventListeners();
+
+            // Set up logout
+            document.getElementById('logoutBtn').addEventListener('click', this.logout.bind(this));
+        }
+
+        async loadRestaurantData() {
+            try {
+                console.log('Loading restaurant data...');
+                this.restaurant = await AuthService.getRestaurant();
+                
+                if (this.restaurant) {
+                    console.log('Restaurant loaded:', this.restaurant);
+                    document.getElementById('restaurantName').textContent = this.restaurant.name;
+                } else {
+                    console.error('No restaurant found for user:', this.user.id);
+                    this.showNotification('No restaurant found. Please contact support.', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading restaurant data:', error);
+                this.showNotification('Error loading restaurant data: ' + error.message, 'error');
+            }
+        }
+
+        async loadCategories() {
+            try {
+                if (!this.restaurant) {
+                    console.error('Cannot load categories: No restaurant data');
+                    return;
+                }
+                
+                console.log('Loading categories for restaurant:', this.restaurant.id);
+                this.categories = await MenuService.getCategories(this.restaurant.id);
+                console.log('Categories loaded:', this.categories);
+                this.displayCategories();
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                this.showNotification('Error loading categories: ' + error.message, 'error');
+            }
+        }
+
+        displayCategories() {
+            const container = document.getElementById('categoriesList');
+            
+            if (this.categories.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-[#8d755e] dark:text-[#a1907c] py-8">
+                        <span class="material-symbols-outlined text-4xl mb-2">category</span>
+                        <p>No categories yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = this.categories.map(category => `
+                <div class="flex items-center gap-4 hover:bg-[#f5f2f0] dark:hover:bg-[#2f271f] p-3 rounded-lg justify-between group ${
+                    this.selectedCategory?.id === category.id ? 'bg-primary/20 dark:bg-primary/30' : ''
+                }" data-category-id="${category.id}">
+                    <div class="flex items-center gap-4">
+                        <div class="text-[#8d755e] dark:text-[#a1907c] flex items-center justify-center shrink-0 size-8 cursor-grab">
+                            <span class="material-symbols-outlined text-2xl">drag_indicator</span>
+                        </div>
+                        <p class="text-[#181410] dark:text-white text-base font-normal leading-normal flex-1 truncate">${category.name}</p>
+                    </div>
+                    <div class="shrink-0 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="text-[#8d755e] dark:text-[#a1907c] edit-category-btn" data-category-id="${category.id}">
+                            <span class="material-symbols-outlined text-xl">edit</span>
+                        </button>
+                        <button class="text-red-500 delete-category-btn" data-category-id="${category.id}">
+                            <span class="material-symbols-outlined text-xl">delete</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add click event to categories
+            container.querySelectorAll('[data-category-id]').forEach(element => {
+                element.addEventListener('click', (e) => {
+                    if (!e.target.closest('.edit-category-btn') && !e.target.closest('.delete-category-btn')) {
+                        const categoryId = element.getAttribute('data-category-id');
+                        this.selectCategory(categoryId);
+                    }
+                });
+            });
+
+            // Add edit button events
+            container.querySelectorAll('.edit-category-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const categoryId = button.getAttribute('data-category-id');
+                    this.editCategory(categoryId);
+                });
+            });
+
+            // Add delete button events
+            container.querySelectorAll('.delete-category-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const categoryId = button.getAttribute('data-category-id');
+                    this.deleteCategory(categoryId);
+                });
+            });
+        }
+
+        async selectCategory(categoryId) {
+            this.selectedCategory = this.categories.find(cat => cat.id === categoryId);
+            
+            // Update UI to show selected category
+            document.querySelectorAll('[data-category-id]').forEach(element => {
+                element.classList.remove('bg-primary/20', 'dark:bg-primary/30');
+                if (element.getAttribute('data-category-id') === categoryId) {
+                    element.classList.add('bg-primary/20', 'dark:bg-primary/30');
+                }
+            });
+
+            // Load menu items for this category
+            await this.loadMenuItems(categoryId);
+        }
+
+        async loadMenuItems(categoryId) {
+            try {
+                this.menuItems = await MenuService.getMenuItems(categoryId);
+                this.displayMenuItems();
+            } catch (error) {
+                console.error('Error loading menu items:', error);
+                this.showNotification('Error loading menu items: ' + error.message, 'error');
+            }
+        }
+
+        displayMenuItems() {
+            const container = document.getElementById('menuItemsSection');
+            
+            if (this.menuItems.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-[#8d755e] dark:text-[#a1907c] py-8 col-span-full">
+                        <span class="material-symbols-outlined text-4xl mb-2">restaurant</span>
+                        <p>No menu items in this category</p>
+                        <button id="addFirstItemBtn" class="text-primary hover:underline mt-2">Add your first item</button>
+                    </div>
+                `;
+
+                document.getElementById('addFirstItemBtn')?.addEventListener('click', () => {
+                    this.showAddItemModal();
+                });
+                return;
+            }
+
+            container.innerHTML = this.menuItems.map(item => {
+                // Check if item has variants
+                const hasVariants = item.variants && item.variants.length > 0;
+                const variantNames = hasVariants 
+                    ? item.variants.map(v => v.name).join(', ')
+                    : 'No variants';
+
+                return `
+                <div class="flex flex-col gap-4 bg-white dark:bg-[#2a2116] rounded-xl p-4 border border-[#f5f2f0] dark:border-[#2f271f] shadow-sm">
+                    <div class="bg-center bg-no-repeat aspect-video bg-cover rounded-lg" style="background-image: url('${item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'}')"></div>
+                    <div class="flex flex-col gap-2">
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-[#181410] dark:text-white text-lg font-bold">${item.name}</h3>
+                            <p class="text-primary text-lg font-bold">$${item.price}</p>
+                        </div>
+                        <p class="text-[#8d755e] dark:text-[#a1907c] text-sm leading-relaxed">${item.description || 'No description available.'}</p>
+                        
+                        <!-- Variants info -->
+                        <div class="mt-2">
+                            <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                                <span class="material-symbols-outlined text-base">layers</span>
+                                <span class="font-medium">Variants:</span>
+                                <span>${variantNames}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Addon groups badge -->
+                        <div class="flex flex-wrap gap-1 mt-2" id="addonBadges-${item.id}">
+                            <!-- Addon groups will be loaded here -->
+                        </div>
+                        
+                        <div class="flex items-center gap-4 text-sm text-[#8d755e] dark:text-[#a1907c]">
+                            <span class="flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">schedule</span>
+                                ${item.preparation_time} min
+                            </span>
+                            <span class="flex items-center gap-1 ${item.is_available ? 'text-green-600' : 'text-red-600'}">
+                                <span class="material-symbols-outlined text-base">circle</span>
+                                ${item.is_available ? 'Available' : 'Unavailable'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-[#f5f2f0] dark:border-[#2f271f]">
+                        <div class="flex items-center gap-2">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" ${item.is_available ? 'checked' : ''} class="sr-only peer" onchange="menuManagement.toggleItemAvailability('${item.id}', this.checked)">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                            </label>
+                            <span class="text-sm font-medium ${item.is_available ? 'text-[#181410] dark:text-white' : 'text-[#8d755e] dark:text-[#a1907c]'}">${item.is_available ? 'Available' : 'Unavailable'}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="flex min-w-[70px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-[#f5f2f0] dark:bg-[#2f271f] text-[#181410] dark:text-white text-sm font-bold leading-normal hover:bg-[#f0ece9] dark:hover:bg-[#3a3025]" onclick="menuManagement.editItem('${item.id}')">
+                                <span class="truncate">Edit</span>
+                            </button>
+                            <button class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm font-bold leading-normal hover:bg-red-200 dark:hover:bg-red-900/50" onclick="menuManagement.deleteItem('${item.id}')">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            // Load and display addon groups for each item
+            this.menuItems.forEach(item => {
+                this.loadAndDisplayItemAddonGroups(item.id);
+            });
+        }
+
+        setupEventListeners() {
+            // Tab switching
+            document.getElementById('menuItemsTab').addEventListener('click', () => {
+                this.showMenuItemsTab();
+            });
+
+            document.getElementById('addonsTab').addEventListener('click', () => {
+                this.showAddonsTab();
+            });
+
+            // Add category modal
+            document.getElementById('addCategoryBtn').addEventListener('click', () => {
+                this.showAddCategoryModal();
+            });
+
+            document.getElementById('cancelCategoryBtn').addEventListener('click', () => {
+                this.hideAddCategoryModal();
+            });
+
+            document.getElementById('addCategoryForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.addCategory();
+            });
+
+            // Edit category modal
+            document.getElementById('cancelEditCategoryBtn').addEventListener('click', () => {
+                this.hideEditCategoryModal();
+            });
+
+            document.getElementById('editCategoryForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.updateCategory();
+            });
+
+            // Item modal
+            document.getElementById('cancelItemBtn').addEventListener('click', () => {
+                this.hideItemModal();
+            });
+
+            document.getElementById('itemForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.saveMenuItem();
+            });
+
+            // Add item button
+            document.getElementById('addItemBtn').addEventListener('click', () => {
+                this.showAddItemModal();
+            });
+
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                this.searchItems(e.target.value);
+            });
+
+            // Image upload events
+            this.setupImageUploadEvents();
+
+            // Add variant button
+            document.getElementById('addVariantBtn').addEventListener('click', () => {
+                this.addVariantField();
+            });
+        }
+
+        setupImageUploadEvents() {
+            const fileInput = document.getElementById('itemImage');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImage = document.getElementById('previewImage');
+            const removeImageBtn = document.getElementById('removeImage');
+
+            // Handle file selection
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    try {
+                        StorageService.validateFile(file);
+                        this.currentImageFile = file;
+                        
+                        // Show preview
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            previewImage.src = e.target.result;
+                            imagePreview.classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                        
+                        // Clear URL input
+                        document.getElementById('itemImageUrl').value = '';
+                    } catch (error) {
+                        this.showNotification(error.message, 'error');
+                        fileInput.value = '';
+                    }
+                }
+            });
+
+            // Handle remove image
+            removeImageBtn.addEventListener('click', () => {
+                this.currentImageFile = null;
+                imagePreview.classList.add('hidden');
+                fileInput.value = '';
+                document.getElementById('itemImageUrl').value = '';
+            });
+
+            // Drag and drop functionality
+            const dropZone = fileInput.parentElement;
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('border-primary', 'bg-primary/5');
+            });
+
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary', 'bg-primary/5');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary', 'bg-primary/5');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    fileInput.dispatchEvent(new Event('change'));
+                }
+            });
+        }
+
+        // Modal Management
+        showMenuItemsTab() {
+            document.getElementById('menuItemsTab').classList.add('bg-primary', 'text-white');
+            document.getElementById('addonsTab').classList.remove('bg-primary', 'text-white');
+            document.getElementById('menuItemsSection').classList.remove('hidden');
+            document.getElementById('addonsSection').classList.add('hidden');
+        }
+
+        showAddonsTab() {
+            window.location.href = 'addon-management.html';
+        }
+
+        showAddCategoryModal() {
+            document.getElementById('addCategoryModal').classList.remove('hidden');
+        }
+
+        hideAddCategoryModal() {
+            document.getElementById('addCategoryModal').classList.add('hidden');
+            document.getElementById('addCategoryForm').reset();
+        }
+
+        showEditCategoryModal() {
+            document.getElementById('editCategoryModal').classList.remove('hidden');
+        }
+
+        hideEditCategoryModal() {
+            document.getElementById('editCategoryModal').classList.add('hidden');
+            document.getElementById('editCategoryForm').reset();
+        }
+
+        showItemModal() {
+            document.getElementById('itemModal').classList.remove('hidden');
+        }
+
+        hideItemModal() {
+            document.getElementById('itemModal').classList.add('hidden');
+            document.getElementById('itemForm').reset();
+            document.getElementById('imagePreview').classList.add('hidden');
+            document.getElementById('itemImage').value = '';
+            this.currentImageFile = null;
+            document.getElementById('variantsContainer').innerHTML = '';
+            this.variantImageFiles = {};
+            
+            // Reset main addon section when hiding modal
+            this.resetMainAddonSection();
+        }
+
+        // Category Operations
+        async addCategory() {
+            const name = document.getElementById('categoryName').value;
+            const description = document.getElementById('categoryDescription').value;
+
+            console.log('Adding category:', { name, description, restaurant: this.restaurant });
+
+            try {
+                if (!this.restaurant) {
+                    console.error('No restaurant data available');
+                    this.showNotification('No restaurant data available. Please refresh the page.', 'error');
+                    return;
+                }
+
+                const newCategory = await MenuService.createCategory({
+                    restaurant_id: this.restaurant.id,
+                    user_id: this.user.id,
+                    name,
+                    description,
+                    display_order: this.categories.length
+                });
+
+                console.log('Category created:', newCategory);
+
+                this.categories.push(newCategory);
+                this.displayCategories();
+                this.hideAddCategoryModal();
+                this.showNotification('Category added successfully!', 'success');
+            } catch (error) {
+                console.error('Error adding category:', error);
+                this.showNotification('Error adding category: ' + error.message, 'error');
+            }
+        }
+
+        editCategory(categoryId) {
+            const category = this.categories.find(cat => cat.id === categoryId);
+            if (!category) {
+                this.showNotification('Category not found', 'error');
+                return;
+            }
+
+            // Populate the edit form
+            document.getElementById('editCategoryId').value = category.id;
+            document.getElementById('editCategoryName').value = category.name;
+            document.getElementById('editCategoryDescription').value = category.description || '';
+
+            // Show the modal
+            this.showEditCategoryModal();
+        }
+
+        async updateCategory() {
+            const categoryId = document.getElementById('editCategoryId').value;
+            const name = document.getElementById('editCategoryName').value;
+            const description = document.getElementById('editCategoryDescription').value;
+
+            try {
+                const updatedCategory = await MenuService.updateCategory(categoryId, {
+                    name,
+                    description
+                });
+
+                // Update local state
+                const index = this.categories.findIndex(cat => cat.id === categoryId);
+                if (index !== -1) {
+                    this.categories[index] = updatedCategory;
+                }
+
+                this.displayCategories();
+                this.hideEditCategoryModal();
+                this.showNotification('Category updated successfully!', 'success');
+            } catch (error) {
+                console.error('Error updating category:', error);
+                this.showNotification('Error updating category: ' + error.message, 'error');
+            }
+        }
+
+        async deleteCategory(categoryId) {
+            if (!confirm('Are you sure you want to delete this category? All menu items in this category will also be deleted.')) {
+                return;
+            }
+
+            try {
+                await MenuService.deleteCategory(categoryId);
+                
+                // Remove from local state
+                this.categories = this.categories.filter(cat => cat.id !== categoryId);
+                
+                // If the deleted category was selected, clear selection
+                if (this.selectedCategory && this.selectedCategory.id === categoryId) {
+                    this.selectedCategory = null;
+                    this.menuItems = [];
+                    this.displayMenuItems();
+                }
+                
+                this.displayCategories();
+                this.showNotification('Category deleted successfully!', 'success');
+            } catch (error) {
+                console.error('Error deleting category:', error);
+                this.showNotification('Error deleting category: ' + error.message, 'error');
+            }
+        }
+
+        // Variant Operations
+        addVariantField(variantData = null) {
+            const container = document.getElementById('variantsContainer');
+            const variantId = variantData?.id || `variant-${Date.now()}`;
+            
+            const variantHtml = `
+                <div class="variant-item border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800" data-variant-id="${variantId}">
+                    <div class="flex justify-between items-start mb-3">
+                        <h4 class="text-sm font-medium text-gray-900 dark:text-white">Variant Option</h4>
+                        <button type="button" class="text-red-500 hover:text-red-700 remove-variant" data-variant-id="${variantId}">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Variant Name *</label>
+                            <input type="text" class="w-full p-2 border rounded text-sm variant-name" 
+                                   placeholder="e.g., Small, With Pitta, With Naan" 
+                                   value="${variantData?.name || ''}" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Additional Price ($)</label>
+                            <input type="number" step="0.01" min="0" class="w-full p-2 border rounded text-sm variant-price" 
+                                   placeholder="0.00" 
+                                   value="${variantData?.additional_price || '0.00'}">
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced Image Upload Section -->
+                    <div class="mt-3">
+                        <label class="block text-xs font-medium mb-1">Variant Image (Optional)</label>
+                        
+                        <!-- Variant Image Preview -->
+                        <div class="variant-image-preview mb-2 ${variantData?.image_url ? '' : 'hidden'}" data-variant-preview="${variantId}">
+                            <img src="${variantData?.image_url || ''}" class="w-20 h-20 object-cover rounded border border-gray-300 variant-preview-img" data-variant-img="${variantId}">
+                            <button type="button" class="text-xs text-red-600 hover:text-red-800 remove-variant-image mt-1" data-variant-remove="${variantId}">
+                                Remove Image
+                            </button>
+                        </div>
+                        
+                        <!-- Variant File Upload -->
+                        <div class="flex items-center gap-2">
+                            <label class="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-gray-300 rounded cursor-pointer bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 variant-image-label" data-variant-label="${variantId}">
+                                <div class="flex flex-col items-center justify-center">
+                                    <span class="material-symbols-outlined text-lg text-gray-400">cloud_upload</span>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Upload Image</p>
+                                </div>
+                                <input type="file" class="hidden variant-image-input" accept="image/*" data-variant-input="${variantId}">
+                            </label>
+                            <div class="flex-1">
+                                <input type="url" class="w-full p-2 border rounded text-sm variant-image-url" 
+                                       placeholder="Or enter image URL" 
+                                       value="${variantData?.image_url || ''}"
+                                       data-variant-url="${variantId}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Addon Groups for Variant -->
+                    <div class="mt-4 pt-3 border-t border-gray-200 dark:border-gray-600">
+                        <label class="block text-xs font-medium mb-2">Addon Groups for this Variant</label>
+                        <div class="variant-addon-groups" data-variant-addons="${variantId}">
+                            <!-- Addon groups for this variant will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', variantHtml);
+            
+            // Setup event listeners for the new variant
+            this.setupVariantEventListeners(variantId);
+            
+            // Load addon groups for this variant
+            this.loadVariantAddonGroups(variantId, variantData?.addon_groups || []);
+        }
+
+        setupVariantEventListeners(variantId) {
+            const variantElement = document.querySelector(`[data-variant-id="${variantId}"]`);
+            if (!variantElement) return;
+            
+            // Remove variant button
+            variantElement.querySelector('.remove-variant').addEventListener('click', () => {
+                this.removeVariantField(variantId);
+            });
+            
+            // Variant image upload elements
+            const imageInput = variantElement.querySelector(`[data-variant-input="${variantId}"]`);
+            const imagePreview = variantElement.querySelector(`[data-variant-preview="${variantId}"]`);
+            const previewImg = variantElement.querySelector(`[data-variant-img="${variantId}"]`);
+            const imageUrlInput = variantElement.querySelector(`[data-variant-url="${variantId}"]`);
+            const removeImageBtn = variantElement.querySelector(`[data-variant-remove="${variantId}"]`);
+            
+            if (imageInput && imagePreview && previewImg && imageUrlInput && removeImageBtn) {
+                // Handle file selection
+                imageInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        try {
+                            StorageService.validateFile(file);
+                            if (!this.variantImageFiles) this.variantImageFiles = {};
+                            this.variantImageFiles[variantId] = file;
+                            
+                            // Show preview
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                previewImg.src = e.target.result;
+                                imagePreview.classList.remove('hidden');
+                            };
+                            reader.readAsDataURL(file);
+                            
+                            // Clear URL input
+                            imageUrlInput.value = '';
+                        } catch (error) {
+                            this.showNotification(error.message, 'error');
+                            imageInput.value = '';
+                        }
+                    }
+                });
+                
+                // Handle remove image
+                removeImageBtn.addEventListener('click', () => {
+                    if (this.variantImageFiles) {
+                        delete this.variantImageFiles[variantId];
+                    }
+                    imagePreview.classList.add('hidden');
+                    imageInput.value = '';
+                    imageUrlInput.value = '';
+                });
+                
+                // Handle URL input changes
+                imageUrlInput.addEventListener('input', () => {
+                    if (imageUrlInput.value) {
+                        previewImg.src = imageUrlInput.value;
+                        imagePreview.classList.remove('hidden');
+                        if (this.variantImageFiles) {
+                            delete this.variantImageFiles[variantId];
+                        }
+                        imageInput.value = '';
+                    } else {
+                        imagePreview.classList.add('hidden');
+                    }
+                });
+            }
+        }
+
+        removeVariantField(variantId) {
+            const variantElement = document.querySelector(`[data-variant-id="${variantId}"]`);
+            if (variantElement) {
+                variantElement.remove();
+                if (this.variantImageFiles) {
+                    delete this.variantImageFiles[variantId];
+                }
+            }
+        }
+
+        collectVariantsData() {
+            const variants = [];
+            const variantElements = document.querySelectorAll('[data-variant-id]');
+            
+            variantElements.forEach(element => {
+                const variantId = element.getAttribute('data-variant-id');
+                
+                // Safely get the input elements
+                const nameInput = element.querySelector('.variant-name');
+                const priceInput = element.querySelector('.variant-price');
+                const imageUrlInput = element.querySelector('.variant-image-url');
+                
+                // Check if elements exist before accessing their values
+                if (nameInput && priceInput && imageUrlInput) {
+                    const name = nameInput.value;
+                    const additionalPrice = parseFloat(priceInput.value) || 0;
+                    const imageUrl = imageUrlInput.value;
+                    
+                    // Get selected addon groups for this variant
+                    const selectedAddonGroups = Array.from(
+                        element.querySelectorAll(`[data-variant-addons-checkbox="${variantId}"]:checked`)
+                    ).map(checkbox => checkbox.value);
+                    
+                    if (name.trim()) {
+                        variants.push({
+                            id: variantId.startsWith('variant-') ? null : variantId,
+                            name: name.trim(),
+                            additional_price: additionalPrice,
+                            image_url: imageUrl || null,
+                            addon_groups: selectedAddonGroups
+                        });
+                    }
+                }
+            });
+            
+            return variants;
+        }
+
+        loadVariants(variants) {
+            const container = document.getElementById('variantsContainer');
+            container.innerHTML = '';
+            this.variantImageFiles = {};
+            
+            if (variants && variants.length > 0) {
+                variants.forEach(variant => {
+                    this.addVariantField(variant);
+                });
+            }
+        }
+
+        // Load addon groups for a specific variant
+        loadVariantAddonGroups(variantId, selectedAddonGroupIds = []) {
+            const container = document.querySelector(`[data-variant-addons="${variantId}"]`);
+            
+            if (!container) {
+                console.warn(`Addon groups container for variant ${variantId} not found`);
+                return;
+            }
+            
+            if (!this.addonGroups || this.addonGroups.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-2 text-xs">
+                        <p>No addon groups available</p>
+                        <a href="addon-management.html" class="text-primary hover:underline">Create addon groups first</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = this.addonGroups.map(group => `
+                <label class="flex items-center gap-2 p-2 border border-gray-200 dark:border-gray-700 rounded text-xs hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors">
+                    <input type="checkbox" 
+                           data-variant-addons-checkbox="${variantId}"
+                           value="${group.id}" 
+                           ${selectedAddonGroupIds.includes(group.id) ? 'checked' : ''}
+                           class="rounded border-gray-300 text-primary focus:ring-primary">
+                    <div class="flex-1">
+                        <div class="font-medium text-gray-900 dark:text-white">${group.name}</div>
+                        <div class="text-gray-500 dark:text-gray-400">
+                            ${group.max_selections || 1} max selection${group.max_selections !== 1 ? 's' : ''}
+                            ${group.is_required ? ' • Required' : ' • Optional'}
+                        </div>
+                    </div>
+                </label>
+            `).join('');
+        }
+
+        // Menu Item Operations
+        showAddItemModal() {
+            console.log('showAddItemModal called');
+            if (!this.selectedCategory) {
+                this.showNotification('Please select a category first', 'error');
+                return;
+            }
+
+            document.getElementById('itemModalTitle').textContent = 'Add New Menu Item';
+            document.getElementById('itemCategoryId').value = this.selectedCategory.id;
+            document.getElementById('editItemId').value = '';
+            
+            // Reset form fields
+            document.getElementById('itemForm').reset();
+            document.getElementById('imagePreview').classList.add('hidden');
+            document.getElementById('itemImage').value = '';
+            this.currentImageFile = null;
+
+            // Reset variants
+            document.getElementById('variantsContainer').innerHTML = '';
+            this.variantImageFiles = {};
+
+            // Ensure main addon section is properly reset
+            this.resetMainAddonSection();
+
+            // Render addon groups
+            this.renderAddonGroups([]);
+
+            this.showItemModal();
+        }
+
+        // New method to reset the main addon section
+        resetMainAddonSection() {
+            const mainAddonSection = document.getElementById('mainAddonSection');
+            if (mainAddonSection) {
+                mainAddonSection.innerHTML = `
+                    <label class="block text-sm font-medium mb-3">Addon Groups</label>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Select which addon groups can be used with this menu item</p>
+                    <div id="addonGroupsContainer" class="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <!-- Addon groups will be loaded here -->
+                    </div>
+                `;
+            }
+        }
+
+        async editItem(itemId) {
+            try {
+                const item = await MenuService.getMenuItem(itemId);
+                if (!item) {
+                    this.showNotification('Menu item not found', 'error');
+                    return;
+                }
+
+                document.getElementById('itemModalTitle').textContent = 'Edit Menu Item';
+                document.getElementById('editItemId').value = item.id;
+                document.getElementById('itemCategoryId').value = item.category_id;
+                document.getElementById('itemName').value = item.name;
+                document.getElementById('itemDescription').value = item.description || '';
+                document.getElementById('itemPrice').value = item.price;
+                document.getElementById('itemImageUrl').value = item.image_url || '';
+                document.getElementById('itemPreparationTime').value = item.preparation_time || 15;
+                document.getElementById('itemAvailable').checked = item.is_available;
+
+                // Show image preview if exists
+                if (item.image_url) {
+                    document.getElementById('previewImage').src = item.image_url;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                } else {
+                    document.getElementById('imagePreview').classList.add('hidden');
+                }
+
+                // Reset file input
+                document.getElementById('itemImage').value = '';
+                this.currentImageFile = null;
+
+                // Load variants with their addon groups
+                const variants = await MenuService.getMenuItemVariants(itemId);
+                
+                // For each variant, load its addon groups
+                const variantsWithAddons = await Promise.all(
+                    variants.map(async (variant) => {
+                        try {
+                            // Check if the method exists before calling it
+                            if (MenuService.getVariantAddonGroups) {
+                                const variantAddonGroups = await MenuService.getVariantAddonGroups(variant.id);
+                                return {
+                                    ...variant,
+                                    addon_groups: variantAddonGroups.map(group => group.addon_group_id)
+                                };
+                            } else {
+                                // If method doesn't exist, return empty addon groups
+                                console.warn('MenuService.getVariantAddonGroups not available');
+                                return {
+                                    ...variant,
+                                    addon_groups: []
+                                };
+                            }
+                        } catch (error) {
+                            console.error(`Error loading addon groups for variant ${variant.id}:`, error);
+                            return {
+                                ...variant,
+                                addon_groups: []
+                            };
+                        }
+                    })
+                );
+                
+                this.loadVariants(variantsWithAddons);
+
+                // Load item-level addon groups (only if no variants)
+                if (variants.length === 0) {
+                    // Ensure main addon section is properly reset
+                    this.resetMainAddonSection();
+                    const linkedAddonGroups = await MenuService.getMenuItemAddonGroups(itemId);
+                    const selectedAddonGroupIds = linkedAddonGroups.map(group => group.addon_group_id);
+                    this.renderAddonGroups(selectedAddonGroupIds);
+                } else {
+                    // Show a note that addon groups are managed per variant
+                    document.getElementById('mainAddonSection').innerHTML = 
+                        '<div class="text-center text-gray-500 py-4">Addon groups are managed per variant when variants exist. Configure addons for each variant in the section above.</div>';
+                }
+
+                this.showItemModal();
+            } catch (error) {
+                console.error('Error loading menu item:', error);
+                this.showNotification('Error loading menu item: ' + error.message, 'error');
+            }
+        }
+
+        async saveMenuItem() {
+            const itemId = document.getElementById('editItemId').value;
+            const categoryId = document.getElementById('itemCategoryId').value;
+            const name = document.getElementById('itemName').value;
+            const description = document.getElementById('itemDescription').value;
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            const image_url = document.getElementById('itemImageUrl').value;
+            const preparation_time = parseInt(document.getElementById('itemPreparationTime').value) || 15;
+            const is_available = document.getElementById('itemAvailable').checked;
+
+            // Collect variants data
+            const variants = this.collectVariantsData();
+            
+            // Get selected addon groups for item-level (only if no variants)
+            const selectedAddonGroups = variants.length === 0 
+                ? Array.from(document.querySelectorAll('input[name="addonGroups"]:checked'))
+                      .map(checkbox => checkbox.value)
+                : [];
+
+            // Show loading state
+            const submitBtn = document.querySelector('#itemForm button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+            submitBtn.disabled = true;
+
+            try {
+                let finalImageUrl = image_url;
+
+                // Upload main image if a file was selected
+                if (this.currentImageFile) {
+                    this.showNotification('Uploading image...', 'info');
+                    finalImageUrl = await StorageService.uploadImage(
+                        this.currentImageFile, 
+                        `restaurant-${this.restaurant.id}`
+                    );
+                }
+
+                let savedItemId;
+
+                if (itemId) {
+                    // Update existing item
+                    const updatedItem = await MenuService.updateMenuItem(itemId, {
+                        name,
+                        description,
+                        price,
+                        image_url: finalImageUrl,
+                        preparation_time,
+                        is_available
+                    });
+
+                    savedItemId = updatedItem.id;
+
+                    // Upload variant images and save variants with their addon groups
+                    await this.uploadAndSaveVariants(itemId, variants);
+
+                    // Update local state
+                    const index = this.menuItems.findIndex(item => item.id === itemId);
+                    if (index !== -1) {
+                        this.menuItems[index] = updatedItem;
+                        // Update variants in local state
+                        this.menuItems[index].variants = variants;
+                    }
+
+                    this.showNotification('Menu item updated successfully!', 'success');
+                } else {
+                    // Create new item
+                    const newItem = await MenuService.createMenuItem({
+                        category_id: categoryId,
+                        user_id: this.user.id,
+                        name,
+                        description,
+                        price,
+                        image_url: finalImageUrl,
+                        preparation_time,
+                        is_available
+                    });
+
+                    savedItemId = newItem.id;
+
+                    // Upload variant images and save variants with their addon groups
+                    await this.uploadAndSaveVariants(savedItemId, variants);
+
+                    // Add variants to local state
+                    newItem.variants = variants;
+                    this.menuItems.push(newItem);
+                    this.showNotification('Menu item added successfully!', 'success');
+                }
+
+                // Save addon group associations (only if no variants)
+                if (savedItemId && variants.length === 0) {
+                    await MenuService.updateMenuItemAddonGroups(savedItemId, selectedAddonGroups);
+                }
+
+                this.displayMenuItems();
+                this.hideItemModal();
+            } catch (error) {
+                console.error('Error saving menu item:', error);
+                this.showNotification('Error saving menu item: ' + error.message, 'error');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // New method to upload variant images and save variants with their addon groups
+        async uploadAndSaveVariants(menuItemId, variants) {
+            // Upload variant images first
+            const variantsWithUploadedImages = await this.uploadVariantImages(variants);
+            
+            // Save variants to database and their addon groups
+            for (const variant of variantsWithUploadedImages) {
+                let savedVariant;
+                
+                if (variant.id) {
+                    // Update existing variant
+                    savedVariant = await MenuService.updateMenuItemVariant(variant.id, {
+                        name: variant.name,
+                        additional_price: variant.additional_price,
+                        image_url: variant.image_url
+                    });
+                } else {
+                    // Create new variant
+                    savedVariant = await MenuService.createMenuItemVariant({
+                        menu_item_id: menuItemId,
+                        name: variant.name,
+                        additional_price: variant.additional_price,
+                        image_url: variant.image_url
+                    });
+                }
+                
+                // Save addon groups for this variant if the method exists
+                if (savedVariant.id && variant.addon_groups && MenuService.updateVariantAddonGroups) {
+                    try {
+                        await MenuService.updateVariantAddonGroups(savedVariant.id, variant.addon_groups);
+                    } catch (error) {
+                        console.error(`Error saving addon groups for variant ${savedVariant.id}:`, error);
+                        // Continue even if addon groups fail to save
+                    }
+                }
+            }
+        }
+
+        // New method to upload variant images
+        async uploadVariantImages(variants) {
+            if (!this.variantImageFiles || Object.keys(this.variantImageFiles).length === 0) {
+                return variants;
+            }
+            
+            const variantsWithImages = [...variants];
+            
+            for (let i = 0; i < variantsWithImages.length; i++) {
+                const variant = variantsWithImages[i];
+                const variantTempId = variant.id || `variant-${i}`;
+                
+                // If there's a file to upload for this variant
+                if (this.variantImageFiles[variantTempId]) {
+                    try {
+                        this.showNotification(`Uploading image for ${variant.name}...`, 'info');
+                        const imageUrl = await StorageService.uploadImage(
+                            this.variantImageFiles[variantTempId],
+                            `restaurant-${this.restaurant.id}/variants`
+                        );
+                        variantsWithImages[i].image_url = imageUrl;
+                    } catch (error) {
+                        console.error(`Error uploading image for variant ${variant.name}:`, error);
+                        // Continue with other variants even if one fails
+                    }
+                }
+            }
+            
+            return variantsWithImages;
+        }
+
+        async deleteItem(itemId) {
+            if (!confirm('Are you sure you want to delete this menu item?')) {
+                return;
+            }
+
+            try {
+                // Get item to check if it has an image
+                const item = await MenuService.getMenuItem(itemId);
+                
+                // Delete the item
+                await MenuService.deleteMenuItem(itemId);
+                
+                // Delete the image from storage if it exists and was uploaded by us
+                if (item.image_url && item.image_url.includes('supabase.co/storage')) {
+                    await StorageService.deleteImage(item.image_url);
+                }
+                
+                // Remove from local state
+                this.menuItems = this.menuItems.filter(item => item.id !== itemId);
+                
+                this.displayMenuItems();
+                this.showNotification('Menu item deleted successfully!', 'success');
+            } catch (error) {
+                console.error('Error deleting menu item:', error);
+                this.showNotification('Error deleting menu item: ' + error.message, 'error');
+            }
+        }
+
+        async toggleItemAvailability(itemId, isAvailable) {
+            try {
+                await MenuService.updateItemAvailability(itemId, isAvailable);
+                // Update local state
+                const item = this.menuItems.find(item => item.id === itemId);
+                if (item) {
+                    item.is_available = isAvailable;
+                }
+                this.showNotification(`Item ${isAvailable ? 'enabled' : 'disabled'}`, 'success');
+            } catch (error) {
+                console.error('Error updating item availability:', error);
+                this.showNotification('Error updating item availability: ' + error.message, 'error');
+            }
+        }
+
+        searchItems(query) {
+            // Basic search functionality
+            if (!query.trim()) {
+                // If search is empty, show all items
+                this.displayMenuItems();
+                return;
+            }
+
+            const filteredItems = this.menuItems.filter(item => 
+                item.name.toLowerCase().includes(query.toLowerCase()) ||
+                (item.description && item.description.toLowerCase().includes(query.toLowerCase()))
+            );
+
+            const container = document.getElementById('menuItemsSection');
+            
+            if (filteredItems.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-[#8d755e] dark:text-[#a1907c] py-8 col-span-full">
+                        <span class="material-symbols-outlined text-4xl mb-2">search_off</span>
+                        <p>No items found for "${query}"</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredItems.map(item => `
+                <div class="flex flex-col gap-4 bg-white dark:bg-[#2a2116] rounded-xl p-4 border border-[#f5f2f0] dark:border-[#2f271f] shadow-sm">
+                    <div class="bg-center bg-no-repeat aspect-video bg-cover rounded-lg" style="background-image: url('${item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'}')"></div>
+                    <div class="flex flex-col gap-2">
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-[#181410] dark:text-white text-lg font-bold">${item.name}</h3>
+                            <p class="text-primary text-lg font-bold">$${item.price}</p>
+                        </div>
+                        <p class="text-[#8d755e] dark:text-[#a1907c] text-sm leading-relaxed">${item.description || 'No description available.'}</p>
+                        <div class="flex items-center gap-4 text-sm text-[#8d755e] dark:text-[#a1907c]">
+                            <span class="flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">schedule</span>
+                                ${item.preparation_time} min
+                            </span>
+                            <span class="flex items-center gap-1 ${item.is_available ? 'text-green-600' : 'text-red-600'}">
+                                <span class="material-symbols-outlined text-base">circle</span>
+                                ${item.is_available ? 'Available' : 'Unavailable'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-[#f5f2f0] dark:border-[#2f271f]">
+                        <div class="flex items-center gap-2">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" ${item.is_available ? 'checked' : ''} class="sr-only peer" onchange="menuManagement.toggleItemAvailability('${item.id}', this.checked)">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                            </label>
+                            <span class="text-sm font-medium ${item.is_available ? 'text-[#181410] dark:text-white' : 'text-[#8d755e] dark:text-[#a1907c]'}">${item.is_available ? 'Available' : 'Unavailable'}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="flex min-w-[70px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-[#f5f2f0] dark:bg-[#2f271f] text-[#181410] dark:text-white text-sm font-bold leading-normal hover:bg-[#f0ece9] dark:hover:bg-[#3a3025]" onclick="menuManagement.editItem('${item.id}')">
+                                <span class="truncate">Edit</span>
+                            </button>
+                            <button class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm font-bold leading-normal hover:bg-red-200 dark:hover:bg-red-900/50" onclick="menuManagement.deleteItem('${item.id}')">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        showNotification(message, type = 'info') {
+            // Remove existing notification
+            const existingNotification = document.querySelector('.notification-toast');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            // Create notification
+            const notification = document.createElement('div');
+            notification.className = `notification-toast fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        async loadAddonGroups() {
+            try {
+                if (!this.restaurant) {
+                    console.error('Cannot load addon groups: No restaurant data');
+                    return;
+                }
+                
+                console.log('Loading addon groups for restaurant:', this.restaurant.id);
+                this.addonGroups = await AddonService.getAddonGroups(this.restaurant.id);
+                console.log('Addon groups loaded:', this.addonGroups);
+            } catch (error) {
+                console.error('Error loading addon groups:', error);
+                this.addonGroups = [];
+            }
+        }
+
+        renderAddonGroups(selectedAddonGroupIds = []) {
+            const container = document.getElementById('addonGroupsContainer');
+            
+            if (!container) {
+                console.warn('Addon groups container not found in DOM - this is expected when editing items with variants');
+                return;
+            }
+            
+            if (!this.addonGroups || this.addonGroups.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-4 col-span-full">
+                        <span class="material-symbols-outlined text-2xl mb-1">extension</span>
+                        <p class="text-sm">No addon groups available</p>
+                        <a href="addon-management.html" class="text-primary text-xs hover:underline">Create addon groups first</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = this.addonGroups.map(group => `
+                <label class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors">
+                    <input type="checkbox" name="addonGroups" value="${group.id}" 
+                           ${selectedAddonGroupIds.includes(group.id) ? 'checked' : ''}
+                           class="rounded border-gray-300 text-primary focus:ring-primary">
+                    <div class="flex-1">
+                        <div class="font-medium text-sm text-gray-900 dark:text-white">${group.name}</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                            ${group.item_count || 0} items • 
+                            ${group.max_selections || 1} max selection${group.max_selections !== 1 ? 's' : ''}
+                            ${group.is_required ? ' • Required' : ' • Optional'}
+                        </div>
+                        ${group.description ? `<div class="text-xs text-gray-600 dark:text-gray-300 mt-1">${group.description}</div>` : ''}
+                    </div>
+                </label>
+            `).join('');
+        }
+
+        async loadAndDisplayItemAddonGroups(itemId) {
+    try {
+        const item = this.menuItems.find(item => item.id === itemId);
+        if (!item) return;
+
+        const container = document.getElementById(`addonBadges-${itemId}`);
+        if (!container) return;
+
+        // Check if item has variants
+        if (item.variants && item.variants.length > 0) {
+            // For items with variants, show variant-level addon groups
+            await this.loadAndDisplayVariantAddonGroups(itemId, container);
+        } else {
+            // For items without variants, show item-level addon groups
+            await this.loadAndDisplayItemLevelAddonGroups(itemId, container);
+        }
+    } catch (error) {
+        console.error('Error loading item addon groups:', error);
+        const container = document.getElementById(`addonBadges-${itemId}`);
+        if (container) {
+            container.innerHTML = '<span class="text-xs text-gray-500">Error loading addons</span>';
+        }
+    }
+}
+
+// New method to load and display variant-level addon groups
+async loadAndDisplayVariantAddonGroups(itemId, container) {
+    try {
+        // Get all variants for this item
+        const variants = await MenuService.getMenuItemVariants(itemId);
+        
+        if (!variants || variants.length === 0) {
+            container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
+            return;
+        }
+
+        // Collect all unique addon groups from all variants
+        const allAddonGroups = new Set();
+        
+        for (const variant of variants) {
+            try {
+                if (MenuService.getVariantAddonGroups) {
+                    const variantAddonGroups = await MenuService.getVariantAddonGroups(variant.id);
+                    variantAddonGroups.forEach(group => {
+                        allAddonGroups.add(group.addon_group_id);
+                    });
+                }
+            } catch (error) {
+                console.error(`Error loading addon groups for variant ${variant.id}:`, error);
+                // Continue with other variants
+            }
+        }
+
+        // If no addon groups found
+        if (allAddonGroups.size === 0) {
+            container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
+            return;
+        }
+
+        // Get addon group details
+        const groupDetails = Array.from(allAddonGroups).map(groupId => {
+            return this.addonGroups.find(g => g.id === groupId);
+        }).filter(Boolean);
+
+        if (groupDetails.length === 0) {
+            container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
+            return;
+        }
+
+        // Display addon groups
+        container.innerHTML = groupDetails.map(group => `
+            <span class="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                <span class="material-symbols-outlined text-xs">extension</span>
+                ${group.name}
+            </span>
+        `).join('');
+
+    } catch (error) {
+        console.error('Error loading variant addon groups:', error);
+        container.innerHTML = '<span class="text-xs text-gray-500">Error loading addons</span>';
+    }
+}
+
+// Updated method for item-level addon groups (existing logic)
+async loadAndDisplayItemLevelAddonGroups(itemId, container) {
+    try {
+        const linkedGroups = await MenuService.getMenuItemAddonGroups(itemId);
+        
+        if (linkedGroups.length === 0) {
+            container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
+            return;
+        }
+
+        // Get the actual group details from our loaded addon groups
+        const groupDetails = linkedGroups.map(link => {
+            return this.addonGroups.find(g => g.id === link.addon_group_id);
+        }).filter(Boolean);
+
+        if (groupDetails.length === 0) {
+            container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
+            return;
+        }
+
+        container.innerHTML = groupDetails.map(group => `
+            <span class="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                <span class="material-symbols-outlined text-xs">extension</span>
+                ${group.name}
+            </span>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading item-level addon groups:', error);
+        container.innerHTML = '<span class="text-xs text-gray-500">Error loading addons</span>';
+    }
+}
+        async logout() {
+            try {
+                await AuthService.logout();
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+    }
+
+    // Initialize menu management
+    const menuManagement = new MenuManagement();
+    window.menuManagement = menuManagement;
+</script>
+</body>
+</html>

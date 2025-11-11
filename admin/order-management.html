@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>DineFlow - Live Orders</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        
+        .notification-toast {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .pulse-ring {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            70% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+        }
+        
+        .new-order-popup {
+            animation: popIn 0.5s ease-out;
+        }
+        
+        @keyframes popIn {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+        
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+        
+        .confirmation-modal {
+            animation: scaleIn 0.2s ease-out;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#ff8000",
+                "background-light": "#f8f7f5",
+                "background-dark": "#23190f",
+              },
+              fontFamily: {
+                "display": ["Inter", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200">
+    <div class="flex h-screen w-full">
+        
+        <!-- SideNavBar -->
+<aside class="flex w-64 flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark p-4">
+    <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-3 px-3 py-2">
+            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="DineFlow company logo" style='background-image: url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80");'></div>
+            <div class="flex flex-col">
+                <h1 class="text-gray-900 dark:text-white text-base font-medium leading-normal">DineFlow</h1>
+                <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal" id="restaurantName">Restaurant Admin</p>
+            </div>
+        </div>
+        <nav class="flex flex-col gap-2 mt-4">
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="dashboard.html">
+                <span class="material-symbols-outlined">dashboard</span>
+                <p class="text-sm font-medium leading-normal">Dashboard</p>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-900 dark:text-white rounded-lg bg-primary/10 dark:bg-primary/20 ring-1 ring-primary/20" href="order-management.html">
+                <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+                <p class="text-sm font-medium leading-normal text-primary">Orders</p>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="menu-management.html">
+                <span class="material-symbols-outlined">menu_book</span>
+                <p class="text-sm font-medium leading-normal">Menu</p>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="table-management.html">
+                <span class="material-symbols-outlined">table_restaurant</span>
+                <p class="text-sm font-medium leading-normal">Tables</p>
+            </a>
+            <!-- New Analytics Button -->
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="analytics.html">
+                <span class="material-symbols-outlined">analytics</span>
+                <p class="text-sm font-medium leading-normal">Analytics</p>
+            </a>
+            <!-- New Add-ons Button -->
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="addon-management.html">
+                <span class="material-symbols-outlined">extension</span>
+                <p class="text-sm font-medium leading-normal">Add-ons</p>
+            </a>
+        </nav>
+    </div>
+    <div class="mt-auto flex flex-col gap-1">
+        <button id="logoutBtn" class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
+            <span class="material-symbols-outlined">logout</span>
+            <p class="text-sm font-medium leading-normal">Logout</p>
+        </button>
+    </div>
+</aside>
+
+        <!-- Main Content -->
+        <main class="flex flex-1 flex-col overflow-y-auto">
+            <!-- TopNavBar -->
+            <header class="flex sticky top-0 z-10 items-center justify-between whitespace-nowrap border-b border-gray-200 dark:border-gray-700 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm px-10 py-3">
+                <label class="flex flex-col min-w-40 !h-10 max-w-sm w-full">
+                    <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                        <div class="text-gray-500 dark:text-gray-400 flex bg-white dark:bg-gray-800 items-center justify-center pl-4 rounded-l-lg border border-gray-200 dark:border-gray-700 border-r-0">
+                            <span class="material-symbols-outlined">search</span>
+                        </div>
+                        <input id="searchInput" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-1 focus:ring-primary border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 h-full placeholder:text-gray-500 dark:placeholder:text-gray-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search orders..." value=""/>
+                    </div>
+                </label>
+                <div class="flex flex-1 justify-end gap-4 items-center">
+                    <button id="notificationBtn" class="relative flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full size-10 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <div id="notificationBadge" class="absolute top-2 right-2.5 size-2 rounded-full bg-primary ring-2 ring-white dark:ring-gray-800 hidden"></div>
+                    </button>
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-offset-2 ring-offset-background-light dark:ring-offset-background-dark ring-primary/50" data-alt="User's profile avatar" style='background-image: url("https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80");'></div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="flex-1 p-10">
+                <div class="flex flex-wrap justify-between gap-3 mb-6 items-center">
+                    <h1 class="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Live Orders</h1>
+                    <div class="flex gap-2">
+                        <button id="recentOrdersBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 gap-2">
+                            <span class="material-symbols-outlined text-base">schedule</span>
+                            <span class="truncate">Recent Orders</span>
+                        </button>
+                        <button id="newOrderBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 gap-2">
+                            <span class="material-symbols-outlined text-base">add</span>
+                            <span class="truncate">New Order</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="w-full @container bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex overflow-hidden rounded-xl">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 dark:bg-gray-800">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Order ID</th>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Table #</th>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Items</th>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Total</th>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Time</th>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Orders will be loaded here -->
+                                <tr>
+                                    <td colspan="7" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                        <span class="material-symbols-outlined text-4xl mb-2">receipt_long</span>
+                                        <p>No orders found</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="flex gap-2 mt-6">
+                    <button data-status="all" class="filter-tab px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium">All Orders</button>
+                    <button data-status="pending" class="filter-tab px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium">Pending</button>
+                    <button data-status="preparing" class="filter-tab px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium">Preparing</button>
+                    <button data-status="completed" class="filter-tab px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium">Completed</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Order Details Drawer -->
+        <aside id="orderDetailsDrawer" class="flex flex-col w-[400px] border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 p-6 transform translate-x-full transition-transform duration-300 ease-in-out fixed right-0 top-0 h-full z-40">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-700">
+                <div>
+                    <h2 id="orderDetailsTitle" class="text-lg font-bold text-gray-900 dark:text-white">Order Details</h2>
+                    <p id="orderTableInfo" class="text-sm text-gray-500 dark:text-gray-400">Table: -</p>
+                </div>
+                <button id="closeOrderDetails" class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <span class="material-symbols-outlined text-gray-500 dark:text-gray-400">close</span>
+                </button>
+            </div>
+            <div id="orderDetailsContent" class="flex-1 py-6 overflow-y-auto space-y-6">
+                <!-- Order details will be loaded here -->
+            </div>
+            <div class="pt-6 border-t border-gray-200 dark:border-gray-700 space-y-3">
+                <!-- Add Mark as Preparing button -->
+                <button id="markPreparingBtn" class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-orange-500 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90">
+                    <span class="truncate">Mark as Preparing</span>
+                </button>
+                <button id="markCompletedBtn" class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90">
+                    <span class="truncate">Mark as Completed</span>
+                </button>
+                <button id="deleteOrderBtn" class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-red-500 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90">
+                    <span class="truncate">Delete Order</span>
+                </button>
+                <button id="printReceiptBtn" class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-gray-200 dark:hover:bg-gray-600">
+                    <span class="truncate">Print Receipt</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- New Order Modal -->
+        <div id="newOrderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white dark:bg-background-dark rounded-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <h3 class="text-lg font-bold mb-4">Create New Order</h3>
+                <form id="newOrderForm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left Column - Order Details -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Table Number *</label>
+                                <select id="orderTable" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" required>
+                                    <option value="">Select a table</option>
+                                    <!-- Tables will be loaded dynamically -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Customer Notes</label>
+                                <textarea id="customerNotes" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" rows="3" placeholder="Any special requests or notes..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Order Type</label>
+                                <select id="orderType" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]">
+                                    <option value="dine-in">Dine-in</option>
+                                    <option value="takeaway">Takeaway</option>
+                                    <option value="delivery">Delivery</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Right Column - Menu Items -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Add Menu Items</label>
+                                <div class="space-y-3">
+                                    <select id="menuCategory" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]">
+                                        <option value="">Select category</option>
+                                        <!-- Categories will be loaded dynamically -->
+                                    </select>
+                                    <select id="menuItem" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]">
+                                        <option value="">Select item</option>
+                                        <!-- Menu items will be loaded dynamically -->
+                                    </select>
+                                    <div class="flex gap-2">
+                                        <input type="number" id="itemQuantity" class="flex-1 p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f271f]" min="1" value="1" placeholder="Qty">
+                                        <button type="button" id="addItemBtn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm">
+                                            Add Item
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Selected Items List -->
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Selected Items</label>
+                                <div id="selectedItems" class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 max-h-40 overflow-y-auto">
+                                    <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No items added yet</p>
+                                </div>
+                            </div>
+
+                            <!-- Order Summary -->
+                            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium">Subtotal:</span>
+                                    <span id="orderSubtotal" class="text-sm font-bold">$0.00</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-bold">Total:</span>
+                                    <span id="orderTotal" class="text-lg font-bold text-primary">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 justify-end mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <button type="button" id="cancelNewOrderBtn" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Create Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Recent Orders Modal -->
+        <div id="recentOrdersModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white dark:bg-background-dark rounded-xl p-6 w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Recent Orders (Last 24 Hours)</h3>
+                    <button id="closeRecentOrders" class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="material-symbols-outlined text-gray-500 dark:text-gray-400">close</span>
+                    </button>
+                </div>
+                <div class="w-full bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex overflow-hidden rounded-xl">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 dark:bg-gray-800">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Order ID</th>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Table #</th>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Items</th>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Total</th>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Time</th>
+                                    <th class="px-6 py-4 text-left text-gray-600 dark:text-gray-300 text-xs font-medium uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersTableBody" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Recent orders will be loaded here -->
+                                <tr>
+                                    <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                        <span class="material-symbols-outlined text-4xl mb-2">schedule</span>
+                                        <p>No recent orders found</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Order Notification -->
+        <div id="newOrderNotification" class="fixed top-4 right-4 z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 max-w-sm new-order-popup">
+                <div class="flex items-start gap-3">
+                    <div class="relative">
+                        <div class="bg-green-500 rounded-full p-2">
+                            <span class="material-symbols-outlined text-white text-lg">notifications</span>
+                        </div>
+                        <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full pulse-ring"></div>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-gray-900 dark:text-white">New Order Received!</h4>
+                        <p id="notificationMessage" class="text-sm text-gray-600 dark:text-gray-300 mt-1">Table #<span id="notificationTable">-</span> - $<span id="notificationAmount">0.00</span></p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2" id="notificationTime">Just now</p>
+                    </div>
+                    <button id="closeNotification" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <span class="material-symbols-outlined text-lg">close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Panel -->
+        <div id="notificationPanel" class="fixed top-16 right-4 z-50 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hidden">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-gray-900 dark:text-white">Notifications</h3>
+                    <button id="clearNotifications" class="text-sm text-primary hover:text-primary/80">Clear All</button>
+                </div>
+            </div>
+            <div id="notificationList" class="max-h-80 overflow-y-auto">
+                <!-- Notifications will be loaded here -->
+                <div class="p-4 text-center text-gray-500 dark:text-gray-400">
+                    <span class="material-symbols-outlined text-2xl mb-2">notifications_off</span>
+                    <p class="text-sm">No notifications</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md confirmation-modal">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-red-100 dark:bg-red-900/20 rounded-full p-3">
+                        <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-xl">warning</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Delete Order</h3>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 mb-6" id="deleteConfirmationMessage">
+                    Are you sure you want to delete this order? This action cannot be undone.
+                </p>
+                <div class="flex gap-3 justify-end">
+                    <button id="cancelDeleteBtn" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                    <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { AuthService } from '../js/auth.js';
+        import { OrdersService } from '../js/orders.js';
+
+        class OrderManagement {
+            constructor() {
+                this.user = null;
+                this.restaurant = null;
+                this.orders = [];
+                this.filteredOrders = [];
+                this.currentFilter = 'all';
+                this.selectedOrder = null;
+                this.tables = [];
+                this.categories = [];
+                this.menuItems = [];
+                this.selectedOrderItems = []; // Track items for new order
+                this.recentOrders = []; // Store recent orders
+                this.notifications = JSON.parse(localStorage.getItem('orderNotifications') || '[]');
+                this.previousOrderIds = new Set(); // Track previous orders for notification
+                this.orderToDelete = null; // Track order to be deleted
+                this.init();
+            }
+
+            async init() {
+                // Check authentication
+                this.user = await AuthService.getCurrentUser();
+                if (!this.user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                console.log('User authenticated:', this.user);
+
+                // Load restaurant data
+                await this.loadRestaurantData();
+                
+                // Load orders
+                await this.loadOrders();
+
+                // Set up event listeners
+                this.setupEventListeners();
+
+                // Set up real-time updates
+                this.setupRealTimeUpdates();
+
+                // Set up logout
+                document.getElementById('logoutBtn').addEventListener('click', this.logout.bind(this));
+
+                // Initialize notifications
+                this.updateNotificationBadge();
+                this.displayNotifications();
+            }
+
+            async loadRestaurantData() {
+                try {
+                    console.log('Loading restaurant data...');
+                    this.restaurant = await AuthService.getRestaurant();
+                    
+                    if (this.restaurant) {
+                        console.log('Restaurant loaded:', this.restaurant);
+                        document.getElementById('restaurantName').textContent = this.restaurant.name;
+                    } else {
+                        console.error('No restaurant found for user:', this.user.id);
+                        this.showNotification('No restaurant found. Please contact support.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error loading restaurant data:', error);
+                    this.showNotification('Error loading restaurant data: ' + error.message, 'error');
+                }
+            }
+
+            async loadOrders() {
+                try {
+                    if (!this.restaurant) {
+                        console.error('Cannot load orders: No restaurant data');
+                        return;
+                    }
+                    
+                    console.log('Loading orders for restaurant:', this.restaurant.id);
+                    const allOrders = await OrdersService.getOrders(this.restaurant.id);
+                    
+                    // Sort orders by order_time (oldest first for first-come-first-served)
+                    this.orders = allOrders.sort((a, b) => new Date(a.order_time) - new Date(b.order_time));
+                    
+                    console.log('Orders loaded:', this.orders);
+                    
+                    // Check for new orders for notifications
+                    this.checkForNewOrders();
+                    
+                    // Load recent orders (last 24 hours)
+                    this.loadRecentOrders();
+                    
+                    this.applyFilter(this.currentFilter);
+                    this.displayOrders();
+                } catch (error) {
+                    console.error('Error loading orders:', error);
+                    this.showNotification('Error loading orders: ' + error.message, 'error');
+                }
+            }
+
+            checkForNewOrders() {
+                // Get current order IDs
+                const currentOrderIds = new Set(this.orders.map(order => order.id));
+                
+                // Find new orders that weren't in the previous set
+                if (this.previousOrderIds.size > 0) {
+                    const newOrders = this.orders.filter(order => 
+                        !this.previousOrderIds.has(order.id) && 
+                        order.status === 'pending' // Only notify for pending orders
+                    );
+                    
+                    // Show notification for each new order
+                    newOrders.forEach(order => {
+                        this.showNewOrderNotification(order);
+                    });
+                }
+                
+                // Update previous order IDs for next check
+                this.previousOrderIds = currentOrderIds;
+            }
+
+            async loadRecentOrders() {
+                try {
+                    if (!this.restaurant) return;
+                    
+                    // Calculate 24 hours ago
+                    const twentyFourHoursAgo = new Date();
+                    twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+                    
+                    // Filter orders from last 24 hours using order_time and sort by order time (newest first)
+                    this.recentOrders = this.orders
+                        .filter(order => new Date(order.order_time) >= twentyFourHoursAgo)
+                        .sort((a, b) => new Date(b.order_time) - new Date(a.order_time));
+                    
+                    console.log('Recent orders loaded:', this.recentOrders);
+                } catch (error) {
+                    console.error('Error loading recent orders:', error);
+                }
+            }
+
+            applyFilter(status) {
+                this.currentFilter = status;
+                
+                if (status === 'all') {
+                    this.filteredOrders = this.orders;
+                } else {
+                    this.filteredOrders = this.orders.filter(order => order.status === status);
+                }
+
+                // Update active tab
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    if (tab.getAttribute('data-status') === status) {
+                        tab.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                        tab.classList.add('bg-primary', 'text-white');
+                    } else {
+                        tab.classList.remove('bg-primary', 'text-white');
+                        tab.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                    }
+                });
+            }
+
+            displayOrders() {
+                const container = document.getElementById('ordersTableBody');
+                
+                if (this.filteredOrders.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                <span class="material-symbols-outlined text-4xl mb-2">receipt_long</span>
+                                <p>No ${this.currentFilter === 'all' ? '' : this.currentFilter} orders found</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.filteredOrders.map(order => {
+                    // Format the time using order_time
+                    const orderTime = new Date(order.order_time);
+                    const formattedTime = orderTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    return `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" data-order-id="${order.id}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">#${order.order_number}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">${order.tables?.table_number || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">${order.order_items?.length || 0} items</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">$${order.total_amount || '0.00'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">${formattedTime}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                order.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                order.status === 'preparing' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
+                                'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                            }">${order.status}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                ${order.status === 'pending' ? `
+                                    <button class="text-orange-500 hover:text-orange-700 mark-preparing-btn" data-order-id="${order.id}" title="Mark as Preparing">
+                                        <span class="material-symbols-outlined text-lg">schedule</span>
+                                    </button>
+                                ` : ''}
+                                ${order.status === 'preparing' ? `
+                                    <button class="text-green-500 hover:text-green-700 mark-completed-btn" data-order-id="${order.id}" title="Mark as Completed">
+                                        <span class="material-symbols-outlined text-lg">check_circle</span>
+                                    </button>
+                                ` : ''}
+                                ${order.status === 'completed' ? `
+                                    <button class="text-red-500 hover:text-red-700 delete-order-btn" data-order-id="${order.id}" title="Delete Order">
+                                        <span class="material-symbols-outlined text-lg">delete</span>
+                                    </button>
+                                ` : ''}
+                                <button class="text-primary hover:text-primary/80 view-order-btn" data-order-id="${order.id}" title="View Details">
+                                    <span class="material-symbols-outlined text-lg">visibility</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `}).join('');
+
+                // Add event listeners for quick status updates
+                container.querySelectorAll('.mark-preparing-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const orderId = button.getAttribute('data-order-id');
+                        try {
+                            await OrdersService.updateOrderStatus(orderId, 'preparing');
+                            this.showNotification('Order marked as preparing!', 'success');
+                            await this.loadOrders();
+                        } catch (error) {
+                            console.error('Error updating order status:', error);
+                            this.showNotification('Error updating order: ' + error.message, 'error');
+                        }
+                    });
+                });
+
+                container.querySelectorAll('.mark-completed-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const orderId = button.getAttribute('data-order-id');
+                        try {
+                            await OrdersService.updateOrderStatus(orderId, 'completed');
+                            this.showNotification('Order marked as completed!', 'success');
+                            await this.loadOrders();
+                        } catch (error) {
+                            console.error('Error updating order status:', error);
+                            this.showNotification('Error updating order: ' + error.message, 'error');
+                        }
+                    });
+                });
+
+                // Add event listeners for delete buttons
+                container.querySelectorAll('.delete-order-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const orderId = button.getAttribute('data-order-id');
+                        this.confirmDeleteOrder(orderId);
+                    });
+                });
+
+                // Add click events to rows and view buttons
+                container.querySelectorAll('tr[data-order-id]').forEach(row => {
+                    row.addEventListener('click', (e) => {
+                        if (!e.target.closest('.view-order-btn') && !e.target.closest('.mark-preparing-btn') && !e.target.closest('.mark-completed-btn') && !e.target.closest('.delete-order-btn')) {
+                            const orderId = row.getAttribute('data-order-id');
+                            this.viewOrderDetails(orderId);
+                        }
+                    });
+                });
+
+                container.querySelectorAll('.view-order-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const orderId = button.getAttribute('data-order-id');
+                        this.viewOrderDetails(orderId);
+                    });
+                });
+            }
+
+            async viewOrderDetails(orderId) {
+                this.selectedOrder = this.orders.find(order => order.id === orderId);
+                
+                if (!this.selectedOrder) return;
+
+                // Update drawer title
+                document.getElementById('orderDetailsTitle').textContent = `Order #${this.selectedOrder.order_number}`;
+                document.getElementById('orderTableInfo').textContent = `Table: ${this.selectedOrder.tables?.table_number || 'N/A'}`;
+
+                // Update order details content
+                const content = document.getElementById('orderDetailsContent');
+                
+                let itemsHtml = '';
+                if (this.selectedOrder.order_items && this.selectedOrder.order_items.length > 0) {
+                    itemsHtml = this.selectedOrder.order_items.map(item => {
+                        // Calculate individual item total including addons
+                        const itemBaseTotal = (item.item_price * item.quantity);
+                        const addonsTotal = (item.order_item_addons || []).reduce((sum, addon) => 
+                            sum + (addon.addon_price * addon.quantity), 0
+                        );
+                        const itemTotal = itemBaseTotal + addonsTotal;
+
+                        return `
+                            <div class="flex justify-between items-start py-3 border-b border-gray-200 dark:border-gray-700">
+                                <div class="flex-1">
+                                    <p class="font-medium text-gray-800 dark:text-gray-200">${item.menu_items?.name || 'Unknown Item'}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Qty: ${item.quantity} × $${item.item_price}</p>
+                                    ${item.special_instructions ? `<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Note: ${item.special_instructions}</p>` : ''}
+                                    ${item.order_item_addons && item.order_item_addons.length > 0 ? `
+                                        <div class="mt-2">
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Add-ons:</p>
+                                            ${item.order_item_addons.map(addon => `
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">• ${addon.addon_name} (+$${addon.addon_price})</p>
+                                            `).join('')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <p class="text-sm font-medium text-gray-800 dark:text-gray-200">$${itemTotal.toFixed(2)}</p>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    itemsHtml = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No items in this order</p>';
+                }
+
+                // Format order time for display
+                const orderTime = new Date(this.selectedOrder.order_time);
+                const formattedTime = orderTime.toLocaleString();
+
+                content.innerHTML = `
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order Information</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-300">Order Time</span>
+                                <span class="font-medium text-gray-800 dark:text-gray-200">${formattedTime}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-300">Order Type</span>
+                                <span class="font-medium text-gray-800 dark:text-gray-200">${this.selectedOrder.order_type || 'Dine-in'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Items</h3>
+                        <div class="space-y-2">
+                            ${itemsHtml}
+                        </div>
+                    </div>
+                    ${this.selectedOrder.customer_notes ? `
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Notes</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-700">${this.selectedOrder.customer_notes}</p>
+                    </div>
+                    ` : ''}
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Summary</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-300">Subtotal</span>
+                                <span class="font-medium text-gray-800 dark:text-gray-200">$${this.selectedOrder.total_amount?.toFixed(2) || '0.00'}</span>
+                            </div>
+                            <div class="flex justify-between text-base font-bold border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
+                                <span class="text-gray-900 dark:text-white">Total</span>
+                                <span class="text-gray-900 dark:text-white">$${this.selectedOrder.total_amount?.toFixed(2) || '0.00'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Update action buttons based on order status
+                const markPreparingBtn = document.getElementById('markPreparingBtn');
+                const markCompletedBtn = document.getElementById('markCompletedBtn');
+                const deleteOrderBtn = document.getElementById('deleteOrderBtn');
+
+                // Reset all buttons first
+                markPreparingBtn.disabled = false;
+                markCompletedBtn.disabled = false;
+                deleteOrderBtn.disabled = false;
+                markPreparingBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                markCompletedBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                deleteOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+                // Set button states based on current status
+                switch (this.selectedOrder.status) {
+                    case 'pending':
+                        markPreparingBtn.innerHTML = '<span class="truncate">Mark as Preparing</span>';
+                        markCompletedBtn.innerHTML = '<span class="truncate">Mark as Completed</span>';
+                        deleteOrderBtn.style.display = 'none';
+                        break;
+                    case 'preparing':
+                        markPreparingBtn.disabled = true;
+                        markPreparingBtn.innerHTML = '<span class="truncate">Currently Preparing</span>';
+                        markPreparingBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        markCompletedBtn.innerHTML = '<span class="truncate">Mark as Completed</span>';
+                        deleteOrderBtn.style.display = 'none';
+                        break;
+                    case 'completed':
+                        markPreparingBtn.disabled = true;
+                        markCompletedBtn.disabled = true;
+                        markPreparingBtn.innerHTML = '<span class="truncate">Already Completed</span>';
+                        markCompletedBtn.innerHTML = '<span class="truncate">Already Completed</span>';
+                        markPreparingBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        markCompletedBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        deleteOrderBtn.style.display = 'block';
+                        break;
+                }
+
+                // Show drawer
+                document.getElementById('orderDetailsDrawer').classList.remove('translate-x-full');
+            }
+
+            setupEventListeners() {
+                // Filter tabs
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const status = tab.getAttribute('data-status');
+                        this.applyFilter(status);
+                        this.displayOrders();
+                    });
+                });
+
+                // Close order details
+                document.getElementById('closeOrderDetails').addEventListener('click', () => {
+                    this.closeOrderDetails();
+                });
+
+                // Mark as preparing
+                document.getElementById('markPreparingBtn').addEventListener('click', () => {
+                    this.markOrderPreparing();
+                });
+
+                // Mark as completed
+                document.getElementById('markCompletedBtn').addEventListener('click', () => {
+                    this.markOrderCompleted();
+                });
+
+                // Delete order
+                document.getElementById('deleteOrderBtn').addEventListener('click', () => {
+                    if (this.selectedOrder) {
+                        this.confirmDeleteOrder(this.selectedOrder.id);
+                    }
+                });
+
+                // Print receipt
+                document.getElementById('printReceiptBtn').addEventListener('click', () => {
+                    this.printReceipt();
+                });
+
+                // New order button
+                document.getElementById('newOrderBtn').addEventListener('click', () => {
+                    this.createNewOrder();
+                });
+
+                // Recent orders button
+                document.getElementById('recentOrdersBtn').addEventListener('click', () => {
+                    this.showRecentOrders();
+                });
+
+                // Close recent orders modal
+                document.getElementById('closeRecentOrders').addEventListener('click', () => {
+                    this.hideRecentOrdersModal();
+                });
+
+                // Search functionality
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    this.searchOrders(e.target.value);
+                });
+
+                // New order modal events
+                document.getElementById('cancelNewOrderBtn').addEventListener('click', () => {
+                    this.hideNewOrderModal();
+                });
+
+                document.getElementById('newOrderForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveNewOrder();
+                });
+
+                document.getElementById('menuCategory').addEventListener('change', (e) => {
+                    this.loadMenuItemsByCategory(e.target.value);
+                });
+
+                document.getElementById('addItemBtn').addEventListener('click', () => {
+                    this.addItemToOrder();
+                });
+
+                // Notification events
+                document.getElementById('notificationBtn').addEventListener('click', () => {
+                    this.toggleNotificationPanel();
+                });
+
+                document.getElementById('closeNotification').addEventListener('click', () => {
+                    this.hideNewOrderNotification();
+                });
+
+                document.getElementById('clearNotifications').addEventListener('click', () => {
+                    this.clearNotifications();
+                });
+
+                // Delete confirmation modal events
+                document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+                    this.hideDeleteConfirmationModal();
+                });
+
+                document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+                    this.deleteOrder();
+                });
+
+                // Close notification panel when clicking outside
+                document.addEventListener('click', (e) => {
+                    const notificationPanel = document.getElementById('notificationPanel');
+                    const notificationBtn = document.getElementById('notificationBtn');
+                    
+                    if (!notificationPanel.contains(e.target) && !notificationBtn.contains(e.target)) {
+                        notificationPanel.classList.add('hidden');
+                    }
+                });
+            }
+
+            setupRealTimeUpdates() {
+                if (!this.restaurant) {
+                    console.error('Cannot setup real-time updates: No restaurant data');
+                    return;
+                }
+                
+                // Subscribe to order changes using restaurant ID
+                OrdersService.subscribeToOrders(this.restaurant.id, (payload) => {
+                    console.log('Order update:', payload);
+                    this.loadOrders(); // Reload orders on changes
+                });
+            }
+
+            closeOrderDetails() {
+                document.getElementById('orderDetailsDrawer').classList.add('translate-x-full');
+                this.selectedOrder = null;
+            }
+
+            async markOrderPreparing() {
+                if (!this.selectedOrder) return;
+
+                try {
+                    await OrdersService.updateOrderStatus(this.selectedOrder.id, 'preparing');
+                    this.showNotification('Order marked as preparing!', 'success');
+                    this.closeOrderDetails();
+                    await this.loadOrders(); // Reload to reflect changes
+                } catch (error) {
+                    console.error('Error updating order status:', error);
+                    this.showNotification('Error updating order: ' + error.message, 'error');
+                }
+            }
+
+            async markOrderCompleted() {
+                if (!this.selectedOrder) return;
+
+                try {
+                    await OrdersService.updateOrderStatus(this.selectedOrder.id, 'completed');
+                    this.showNotification('Order marked as completed!', 'success');
+                    this.closeOrderDetails();
+                    await this.loadOrders(); // Reload to reflect changes
+                } catch (error) {
+                    console.error('Error updating order status:', error);
+                    this.showNotification('Error updating order: ' + error.message, 'error');
+                }
+            }
+
+            confirmDeleteOrder(orderId) {
+                const order = this.orders.find(o => o.id === orderId);
+                if (!order) return;
+
+                this.orderToDelete = orderId;
+                
+                // Update confirmation message
+                document.getElementById('deleteConfirmationMessage').textContent = 
+                    `Are you sure you want to delete Order #${order.order_number}? This action cannot be undone.`;
+                
+                // Show confirmation modal
+                document.getElementById('deleteConfirmationModal').classList.remove('hidden');
+            }
+
+            hideDeleteConfirmationModal() {
+                document.getElementById('deleteConfirmationModal').classList.add('hidden');
+                this.orderToDelete = null;
+            }
+
+            async deleteOrder() {
+                if (!this.orderToDelete) return;
+
+                try {
+                    // Show loading state
+                    const confirmBtn = document.getElementById('confirmDeleteBtn');
+                    const originalText = confirmBtn.innerHTML;
+                    confirmBtn.innerHTML = '<span class="loading-spinner"></span> Deleting...';
+                    confirmBtn.disabled = true;
+
+                    await OrdersService.deleteOrder(this.orderToDelete);
+                    
+                    this.hideDeleteConfirmationModal();
+                    this.showNotification('Order deleted successfully!', 'success');
+                    
+                    // Close order details if the deleted order was selected
+                    if (this.selectedOrder && this.selectedOrder.id === this.orderToDelete) {
+                        this.closeOrderDetails();
+                    }
+                    
+                    await this.loadOrders(); // Reload to reflect changes
+                    
+                } catch (error) {
+                    console.error('Error deleting order:', error);
+                    this.showNotification('Error deleting order: ' + error.message, 'error');
+                    
+                    // Reset button state
+                    const confirmBtn = document.getElementById('confirmDeleteBtn');
+                    confirmBtn.innerHTML = 'Delete Order';
+                    confirmBtn.disabled = false;
+                }
+            }
+
+            printReceipt() {
+                if (!this.selectedOrder) return;
+                // In a real app, this would generate a printable receipt
+                window.print();
+            }
+
+            createNewOrder() {
+                this.showNewOrderModal();
+            }
+
+            showRecentOrders() {
+                this.displayRecentOrders();
+                document.getElementById('recentOrdersModal').classList.remove('hidden');
+            }
+
+            hideRecentOrdersModal() {
+                document.getElementById('recentOrdersModal').classList.add('hidden');
+            }
+
+            displayRecentOrders() {
+                const container = document.getElementById('recentOrdersTableBody');
+                
+                if (this.recentOrders.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                <span class="material-symbols-outlined text-4xl mb-2">schedule</span>
+                                <p>No recent orders found</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.recentOrders.map(order => {
+                    // Format the time using order_time
+                    const orderTime = new Date(order.order_time);
+                    const formattedTime = orderTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    return `
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">#${order.order_number}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">${order.tables?.table_number || 'N/A'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">${order.order_items?.length || 0} items</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">$${order.total_amount || '0.00'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">${formattedTime}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    order.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                    order.status === 'preparing' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
+                                    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                }">${order.status}</span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            showNewOrderNotification(order) {
+                // Create notification object
+                const notification = {
+                    id: Date.now().toString(),
+                    type: 'new_order',
+                    orderId: order.id,
+                    orderNumber: order.order_number,
+                    tableNumber: order.tables?.table_number || 'N/A',
+                    totalAmount: order.total_amount || 0,
+                    timestamp: new Date().toISOString(),
+                    read: false
+                };
+                
+                // Add to notifications array
+                this.notifications.unshift(notification);
+                
+                // Save to localStorage
+                this.saveNotifications();
+                
+                // Update notification badge
+                this.updateNotificationBadge();
+                
+                // Display notification popup
+                this.displayNewOrderPopup(notification);
+                
+                // Update notification panel
+                this.displayNotifications();
+            }
+
+            displayNewOrderPopup(notification) {
+                const popup = document.getElementById('newOrderNotification');
+                const tableEl = document.getElementById('notificationTable');
+                const amountEl = document.getElementById('notificationAmount');
+                const timeEl = document.getElementById('notificationTime');
+                
+                // Set notification content
+                tableEl.textContent = notification.tableNumber;
+                amountEl.textContent = notification.totalAmount.toFixed(2);
+                
+                // Format time
+                const now = new Date();
+                const notificationTime = new Date(notification.timestamp);
+                const diffMs = now - notificationTime;
+                const diffMins = Math.floor(diffMs / 60000);
+                
+                if (diffMins < 1) {
+                    timeEl.textContent = 'Just now';
+                } else if (diffMins === 1) {
+                    timeEl.textContent = '1 minute ago';
+                } else {
+                    timeEl.textContent = `${diffMins} minutes ago`;
+                }
+                
+                // Show popup
+                popup.classList.remove('hidden');
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    this.hideNewOrderNotification();
+                }, 5000);
+            }
+
+            hideNewOrderNotification() {
+                const popup = document.getElementById('newOrderNotification');
+                popup.classList.add('hidden');
+            }
+
+            toggleNotificationPanel() {
+                const panel = document.getElementById('notificationPanel');
+                panel.classList.toggle('hidden');
+                
+                // Mark notifications as read when panel is opened
+                if (!panel.classList.contains('hidden')) {
+                    this.markNotificationsAsRead();
+                }
+            }
+
+            displayNotifications() {
+                const container = document.getElementById('notificationList');
+                
+                if (this.notifications.length === 0) {
+                    container.innerHTML = `
+                        <div class="p-4 text-center text-gray-500 dark:text-gray-400">
+                            <span class="material-symbols-outlined text-2xl mb-2">notifications_off</span>
+                            <p class="text-sm">No notifications</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = this.notifications.map(notification => {
+                    const time = new Date(notification.timestamp);
+                    const formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    return `
+                        <div class="p-4 border-b border-gray-200 dark:border-gray-700 ${notification.read ? 'bg-white dark:bg-gray-800' : 'bg-blue-50 dark:bg-blue-900/20'}">
+                            <div class="flex items-start gap-3">
+                                <div class="bg-green-500 rounded-full p-1 mt-1">
+                                    <span class="material-symbols-outlined text-white text-sm">receipt_long</span>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">New Order #${notification.orderNumber}</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">Table ${notification.tableNumber} - $${notification.totalAmount.toFixed(2)}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${formattedTime}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            markNotificationsAsRead() {
+                this.notifications.forEach(notification => {
+                    notification.read = true;
+                });
+                
+                this.saveNotifications();
+                this.updateNotificationBadge();
+            }
+
+            clearNotifications() {
+                this.notifications = [];
+                this.saveNotifications();
+                this.updateNotificationBadge();
+                this.displayNotifications();
+            }
+
+            updateNotificationBadge() {
+                const badge = document.getElementById('notificationBadge');
+                const unreadCount = this.notifications.filter(n => !n.read).length;
+                
+                if (unreadCount > 0) {
+                    badge.classList.remove('hidden');
+                    // You could also update the badge text if you want to show count
+                    // badge.textContent = unreadCount > 9 ? '9+' : unreadCount.toString();
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+
+            saveNotifications() {
+                localStorage.setItem('orderNotifications', JSON.stringify(this.notifications));
+            }
+
+            async showNewOrderModal() {
+                try {
+                    // Reset form
+                    document.getElementById('newOrderForm').reset();
+                    this.selectedOrderItems = [];
+                    this.updateOrderSummary();
+                    
+                    // Load tables and categories
+                    await this.loadTables();
+                    await this.loadCategories();
+                    
+                    // Show modal
+                    document.getElementById('newOrderModal').classList.remove('hidden');
+                } catch (error) {
+                    console.error('Error showing new order modal:', error);
+                    this.showNotification('Error loading order form: ' + error.message, 'error');
+                }
+            }
+
+            hideNewOrderModal() {
+                document.getElementById('newOrderModal').classList.add('hidden');
+            }
+
+            async loadTables() {
+                try {
+                    if (!this.restaurant) {
+                        console.error('Cannot load tables: No restaurant data');
+                        return;
+                    }
+                    
+                    this.tables = await OrdersService.getTables(this.restaurant.id);
+                    
+                    const tableSelect = document.getElementById('orderTable');
+                    tableSelect.innerHTML = '<option value="">Select a table</option>';
+                    
+                    this.tables.forEach(table => {
+                        const option = document.createElement('option');
+                        option.value = table.id;
+                        option.textContent = `Table ${table.table_number} - ${table.capacity} seats (${table.status || 'Available'})`;
+                        tableSelect.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error loading tables:', error);
+                    this.showNotification('Error loading tables: ' + error.message, 'error');
+                }
+            }
+
+            async loadCategories() {
+                try {
+                    if (!this.restaurant) {
+                        console.error('Cannot load categories: No restaurant data');
+                        return;
+                    }
+                    
+                    this.categories = await OrdersService.getCategories(this.restaurant.id);
+                    
+                    const categorySelect = document.getElementById('menuCategory');
+                    categorySelect.innerHTML = '<option value="">Select category</option>';
+                    
+                    this.categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        categorySelect.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error loading categories:', error);
+                    this.showNotification('Error loading categories: ' + error.message, 'error');
+                }
+            }
+
+            async loadMenuItemsByCategory(categoryId) {
+                try {
+                    const itemSelect = document.getElementById('menuItem');
+                    itemSelect.innerHTML = '<option value="">Select item</option>';
+                    
+                    if (!categoryId) return;
+                    
+                    this.menuItems = await OrdersService.getMenuItemsByCategory(categoryId);
+                    
+                    this.menuItems.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = `${item.name} - $${item.price} ${item.is_available ? '' : '(Unavailable)'}`;
+                        option.disabled = !item.is_available;
+                        itemSelect.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error loading menu items:', error);
+                    this.showNotification('Error loading menu items: ' + error.message, 'error');
+                }
+            }
+
+            addItemToOrder() {
+                const itemSelect = document.getElementById('menuItem');
+                const quantityInput = document.getElementById('itemQuantity');
+                
+                const itemId = itemSelect.value;
+                const quantity = parseInt(quantityInput.value) || 1;
+                
+                if (!itemId) {
+                    this.showNotification('Please select a menu item', 'error');
+                    return;
+                }
+                
+                const selectedItem = this.menuItems.find(item => item.id === itemId);
+                if (!selectedItem) return;
+                
+                // Check if item already exists in order
+                const existingItemIndex = this.selectedOrderItems.findIndex(item => item.menu_item_id === itemId);
+                
+                if (existingItemIndex > -1) {
+                    // Update quantity if item already exists
+                    this.selectedOrderItems[existingItemIndex].quantity += quantity;
+                } else {
+                    // Add new item
+                    this.selectedOrderItems.push({
+                        menu_item_id: itemId,
+                        menu_item_name: selectedItem.name,
+                        price: selectedItem.price,
+                        quantity: quantity,
+                        special_instructions: ''
+                    });
+                }
+                
+                this.updateSelectedItemsDisplay();
+                this.updateOrderSummary();
+                
+                // Reset selection
+                itemSelect.value = '';
+                quantityInput.value = '1';
+            }
+
+            updateSelectedItemsDisplay() {
+                const container = document.getElementById('selectedItems');
+                
+                if (this.selectedOrderItems.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No items added yet</p>';
+                    return;
+                }
+                
+                container.innerHTML = this.selectedOrderItems.map((item, index) => `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-600 last:border-b-0">
+                        <div class="flex-1">
+                            <p class="text-sm font-medium">${item.menu_item_name}</p>
+                            <p class="text-xs text-gray-500">Qty: ${item.quantity} × $${item.price}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold">$${(item.quantity * item.price).toFixed(2)}</span>
+                            <button type="button" class="text-red-500 hover:text-red-700 remove-item-btn" data-index="${index}">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Add event listeners to remove buttons
+                container.querySelectorAll('.remove-item-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.closest('.remove-item-btn').getAttribute('data-index'));
+                        this.removeItemFromOrder(index);
+                    });
+                });
+            }
+
+            removeItemFromOrder(index) {
+                this.selectedOrderItems.splice(index, 1);
+                this.updateSelectedItemsDisplay();
+                this.updateOrderSummary();
+            }
+
+            updateOrderSummary() {
+                const subtotal = this.selectedOrderItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+                
+                document.getElementById('orderSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+                document.getElementById('orderTotal').textContent = `$${subtotal.toFixed(2)}`;
+            }
+
+            async saveNewOrder() {
+                const tableId = document.getElementById('orderTable').value;
+                const customerNotes = document.getElementById('customerNotes').value;
+                const orderType = document.getElementById('orderType').value;
+                
+                if (!tableId) {
+                    this.showNotification('Please select a table', 'error');
+                    return;
+                }
+                
+                if (this.selectedOrderItems.length === 0) {
+                    this.showNotification('Please add at least one item to the order', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                const submitBtn = document.querySelector('#newOrderForm button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="loading-spinner"></span> Creating...';
+                submitBtn.disabled = true;
+
+                try {
+                    const orderData = {
+                        restaurant_id: this.restaurant.id,
+                        table_id: tableId,
+                        order_type: orderType,
+                        customer_notes: customerNotes,
+                        status: 'pending',
+                        total_amount: this.selectedOrderItems.reduce((sum, item) => sum + (item.quantity * item.price), 0),
+                        order_items: this.selectedOrderItems.map(item => ({
+                            menu_item_id: item.menu_item_id,
+                            quantity: item.quantity,
+                            item_price: item.price,
+                            special_instructions: item.special_instructions
+                        }))
+                    };
+                    
+                    const newOrder = await OrdersService.createOrder(orderData);
+                    
+                    this.hideNewOrderModal();
+                    this.showNotification('Order created successfully!', 'success');
+                    await this.loadOrders(); // Reload orders to show the new one
+                    
+                } catch (error) {
+                    console.error('Error creating order:', error);
+                    this.showNotification('Error creating order: ' + error.message, 'error');
+                } finally {
+                    // Reset button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+
+            searchOrders(query) {
+                if (!query.trim()) {
+                    this.applyFilter(this.currentFilter);
+                    this.displayOrders();
+                    return;
+                }
+
+                const filtered = this.filteredOrders.filter(order => 
+                    order.order_number.toLowerCase().includes(query.toLowerCase()) ||
+                    (order.tables?.table_number && order.tables.table_number.toLowerCase().includes(query.toLowerCase()))
+                );
+
+                const container = document.getElementById('ordersTableBody');
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                <span class="material-symbols-outlined text-4xl mb-2">search</span>
+                                <p>No orders matching "${query}"</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                // Display filtered results
+                container.innerHTML = filtered.map(order => {
+                    // Format the time using order_time
+                    const orderTime = new Date(order.order_time);
+                    const formattedTime = orderTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    return `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" data-order-id="${order.id}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">#${order.order_number}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">${order.tables?.table_number || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">${order.order_items?.length || 0} items</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">$${order.total_amount || '0.00'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">${formattedTime}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                order.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                order.status === 'preparing' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
+                                'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                            }">${order.status}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                ${order.status === 'pending' ? `
+                                    <button class="text-orange-500 hover:text-orange-700 mark-preparing-btn" data-order-id="${order.id}" title="Mark as Preparing">
+                                        <span class="material-symbols-outlined text-lg">schedule</span>
+                                    </button>
+                                ` : ''}
+                                ${order.status === 'preparing' ? `
+                                    <button class="text-green-500 hover:text-green-700 mark-completed-btn" data-order-id="${order.id}" title="Mark as Completed">
+                                        <span class="material-symbols-outlined text-lg">check_circle</span>
+                                    </button>
+                                ` : ''}
+                                ${order.status === 'completed' ? `
+                                    <button class="text-red-500 hover:text-red-700 delete-order-btn" data-order-id="${order.id}" title="Delete Order">
+                                        <span class="material-symbols-outlined text-lg">delete</span>
+                                    </button>
+                                ` : ''}
+                                <button class="text-primary hover:text-primary/80 view-order-btn" data-order-id="${order.id}" title="View Details">
+                                    <span class="material-symbols-outlined text-lg">visibility</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `}).join('');
+
+                // Reattach event listeners
+                this.attachRowEventListeners();
+            }
+
+            attachRowEventListeners() {
+                const container = document.getElementById('ordersTableBody');
+                
+                container.querySelectorAll('tr[data-order-id]').forEach(row => {
+                    row.addEventListener('click', (e) => {
+                        if (!e.target.closest('.view-order-btn') && !e.target.closest('.mark-preparing-btn') && !e.target.closest('.mark-completed-btn') && !e.target.closest('.delete-order-btn')) {
+                            const orderId = row.getAttribute('data-order-id');
+                            this.viewOrderDetails(orderId);
+                        }
+                    });
+                });
+
+                container.querySelectorAll('.view-order-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const orderId = button.getAttribute('data-order-id');
+                        this.viewOrderDetails(orderId);
+                    });
+                });
+
+                container.querySelectorAll('.mark-preparing-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const orderId = button.getAttribute('data-order-id');
+                        try {
+                            await OrdersService.updateOrderStatus(orderId, 'preparing');
+                            this.showNotification('Order marked as preparing!', 'success');
+                            await this.loadOrders();
+                        } catch (error) {
+                            console.error('Error updating order status:', error);
+                            this.showNotification('Error updating order: ' + error.message, 'error');
+                        }
+                    });
+                });
+
+                container.querySelectorAll('.mark-completed-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const orderId = button.getAttribute('data-order-id');
+                        try {
+                            await OrdersService.updateOrderStatus(orderId, 'completed');
+                            this.showNotification('Order marked as completed!', 'success');
+                            await this.loadOrders();
+                        } catch (error) {
+                            console.error('Error updating order status:', error);
+                            this.showNotification('Error updating order: ' + error.message, 'error');
+                        }
+                    });
+                });
+
+                container.querySelectorAll('.delete-order-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const orderId = button.getAttribute('data-order-id');
+                        this.confirmDeleteOrder(orderId);
+                    });
+                });
+            }
+
+            showNotification(message, type = 'info') {
+                // Remove existing notification
+                const existingNotification = document.querySelector('.notification-toast');
+                if (existingNotification) {
+                    existingNotification.remove();
+                }
+
+                // Create notification
+                const notification = document.createElement('div');
+                notification.className = `notification-toast fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg ${
+                    type === 'success' ? 'bg-green-500 text-white' : 
+                    type === 'error' ? 'bg-red-500 text-white' : 
+                    'bg-blue-500 text-white'
+                }`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            }
+
+            async logout() {
+                try {
+                    await AuthService.logout();
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            }
+        }
+
+        // Initialize order management
+        const orderManagement = new OrderManagement();
+        window.orderManagement = orderManagement;
+    </script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>DineFlow - Streamline Your Restaurant Operations</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff7b00",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#181410",
+                        "card-light": "#ffffff",
+                        "card-dark": "#23190f",
+                        "text-light": "#181410",
+                        "text-dark": "#f8f7f5",
+                        "text-muted-light": "#8d755e",
+                        "text-muted-dark": "#a39587",
+                        "border-light": "#e7e0da",
+                        "border-dark": "#3a2d1f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px",
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+    <div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+            <!-- TopNavBar Section -->
+            <header class="sticky top-0 z-50 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+                <div class="max-w-6xl mx-auto px-4">
+                    <div class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-light dark:border-border-dark py-3">
+                        <div class="flex items-center gap-4 text-text-light dark:text-text-dark">
+                            <div class="size-6 text-primary">
+                                <svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight tracking-[-0.015em]">DineFlow</h2>
+                        </div>
+                        <div class="hidden md:flex flex-1 justify-end items-center gap-8">
+                            <nav class="flex items-center gap-9">
+                                <a class="text-text-light dark:text-text-dark text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors" href="#features">Features</a>
+                                <a class="text-text-light dark:text-text-dark text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors" href="#pricing">Pricing</a>
+                                <a class="text-text-light dark:text-text-dark text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors" href="#testimonials">Testimonials</a>
+                            </nav>
+                            <div class="flex gap-2">
+                                <a href="admin/login.html" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-background-light dark:bg-card-dark text-text-light dark:text-text-dark text-sm font-bold leading-normal tracking-[0.015em] border border-border-light dark:border-border-dark hover:bg-border-light dark:hover:bg-border-dark transition-colors">
+                                    <span class="truncate">Login</span>
+                                </a>
+                                <a href="admin/register.html" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-background-dark text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity">
+                                    <span class="truncate">Sign Up</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex flex-col flex-1">
+                <!-- Hero Section -->
+                <section class="w-full py-20 md:py-32">
+                    <div class="max-w-6xl mx-auto px-4">
+                        <div class="@container">
+                            <div class="flex flex-col gap-10 @[864px]:flex-row @[864px]:items-center">
+                                <div class="flex flex-col gap-6 text-center @[864px]:text-left @[864px]:w-1/2">
+                                    <h1 class="text-text-light dark:text-text-dark text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-6xl">
+                                        Streamline Your Restaurant Operations with DineFlow
+                                    </h1>
+                                    <h2 class="text-text-muted-light dark:text-text-muted-dark text-base font-normal leading-normal @[480px]:text-lg">
+                                        The all-in-one platform for QR ordering, menu management, and analytics designed to boost your efficiency and delight your diners.
+                                    </h2>
+                                    <div class="flex flex-wrap gap-3 justify-center @[864px]:justify-start">
+                                        <a href="admin/register.html" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-background-dark text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity">
+                                            <span class="truncate">Get Started Free</span>
+                                        </a>
+                                        <a href="#demo" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark text-base font-bold leading-normal tracking-[0.015em] border border-border-light dark:border-border-dark hover:bg-border-light dark:hover:bg-border-dark transition-colors">
+                                            <span class="truncate">Request a Demo</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="w-full @[864px]:w-1/2">
+                                    <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl shadow-lg" data-alt="A tablet showing the DineFlow dashboard interface in a restaurant setting." style='background-image: url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80");'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Features Section -->
+                <section id="features" class="w-full py-16 md:py-24 bg-card-light dark:bg-card-dark border-y border-border-light dark:border-border-dark">
+                    <div class="max-w-6xl mx-auto px-4">
+                        <div class="flex flex-col gap-12 @container">
+                            <div class="flex flex-col gap-4 text-center max-w-3xl mx-auto">
+                                <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em]">Everything you need to run your restaurant smoothly</h2>
+                                <p class="text-text-muted-light dark:text-text-muted-dark text-base font-normal leading-normal">
+                                    DineFlow provides powerful, easy-to-use tools that help you manage your operations, reduce costs, and enhance the customer experience.
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-1 @[480px]:grid-cols-2 @[864px]:grid-cols-4 gap-6">
+                                <div class="flex flex-col gap-4 rounded-lg bg-background-light dark:bg-background-dark p-6 border border-border-light dark:border-border-dark">
+                                    <div class="flex items-center justify-center size-12 rounded-lg bg-primary/20 text-primary">
+                                        <span class="material-symbols-outlined">qr_code_scanner</span>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <h3 class="text-text-light dark:text-text-dark text-base font-bold leading-tight">Seamless QR Code Ordering</h3>
+                                        <p class="text-text-muted-light dark:text-text-muted-dark text-sm font-normal leading-normal">
+                                            Customers scan a QR code to view your menu, place orders, and pay directly from their phones.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-4 rounded-lg bg-background-light dark:bg-background-dark p-6 border border-border-light dark:border-border-dark">
+                                    <div class="flex items-center justify-center size-12 rounded-lg bg-primary/20 text-primary">
+                                        <span class="material-symbols-outlined">menu_book</span>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <h3 class="text-text-light dark:text-text-dark text-base font-bold leading-tight">Effortless Menu Management</h3>
+                                        <p class="text-text-muted-light dark:text-text-muted-dark text-sm font-normal leading-normal">
+                                            Update your menu in real-time. Add new items or adjust prices with just a few clicks.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-4 rounded-lg bg-background-light dark:bg-background-dark p-6 border border-border-light dark:border-border-dark">
+                                    <div class="flex items-center justify-center size-12 rounded-lg bg-primary/20 text-primary">
+                                        <span class="material-symbols-outlined">receipt_long</span>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <h3 class="text-text-light dark:text-text-dark text-base font-bold leading-tight">Real-Time Order Tracking</h3>
+                                        <p class="text-text-muted-light dark:text-text-muted-dark text-sm font-normal leading-normal">
+                                            Keep your front-of-house and kitchen in perfect sync. Monitor order status from placement to table.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-4 rounded-lg bg-background-light dark:bg-background-dark p-6 border border-border-light dark:border-border-dark">
+                                    <div class="flex items-center justify-center size-12 rounded-lg bg-primary/20 text-primary">
+                                        <span class="material-symbols-outlined">bar_chart</span>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <h3 class="text-text-light dark:text-text-dark text-base font-bold leading-tight">Insightful Analytics</h3>
+                                        <p class="text-text-muted-light dark:text-text-muted-dark text-sm font-normal leading-normal">
+                                            Make data-driven decisions. Track sales trends, identify popular dishes, and grow your business.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Testimonials Section -->
+                <section id="testimonials" class="w-full py-20 md:py-32">
+                    <div class="max-w-6xl mx-auto px-4">
+                        <div class="flex flex-col gap-12">
+                            <div class="text-center">
+                                <h4 class="text-primary text-sm font-bold leading-normal tracking-[0.015em] uppercase">Loved by Restaurant Owners Everywhere</h4>
+                                <h2 class="text-text-light dark:text-text-dark text-3xl md:text-4xl font-bold mt-2">What Our Partners Are Saying</h2>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div class="flex flex-col gap-4 rounded-lg p-6 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark">
+                                    <p class="text-text-light dark:text-text-dark">"DineFlow has completely transformed our ordering process. Our staff is less stressed, and customers love the convenience. Table turnover has increased by 20%!"</p>
+                                    <div class="flex items-center gap-4 mt-auto pt-4">
+                                        <img class="size-12 rounded-full object-cover" data-alt="Photo of Sarah L., owner of The Coastal Bistro." src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80"/>
+                                        <div>
+                                            <p class="font-bold text-text-light dark:text-text-dark">Sarah L.</p>
+                                            <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Owner, The Coastal Bistro</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-4 rounded-lg p-6 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark">
+                                    <p class="text-text-light dark:text-text-dark">"The analytics are a game-changer. I can instantly see which dishes are our bestsellers and adjust the menu for profitability. It's incredibly powerful."</p>
+                                    <div class="flex items-center gap-4 mt-auto pt-4">
+                                        <img class="size-12 rounded-full object-cover" data-alt="Photo of Mike R., manager of Urban Eatery." src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80"/>
+                                        <div>
+                                            <p class="font-bold text-text-light dark:text-text-dark">Mike R.</p>
+                                            <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Manager, Urban Eatery</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-4 rounded-lg p-6 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark">
+                                    <p class="text-text-light dark:text-text-dark">"Switching to DineFlow was seamless. The support team was fantastic, and we were up and running in a single afternoon. Our customers appreciate the modern experience."</p>
+                                    <div class="flex items-center gap-4 mt-auto pt-4">
+                                        <img class="size-12 rounded-full object-cover" data-alt="Photo of Chen W., owner of The Golden Wok." src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80"/>
+                                        <div>
+                                            <p class="font-bold text-text-light dark:text-text-dark">Chen W.</p>
+                                            <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Owner, The Golden Wok</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CTA Section -->
+                <section class="w-full py-20 md:py-32 bg-card-light dark:bg-card-dark border-t border-border-light dark:border-border-dark">
+                    <div class="max-w-3xl mx-auto px-4 text-center">
+                        <div class="flex flex-col gap-6 items-center">
+                            <h2 class="text-text-light dark:text-text-dark text-3xl md:text-4xl font-bold">Ready to Transform Your Restaurant?</h2>
+                            <p class="text-text-muted-light dark:text-text-muted-dark text-lg">Join hundreds of successful restaurants using DineFlow to improve efficiency and increase revenue. Get started today.</p>
+                            <div class="flex flex-wrap gap-3 justify-center">
+                                <a href="admin/register.html" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-background-dark text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity">
+                                    <span class="truncate">Get Started Free</span>
+                                </a>
+                                <a href="#demo" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark text-base font-bold leading-normal tracking-[0.015em] border border-border-light dark:border-border-dark hover:bg-border-light dark:hover:bg-border-dark transition-colors">
+                                    <span class="truncate">Request a Demo</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Footer Section -->
+            <footer class="w-full py-12 bg-background-dark text-background-light">
+                <div class="max-w-6xl mx-auto px-4">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                        <div class="flex items-center gap-4">
+                            <div class="size-6 text-primary">
+                                <svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-lg font-bold">DineFlow</h2>
+                        </div>
+                        <nav class="flex flex-wrap justify-center gap-6">
+                            <a class="text-sm font-medium hover:text-primary transition-colors" href="#features">Features</a>
+                            <a class="text-sm font-medium hover:text-primary transition-colors" href="#pricing">Pricing</a>
+                            <a class="text-sm font-medium hover:text-primary transition-colors" href="#testimonials">Testimonials</a>
+                            <a class="text-sm font-medium hover:text-primary transition-colors" href="#contact">Contact</a>
+                        </nav>
+                        <div class="text-sm text-text-muted-dark">© 2024 DineFlow. All rights reserved.</div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

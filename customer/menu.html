@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - DineFlow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .loading-spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #ff8000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .variant-option img {
+            transition: transform 0.2s ease;
+        }
+        .variant-option:hover img {
+            transform: scale(1.05);
+        }
+        .variant-option.border-orange-500 {
+            border-width: 2px;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white text-sm">restaurant</span>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-900" id="restaurantName">Restaurant Menu</h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button id="cartButton" class="relative p-2 rounded-lg hover:bg-gray-100">
+                        <span class="material-symbols-outlined text-gray-600">shopping_cart</span>
+                        <span id="cartCount" class="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-6">
+        <!-- Table Info -->
+        <div id="tableInfo" class="bg-white rounded-lg shadow-sm p-4 mb-6 border">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900">Table <span id="tableNumber">-</span></h2>
+                    <p class="text-gray-600 text-sm">Scan the QR code to view this menu</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-600">Order will be sent directly to the kitchen</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Navigation -->
+        <div class="mb-6 overflow-x-auto">
+            <div id="categoriesNav" class="flex space-x-2 pb-2">
+                <!-- Categories will be loaded here -->
+                <div class="px-4 py-2 bg-gray-200 rounded-full text-gray-600 animate-pulse">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Menu Items Grid -->
+        <div id="menuItemsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+            <!-- Menu items will be loaded here -->
+            <div class="col-span-full text-center py-12">
+                <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">restaurant</span>
+                <p class="text-gray-500">Loading menu items...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Cart Drawer -->
+    <div id="cartDrawer" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl">
+            <div class="flex flex-col h-full">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-4 border-b">
+                    <h2 class="text-lg font-semibold">Your Order</h2>
+                    <button id="closeCart" class="p-2 rounded-lg hover:bg-gray-100">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <!-- Cart Items -->
+                <div id="cartItems" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <!-- Cart items will be loaded here -->
+                    <div class="text-center py-12 text-gray-500">
+                        <span class="material-symbols-outlined text-4xl mb-2">shopping_cart</span>
+                        <p>Your cart is empty</p>
+                    </div>
+                </div>
+
+                <!-- Cart Summary -->
+                <div class="border-t p-4 space-y-4">
+                    <div class="flex justify-between text-lg font-semibold">
+                        <span>Total:</span>
+                        <span id="cartTotal">$0.00</span>
+                    </div>
+                    <div class="space-y-2">
+                        <textarea id="orderNotes" placeholder="Any special instructions?" class="w-full p-3 border rounded-lg resize-none" rows="3"></textarea>
+                        <button id="placeOrderBtn" class="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Place Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Variant Selection Modal -->
+    <div id="variantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold" id="variantModalTitle">Choose Option</h3>
+                <button id="closeVariantModal" class="p-1 rounded-lg hover:bg-gray-100">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <div id="variantContent" class="space-y-3">
+                <!-- Variants will be loaded here -->
+            </div>
+            
+            <div class="flex gap-3 justify-end mt-6 pt-4 border-t">
+                <button id="cancelVariant" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+                <button id="confirmVariant" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+                    Continue to Add-ons
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add-Ons Modal -->
+    <div id="addonsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold" id="addonsModalTitle">Customize Your Item</h3>
+                <button id="closeAddonsModal" class="p-1 rounded-lg hover:bg-gray-100">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <!-- Selected Variant Info -->
+            <div id="selectedVariantInfo" class="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4 hidden">
+                <div class="flex justify-between items-center">
+                    <span class="font-medium text-orange-800" id="selectedVariantName"></span>
+                    <span class="font-semibold text-orange-600" id="selectedVariantPrice"></span>
+                </div>
+            </div>
+            
+            <div id="addonsContent" class="space-y-4">
+                <!-- Add-ons will be loaded here -->
+            </div>
+            
+            <div class="flex gap-3 justify-end mt-6 pt-4 border-t">
+                <button id="cancelAddons" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+                <button id="confirmAddons" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Cart Button -->
+    <button id="floatingCartBtn" class="fixed bottom-6 right-6 bg-orange-500 text-white p-4 rounded-full shadow-lg hover:bg-orange-600 transition-colors z-30 hidden">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        <span id="floatingCartCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+    </button>
+
+    <!-- Order Confirmation Modal -->
+    <div id="orderConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="text-center">
+                <span class="material-symbols-outlined text-6xl text-green-500 mb-4">check_circle</span>
+                <h3 class="text-xl font-semibold mb-2">Order Placed Successfully!</h3>
+                <p class="text-gray-600 mb-6">Your order has been sent to the kitchen. You'll be notified when it's ready.</p>
+                <div class="space-y-2 text-sm text-gray-500 mb-6">
+                    <p>Order #: <span id="confirmationOrderNumber" class="font-semibold">-</span></p>
+                    <p>Estimated wait time: <span id="estimatedWaitTime" class="font-semibold">15-20 minutes</span></p>
+                </div>
+                <button id="closeConfirmation" class="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600">
+                    Continue Browsing
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error State (Hidden by default) -->
+    <div id="errorState" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md mx-4 text-center">
+            <span class="material-symbols-outlined text-6xl text-red-500 mb-4">error</span>
+            <h3 class="text-xl font-semibold mb-2">Error</h3>
+            <p class="text-gray-600 mb-6" id="errorMessage"></p>
+            <button onclick="location.reload()" class="bg-orange-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-600">
+                Try Again
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from '../js/supabase.js';
+
+        class CustomerMenu {
+            constructor() {
+                // 🧩 Restaurant and table info
+                this.restaurantId = null;
+                this.restaurantUserId = null;
+                this.tableId = null;
+
+                // 🗂️ Menu and cart state
+                this.categories = [];
+                this.menuItems = [];
+                this.menuItemVariants = {}; // Store variants by menu item ID
+                this.cart = [];
+
+                // 🧠 UI and interaction state
+                this.currentCategory = 'all';
+                this.currentMenuItem = null;
+                this.selectedVariant = null;
+                this.selectedAddons = [];
+                this.addonGroups = [];
+
+                // 🚫 Prevent double order submissions
+                this.isPlacingOrder = false;
+
+                // 🚀 Initialize menu
+                this.init();
+            }
+
+            async init() {
+                const urlParams = new URLSearchParams(window.location.search);
+                this.tableId = urlParams.get('table');
+                
+                if (!this.tableId) {
+                    this.showError('Invalid table QR code. Please scan a valid QR code.');
+                    return;
+                }
+
+                if (!this.isValidTableId(this.tableId)) {
+                    this.showError('Invalid table QR code format. Please scan a valid QR code.');
+                    return;
+                }
+                
+                await this.loadTableInfo();
+                await this.loadMenuData();
+                this.setupEventListeners();
+            }
+
+            async loadTableInfo() {
+                try {
+                    const { data: table, error } = await supabase
+                        .from('tables')
+                        .select('*, restaurants(name, user_id)')
+                        .eq('id', this.tableId)
+                        .single();
+
+                    if (error) throw error;
+                    if (!table) throw new Error('Table not found');
+
+                    this.restaurantId = table.restaurant_id;
+                    this.restaurantUserId = table.restaurants.user_id;
+                    
+                    document.getElementById('restaurantName').textContent = table.restaurants.name;
+                    document.getElementById('tableNumber').textContent = table.table_number;
+
+                } catch (error) {
+                    console.error('Error loading table info:', error);
+                    this.showError('Error loading table information: ' + error.message);
+                }
+            }
+
+            async loadMenuData() {
+                try {
+                    // Load categories
+                    const { data: categories, error: categoriesError } = await supabase
+                        .from('categories')
+                        .select('*')
+                        .eq('restaurant_id', this.restaurantId)
+                        .order('display_order');
+
+                    if (categoriesError) throw categoriesError;
+                    this.categories = categories || [];
+
+                    // Load menu items
+                    let menuItems = [];
+                    const { data: itemsByRestaurant, error: err1 } = await supabase
+                        .from('menu_items')
+                        .select('*')
+                        .eq('restaurant_id', this.restaurantId)
+                        .eq('is_available', true)
+                        .order('created_at');
+
+                    if (!err1 && itemsByRestaurant?.length) {
+                        menuItems = itemsByRestaurant;
+                    } else {
+                        const { data: itemsByUser, error: err2 } = await supabase
+                            .from('menu_items')
+                            .select('*')
+                            .eq('user_id', this.restaurantUserId)
+                            .eq('is_available', true)
+                            .order('created_at');
+                            
+                        if (!err2 && itemsByUser?.length) {
+                            menuItems = itemsByUser;
+                        }
+                    }
+
+                    this.menuItems = menuItems;
+
+                    // Load variants for all menu items
+                    await this.loadAllVariants();
+
+                    this.displayCategories();
+                    this.displayMenuItems();
+
+                } catch (error) {
+                    console.error('Error loading menu data:', error);
+                    this.showError('Error loading menu. Please try again.');
+                }
+            }
+
+            async loadAllVariants() {
+                try {
+                    // Load variants for all menu items at once
+                    const menuItemIds = this.menuItems.map(item => item.id);
+                    
+                    if (menuItemIds.length === 0) return;
+
+                    const { data: variants, error } = await supabase
+                        .from('menu_item_variants')
+                        .select('*')
+                        .in('menu_item_id', menuItemIds)
+                        .order('created_at');
+
+                    if (error) throw error;
+
+                    // Group variants by menu item ID
+                    this.menuItemVariants = {};
+                    variants.forEach(variant => {
+                        if (!this.menuItemVariants[variant.menu_item_id]) {
+                            this.menuItemVariants[variant.menu_item_id] = [];
+                        }
+                        this.menuItemVariants[variant.menu_item_id].push(variant);
+                    });
+
+                } catch (error) {
+                    console.error('Error loading variants:', error);
+                    // Continue without variants if there's an error
+                }
+            }
+
+            async loadAddonsForVariant(variantId) {
+                try {
+                    // First try to get addon groups for the variant
+                    const { data: variantAddons, error: variantError } = await supabase
+                        .from('variant_addon_groups')
+                        .select(`
+                            addon_groups (
+                                id,
+                                name,
+                                description,
+                                is_required,
+                                max_selections,
+                                addons (
+                                    id,
+                                    name,
+                                    price,
+                                    is_available
+                                )
+                            )
+                        `)
+                        .eq('variant_id', variantId);
+
+                    if (!variantError && variantAddons && variantAddons.length > 0) {
+                        const addonGroups = variantAddons
+                            .map(item => item.addon_groups)
+                            .filter(group => group !== null)
+                            .map(group => ({
+                                id: group.id,
+                                name: group.name,
+                                description: group.description || '',
+                                is_required: group.is_required || false,
+                                max_selections: group.max_selections || null,
+                                addons: (group.addons || []).filter(addon => addon.is_available)
+                            }))
+                            .filter(group => group.addons.length > 0);
+
+                        return addonGroups;
+                    }
+
+                    // If no variant-specific addons, try menu item level addons
+                    const variant = await supabase
+                        .from('menu_item_variants')
+                        .select('menu_item_id')
+                        .eq('id', variantId)
+                        .single();
+
+                    if (variant.data) {
+                        return await this.loadAddonsForMenuItem(variant.data.menu_item_id);
+                    }
+
+                    return [];
+
+                } catch (error) {
+                    console.error('Error loading addons for variant:', error);
+                    return [];
+                }
+            }
+
+            async loadAddonsForMenuItem(menuItemId) {
+                try {
+                    const { data: menuItemAddons, error } = await supabase
+                        .from('menu_item_addons')
+                        .select(`
+                            addon_groups (
+                                id,
+                                name,
+                                description,
+                                is_required,
+                                max_selections,
+                                addons (
+                                    id,
+                                    name,
+                                    price,
+                                    is_available
+                                )
+                            )
+                        `)
+                        .eq('menu_item_id', menuItemId);
+
+                    if (error) return [];
+
+                    const addonGroups = (menuItemAddons || [])
+                        .map(item => item.addon_groups)
+                        .filter(group => group !== null)
+                        .map(group => ({
+                            id: group.id,
+                            name: group.name,
+                            description: group.description || '',
+                            is_required: group.is_required || false,
+                            max_selections: group.max_selections || null,
+                            addons: (group.addons || []).filter(addon => addon.is_available)
+                        }))
+                        .filter(group => group.addons.length > 0);
+
+                    return addonGroups;
+
+                } catch (error) {
+                    console.error('Error loading addons:', error);
+                    return [];
+                }
+            }
+
+            showVariantModal(itemId) {
+    const item = this.menuItems.find(i => i.id === itemId);
+    if (!item) {
+        console.error('Menu item not found:', itemId);
+        return;
+    }
+
+    this.currentMenuItem = item;
+    this.selectedVariant = null;
+
+    const variants = this.menuItemVariants[itemId] || [];
+    
+    document.getElementById('variantModalTitle').textContent = `Choose ${item.name} Option`;
+
+    const content = document.getElementById('variantContent');
+    
+    if (variants.length === 0) {
+        // If no variants, go directly to add-ons
+        this.hideVariantModal();
+        this.showAddonsModal(itemId);
+        return;
+    }
+
+    content.innerHTML = variants.map(variant => {
+        // Use variant image if available, otherwise use item image, otherwise use placeholder
+        const imageUrl = variant.image_url || item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80';
+        const finalPrice = (parseFloat(item.price) + parseFloat(variant.additional_price || 0)).toFixed(2);
+        
+        return `
+        <label class="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:border-orange-300 transition-colors variant-option">
+            <input type="radio" name="variant" value="${variant.id}" class="mt-1 variant-radio">
+            <div class="flex items-start gap-3 flex-1">
+                <!-- Variant Image -->
+                <div class="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+                    <img src="${imageUrl}" alt="${variant.name}" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex justify-between items-start">
+                        <span class="font-medium text-gray-900 truncate">${variant.name}</span>
+                        <span class="font-semibold text-orange-500 whitespace-nowrap ml-2">
+                            $${finalPrice}
+                        </span>
+                    </div>
+                    ${variant.additional_price > 0 ? `
+                        <p class="text-sm text-gray-600 mt-1">
+                            +$${parseFloat(variant.additional_price).toFixed(2)} additional
+                        </p>
+                    ` : ''}
+                </div>
+            </div>
+        </label>
+        `;
+    }).join('');
+
+    // Clear any previous event listeners and add new ones
+    this.setupVariantEventListeners(variants);
+    
+    document.getElementById('variantModal').classList.remove('hidden');
+}
+
+setupVariantEventListeners(variants) {
+    const content = document.getElementById('variantContent');
+    
+    // Remove any existing event listeners first
+    content.querySelectorAll('.variant-option').forEach(option => {
+        option.replaceWith(option.cloneNode(true));
+    });
+
+    // Add new event listeners
+    content.querySelectorAll('.variant-option').forEach(option => {
+        option.addEventListener('click', (e) => {
+            // Remove selection from other options
+            content.querySelectorAll('.variant-option').forEach(opt => {
+                opt.classList.remove('border-orange-500', 'bg-orange-50');
+                opt.classList.add('border-gray-200');
+            });
+            
+            // Select this option
+            option.classList.remove('border-gray-200');
+            option.classList.add('border-orange-500', 'bg-orange-50');
+            
+            const radio = option.querySelector('.variant-radio');
+            radio.checked = true;
+            
+            // Update selected variant
+            const variantId = radio.value;
+            const variant = variants.find(v => v.id === variantId);
+            
+            if (variant) {
+                this.selectedVariant = variant;
+                console.log('Variant selected:', variant);
+            } else {
+                console.error('Variant not found:', variantId);
+                this.selectedVariant = null;
+            }
+        });
+    });
+}
+            async showAddonsModal(itemId, variantId = null) {
+    // Validate input parameters
+    if (!itemId) {
+        console.error('No itemId provided to showAddonsModal');
+        return;
+    }
+
+    const item = this.menuItems.find(i => i.id === itemId);
+    if (!item) {
+        console.error('Menu item not found:', itemId);
+        this.showToast('Error: Menu item not found', 'error');
+        return;
+    }
+
+    this.currentMenuItem = item;
+    this.selectedAddons = [];
+
+    let addonGroups = [];
+    let finalPrice = parseFloat(item.price);
+    let variantName = '';
+
+    if (variantId) {
+        // Validate variant
+        const variants = this.menuItemVariants[itemId] || [];
+        const variant = variants.find(v => v.id === variantId);
+        
+        if (variant) {
+            addonGroups = await this.loadAddonsForVariant(variantId);
+            finalPrice += parseFloat(variant.additional_price || 0);
+            variantName = variant.name;
+            this.selectedVariant = variant;
+        } else {
+            console.error('Variant not found:', variantId);
+            // Fallback to menu item addons
+            addonGroups = await this.loadAddonsForMenuItem(itemId);
+            this.selectedVariant = null;
+        }
+    } else {
+        // Load addons for the menu item (no variants)
+        addonGroups = await this.loadAddonsForMenuItem(itemId);
+        this.selectedVariant = null;
+    }
+
+                // Update modal title and show variant info if applicable
+                document.getElementById('addonsModalTitle').textContent = `Customize ${item.name}`;
+                
+                const variantInfo = document.getElementById('selectedVariantInfo');
+                if (variantName) {
+                    document.getElementById('selectedVariantName').textContent = variantName;
+                    document.getElementById('selectedVariantPrice').textContent = `$${finalPrice.toFixed(2)}`;
+                    variantInfo.classList.remove('hidden');
+                } else {
+                    variantInfo.classList.add('hidden');
+                }
+
+                const content = document.getElementById('addonsContent');
+                
+                if (addonGroups.length === 0) {
+                    content.innerHTML = `
+                        <div class="text-center py-8">
+                            <span class="material-symbols-outlined text-4xl text-gray-300 mb-4">restaurant</span>
+                            <p class="text-gray-500">No customization options available</p>
+                            <p class="text-sm text-gray-400 mt-2">This item will be added as-is</p>
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = addonGroups.map(group => `
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">${group.name}</h4>
+                                    ${group.description ? `<p class="text-sm text-gray-600 mt-1">${group.description}</p>` : ''}
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        ${group.is_required ? 'Required • ' : 'Optional • '}
+                                        ${group.max_selections ? `Max ${group.max_selections} selections` : 'Multiple selections allowed'}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                ${group.addons.map(addon => `
+                                    <label class="flex items-start gap-3 p-2 rounded-lg border border-gray-200 hover:border-orange-300 cursor-pointer transition-colors">
+                                        <input type="${group.max_selections === 1 ? 'radio' : 'checkbox'}" 
+                                               name="addon-group-${group.id}" 
+                                               value="${addon.id}" 
+                                               class="mt-1 addon-checkbox"
+                                               data-addon='${JSON.stringify(addon).replace(/'/g, "&#39;")}'
+                                               ${group.is_required && group.max_selections === 1 ? 'required' : ''}>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <span class="font-medium text-gray-900">${addon.name}</span>
+                                                <span class="text-orange-500 font-semibold">+$${parseFloat(addon.price).toFixed(2)}</span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+
+                    this.setupAddonEventListeners();
+                }
+
+                document.getElementById('addonsModal').classList.remove('hidden');
+            }
+
+            setupAddonEventListeners() {
+                document.querySelectorAll('.addon-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => {
+                        const groupId = e.target.name.replace('addon-group-', '');
+                        this.validateAddonGroup(groupId);
+                    });
+                });
+            }
+
+            validateAddonGroup(groupId) {
+                const checkboxes = document.querySelectorAll(`[name="addon-group-${groupId}"]`);
+                const checkedBoxes = document.querySelectorAll(`[name="addon-group-${groupId}"]:checked`);
+                const group = this.addonGroups.find(g => g.id === groupId);
+                
+                if (!group) return;
+                
+                if (group.is_required && checkedBoxes.length === 0) {
+                    this.showToast(`${group.name} is required`, 'warning');
+                    return;
+                }
+                
+                if (group.max_selections && checkedBoxes.length > group.max_selections) {
+                    checkedBoxes[checkedBoxes.length - 1].checked = false;
+                    this.showToast(`Maximum ${group.max_selections} selections allowed for ${group.name}`, 'warning');
+                }
+            }
+
+            addToCartWithAddons() {
+    if (!this.currentMenuItem) return;
+
+    // Validate required addons
+    for (const group of this.addonGroups) {
+        if (group.is_required) {
+            const checked = document.querySelectorAll(`[name="addon-group-${group.id}"]:checked`);
+            if (checked.length === 0) {
+                this.showToast(`${group.name} is required`, 'error');
+                return;
+            }
+        }
+    }
+
+    // Get selected addons
+    const selectedAddons = [];
+    document.querySelectorAll('.addon-checkbox:checked').forEach(checkbox => {
+        const addonData = JSON.parse(checkbox.getAttribute('data-addon').replace(/&#39;/g, "'"));
+        selectedAddons.push({
+            id: addonData.id,
+            name: addonData.name,
+            price: parseFloat(addonData.price),
+            quantity: 1
+        });
+    });
+
+    // Calculate final price and get variant image
+    let finalPrice = parseFloat(this.currentMenuItem.price);
+    let variantInfo = null;
+    let variantImageUrl = null;
+
+    if (this.selectedVariant) {
+        finalPrice += parseFloat(this.selectedVariant.additional_price || 0);
+        variantInfo = {
+            id: this.selectedVariant.id,
+            name: this.selectedVariant.name,
+            additional_price: parseFloat(this.selectedVariant.additional_price || 0),
+            image_url: this.selectedVariant.image_url // Store variant image
+        };
+        variantImageUrl = this.selectedVariant.image_url;
+    }
+
+    const item = this.currentMenuItem;
+    const cartItemKey = this.generateCartItemKey(item.id, variantInfo, selectedAddons);
+
+    const existingItemIndex = this.cart.findIndex(cartItem => 
+        cartItem.key === cartItemKey
+    );
+
+    if (existingItemIndex !== -1) {
+        this.cart[existingItemIndex].quantity += 1;
+    } else {
+        this.cart.push({
+            key: cartItemKey,
+            id: item.id,
+            name: item.name,
+            base_price: parseFloat(item.price),
+            final_price: finalPrice,
+            quantity: 1,
+            special_instructions: '',
+            selectedAddons: selectedAddons,
+            variant: variantInfo,
+            image_url: variantImageUrl || item.image_url // Use variant image if available
+        });
+    }
+
+    this.updateCartUI();
+    this.showToast(`Added ${item.name} to cart`, 'success');
+    this.hideAddonsModal();
+}
+
+            generateCartItemKey(itemId, variant, selectedAddons) {
+                const variantId = variant ? variant.id : 'no-variant';
+                const addonIds = selectedAddons.map(addon => addon.id).sort().join(',');
+                return `${itemId}-${variantId}-${addonIds}`;
+            }
+
+            displayCategories() {
+                const container = document.getElementById('categoriesNav');
+                
+                const categoriesHtml = [
+                    `<button class="category-btn px-4 py-2 rounded-full font-medium whitespace-nowrap ${
+                        this.currentCategory === 'all' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }" data-category="all">All Items</button>`,
+                    ...this.categories.map(category => `
+                        <button class="category-btn px-4 py-2 rounded-full font-medium whitespace-nowrap ${
+                            this.currentCategory === category.id ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }" data-category="${category.id}">${category.name}</button>
+                    `)
+                ].join('');
+
+                container.innerHTML = categoriesHtml;
+
+                container.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const category = e.target.getAttribute('data-category');
+                        this.filterByCategory(category);
+                    });
+                });
+            }
+
+            displayMenuItems() {
+    const container = document.getElementById('menuItemsGrid');
+    
+    let filteredItems = this.menuItems;
+    if (this.currentCategory !== 'all') {
+        filteredItems = this.menuItems.filter(item => item.category_id === this.currentCategory);
+    }
+
+    if (filteredItems.length === 0) {
+        container.innerHTML = `
+            <div class="col-span-full text-center py-12">
+                <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">search_off</span>
+                <p class="text-gray-500">No items found in this category</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = filteredItems.map(item => {
+        const variants = this.menuItemVariants[item.id] || [];
+        const hasVariants = variants.length > 0;
+        
+        // Calculate price range if there are variants
+        let priceDisplay = `$${parseFloat(item.price).toFixed(2)}`;
+        if (hasVariants) {
+            const prices = variants.map(v => parseFloat(item.price) + parseFloat(v.additional_price || 0));
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+            if (minPrice !== maxPrice) {
+                priceDisplay = `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
+            }
+        }
+
+        // Use the first variant image if available, otherwise use item image
+        const displayImage = item.image_url
+        return `
+        <div class="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
+            <div class="h-48 bg-gray-200 bg-cover bg-center" style="background-image: url('${displayImage}')"></div>
+            <div class="p-4">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="font-semibold text-gray-900 text-lg">${item.name}</h3>
+                    <span class="font-bold text-orange-500">${priceDisplay}</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">${item.description || 'Delicious menu item'}</p>
+                ${hasVariants ? `
+                    <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                        <span class="material-symbols-outlined text-base">layers</span>
+                        <span>${variants.length} option${variants.length !== 1 ? 's' : ''} available</span>
+                    </div>
+                ` : ''}
+                <button class="add-to-cart-btn w-full bg-orange-500 text-white py-2 rounded-lg font-medium hover:bg-orange-600 transition-colors" data-item-id="${item.id}">
+                    ${hasVariants ? 'Choose Options' : 'Add to Cart'}
+                </button>
+            </div>
+        </div>
+        `;
+    }).join('');
+
+    container.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const itemId = e.target.getAttribute('data-item-id');
+            const variants = this.menuItemVariants[itemId] || [];
+            
+            if (variants.length > 0) {
+                this.showVariantModal(itemId);
+            } else {
+                this.showAddonsModal(itemId);
+            }
+        });
+    });
+}
+
+            filterByCategory(categoryId) {
+                this.currentCategory = categoryId;
+                
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    const btnCategory = btn.getAttribute('data-category');
+                    if (btnCategory === categoryId) {
+                        btn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                        btn.classList.add('bg-orange-500', 'text-white');
+                    } else {
+                        btn.classList.remove('bg-orange-500', 'text-white');
+                        btn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                    }
+                });
+
+                this.displayMenuItems();
+            }
+
+            calculateCartTotal() {
+                let total = 0;
+                
+                this.cart.forEach((item, index) => {
+                    const itemTotal = item.final_price * item.quantity;
+                    
+                    let addonsTotal = 0;
+                    if (item.selectedAddons && item.selectedAddons.length > 0) {
+                        item.selectedAddons.forEach(addon => {
+                            const addonPrice = parseFloat(addon.price);
+                            const addonQty = parseInt(addon.quantity || 1);
+                            addonsTotal += addonPrice * addonQty;
+                        });
+                    }
+                    
+                    const itemGrandTotal = itemTotal + addonsTotal;
+                    total += itemGrandTotal;
+                });
+                
+                const roundedTotal = Math.round(total * 100) / 100;
+                return roundedTotal;
+            }
+
+            updateCartUI() {
+                const totalItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+                const totalPrice = this.calculateCartTotal();
+
+                document.getElementById('cartCount').textContent = totalItems;
+                document.getElementById('floatingCartCount').textContent = totalItems;
+
+                if (totalItems > 0) {
+                    document.getElementById('cartCount').classList.remove('hidden');
+                    document.getElementById('floatingCartBtn').classList.remove('hidden');
+                } else {
+                    document.getElementById('cartCount').classList.add('hidden');
+                    document.getElementById('floatingCartBtn').classList.add('hidden');
+                }
+
+                document.getElementById('cartTotal').textContent = `$${totalPrice.toFixed(2)}`;
+                this.displayCartItems();
+            }
+
+            displayCartItems() {
+    const container = document.getElementById('cartItems');
+    
+    if (this.cart.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-12 text-gray-500">
+                <span class="material-symbols-outlined text-4xl mb-2">shopping_cart</span>
+                <p>Your cart is empty</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = this.cart.map((item, index) => {
+        const addonsTotal = (item.selectedAddons || []).reduce((sum, addon) => 
+            sum + (parseFloat(addon.price) * parseInt(addon.quantity || 1)), 0
+        );
+        const itemTotal = (item.final_price * item.quantity) + addonsTotal;
+
+        // Use variant image if available, otherwise use item image
+        const imageUrl = item.variant?.image_url || item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80';
+
+        return `
+        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+            <!-- Item Image -->
+            <div class="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+                <img src="${imageUrl}" alt="${item.name}" class="w-full h-full object-cover">
+            </div>
+            
+            <div class="flex-1 min-w-0">
+                <h4 class="font-medium text-gray-900 truncate">${item.name}</h4>
+                ${item.variant ? `
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-sm text-orange-600 bg-orange-50 px-2 py-1 rounded">
+                            ${item.variant.name}
+                        </span>
+                        ${item.variant.additional_price > 0 ? `
+                            <span class="text-xs text-gray-500">+$${item.variant.additional_price.toFixed(2)}</span>
+                        ` : ''}
+                    </div>
+                ` : ''}
+                
+                <div class="flex items-center justify-between mt-2">
+                    <span class="text-orange-500 font-semibold">$${item.final_price.toFixed(2)} × ${item.quantity}</span>
+                    ${addonsTotal > 0 ? `
+                        <span class="text-sm text-green-600">+$${addonsTotal.toFixed(2)}</span>
+                    ` : ''}
+                </div>
+                
+                ${item.selectedAddons && item.selectedAddons.length > 0 ? `
+                    <div class="mt-2">
+                        <p class="text-xs text-gray-500 font-medium">Add-ons:</p>
+                        <div class="flex flex-wrap gap-1 mt-1">
+                            ${item.selectedAddons.map(addon => `
+                                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                    ${addon.name} (+$${parseFloat(addon.price).toFixed(2)})
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+                
+                ${item.special_instructions ? `
+                    <p class="text-sm text-gray-600 mt-2 border-l-2 border-orange-500 pl-2">
+                        ${item.special_instructions}
+                    </p>
+                ` : ''}
+            </div>
+            
+            <div class="flex flex-col items-center gap-2">
+                <div class="flex items-center gap-2">
+                    <button class="decrease-quantity p-1 rounded hover:bg-gray-200 transition-colors" data-item-index="${index}">
+                        <span class="material-symbols-outlined text-lg">remove</span>
+                    </button>
+                    <span class="w-8 text-center font-medium">${item.quantity}</span>
+                    <button class="increase-quantity p-1 rounded hover:bg-gray-200 transition-colors" data-item-index="${index}">
+                        <span class="material-symbols-outlined text-lg">add</span>
+                    </button>
+                </div>
+                <button class="remove-item p-1 rounded hover:bg-red-100 text-red-500 transition-colors" data-item-index="${index}">
+                    <span class="material-symbols-outlined text-lg">delete</span>
+                </button>
+            </div>
+        </div>
+        `;
+    }).join('');
+
+    // Add event listeners for quantity buttons
+    container.querySelectorAll('.increase-quantity').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
+            this.updateQuantity(index, 1);
+        });
+    });
+
+    container.querySelectorAll('.decrease-quantity').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
+            this.updateQuantity(index, -1);
+        });
+    });
+
+    container.querySelectorAll('.remove-item').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
+            this.removeFromCart(index);
+        });
+    });
+}
+            updateQuantity(index, change) {
+                const item = this.cart[index];
+                if (!item) return;
+
+                item.quantity += change;
+
+                if (item.quantity <= 0) {
+                    this.removeFromCart(index);
+                } else {
+                    this.updateCartUI();
+                }
+            }
+
+            removeFromCart(index) {
+                this.cart.splice(index, 1);
+                this.updateCartUI();
+            }
+
+            setupEventListeners() {
+                document.getElementById('cartButton').addEventListener('click', () => this.toggleCart());
+                document.getElementById('floatingCartBtn').addEventListener('click', () => this.toggleCart());
+                document.getElementById('closeCart').addEventListener('click', () => this.closeCart());
+                document.getElementById('placeOrderBtn').addEventListener('click', () => this.placeOrder());
+                document.getElementById('closeConfirmation').addEventListener('click', () => this.closeConfirmationModal());
+                
+                // Variant modal events
+                document.getElementById('closeVariantModal').addEventListener('click', () => this.hideVariantModal());
+                document.getElementById('cancelVariant').addEventListener('click', () => {
+    this.selectedVariant = null;
+    this.currentMenuItem = null;
+    this.hideVariantModal();
+});
+
+                document.getElementById('confirmVariant').addEventListener('click', () => this.confirmVariantSelection());
+                
+                // Addons modal events
+                document.getElementById('closeAddonsModal').addEventListener('click', () => this.hideAddonsModal());
+                document.getElementById('cancelAddons').addEventListener('click', () => this.hideAddonsModal());
+                document.getElementById('confirmAddons').addEventListener('click', () => this.addToCartWithAddons());
+
+                // Modal backdrop clicks
+                document.getElementById('variantModal').addEventListener('click', (e) => {
+    if (e.target.id === 'variantModal') {
+        this.selectedVariant = null;
+        this.currentMenuItem = null;
+        this.hideVariantModal();
+    }
+});
+                document.getElementById('addonsModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'addonsModal') this.hideAddonsModal();
+                });
+                document.getElementById('cartDrawer').addEventListener('click', (e) => {
+                    if (e.target.id === 'cartDrawer') this.closeCart();
+                });
+                document.getElementById('orderConfirmationModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'orderConfirmationModal') this.closeConfirmationModal();
+                });
+            }
+
+            confirmVariantSelection() {
+    // Check if a variant is selected
+    if (!this.selectedVariant) {
+        this.showToast('Please select an option', 'error');
+        return;
+    }
+
+    // Check if currentMenuItem exists
+    if (!this.currentMenuItem || !this.currentMenuItem.id) {
+        console.error('Current menu item is not set properly');
+        this.showToast('Error: Menu item not found', 'error');
+        return;
+    }
+
+    // Safely access the variant ID
+    const variantId = this.selectedVariant.id;
+    const menuItemId = this.currentMenuItem.id;
+
+    console.log('Selected variant:', this.selectedVariant);
+    console.log('Current menu item:', this.currentMenuItem);
+
+    this.hideVariantModal();
+    this.showAddonsModal(menuItemId, variantId);
+}
+
+            toggleCart() {
+                document.getElementById('cartDrawer').classList.toggle('hidden');
+            }
+
+            closeCart() {
+                document.getElementById('cartDrawer').classList.add('hidden');
+            }
+
+            hideVariantModal() {
+                document.getElementById('variantModal').classList.add('hidden');
+                ///this.selectedVariant = null;
+            }
+
+            hideAddonsModal() {
+                document.getElementById('addonsModal').classList.add('hidden');
+                this.currentMenuItem = null;
+                this.selectedVariant = null;
+                this.selectedAddons = [];
+                this.addonGroups = [];
+            }
+
+            async placeOrder() {
+                if (this.isPlacingOrder) {
+                    console.warn('⏳ Order is already being placed. Ignoring duplicate call.');
+                    return;
+                }
+                this.isPlacingOrder = true;
+
+                if (this.cart.length === 0) {
+                    this.showToast('Your cart is empty', 'error');
+                    this.isPlacingOrder = false;
+                    return;
+                }
+
+                const orderNotes = document.getElementById('orderNotes').value;
+                const placeOrderBtn = document.getElementById('placeOrderBtn');
+                
+                placeOrderBtn.disabled = true;
+                placeOrderBtn.innerHTML = '<span class="loading-spinner"></span> Placing Order...';
+
+                try {
+                    const finalTotal = this.calculateCartTotal();
+                    console.log('💰 FINAL ORDER TOTAL TO STORE:', finalTotal);
+
+                    const orderTime = new Date().toISOString();
+                    const estimatedCompletionTime = new Date(Date.now() + 20 * 60000).toISOString();
+
+                    const orderData = {
+                        restaurant_id: this.restaurantId,
+                        table_id: this.tableId,
+                        order_number: 'DF-' + new Date().toISOString().slice(0,10).replace(/-/g, '') + '-' + Math.random().toString().slice(2, 8),
+                        status: 'pending',
+                        total_amount: finalTotal,
+                        customer_notes: orderNotes,
+                        order_time: orderTime,
+                        estimated_completion_time: estimatedCompletionTime
+                    };
+
+                    console.log('📦 ORDER DATA:', orderData);
+
+                    const { data: order, error: orderError } = await supabase
+                        .from('orders')
+                        .insert([orderData])
+                        .select()
+                        .single();
+
+                    if (orderError) throw orderError;
+
+                    console.log('✅ Order created with ID:', order.id);
+
+                    // Insert order items with variants
+                    const orderItems = this.cart.map(cartItem => ({
+                        order_id: order.id,
+                        menu_item_id: cartItem.id,
+                        variant_id: cartItem.variant?.id || null,
+                        quantity: cartItem.quantity,
+                        special_instructions: cartItem.special_instructions || '',
+                        item_price: cartItem.final_price
+                    }));
+
+                    const { data: orderItemsData, error: orderItemsError } = await supabase
+                        .from('order_items')
+                        .insert(orderItems)
+                        .select();
+
+                    if (orderItemsError) throw orderItemsError;
+                    console.log('✅ Order items inserted:', orderItemsData.length);
+
+                    // Handle add-ons
+                    await this.handleOrderItemAddons(order.id, orderItemsData);
+
+                    this.showOrderConfirmation(order.order_number);
+                    this.cart = [];
+                    this.updateCartUI();
+                    this.closeCart();
+
+                } catch (error) {
+                    console.error('❌ Error placing order:', error);
+                    this.showToast('Error placing order. Please try again.', 'error');
+                } finally {
+                    this.isPlacingOrder = false;
+                    placeOrderBtn.disabled = false;
+                    placeOrderBtn.textContent = 'Place Order';
+                }
+            }
+
+            async handleOrderItemAddons(orderId, orderItemsData) {
+                try {
+                    const addonsToInsert = [];
+                    const menuItemToOrderItemMap = {};
+                    
+                    orderItemsData.forEach(orderItem => {
+                        menuItemToOrderItemMap[orderItem.menu_item_id] = orderItem.id;
+                    });
+
+                    for (const cartItem of this.cart) {
+                        const orderItemId = menuItemToOrderItemMap[cartItem.id];
+                        
+                        if (orderItemId && cartItem.selectedAddons && cartItem.selectedAddons.length > 0) {
+                            for (const addon of cartItem.selectedAddons) {
+                                addonsToInsert.push({
+                                    order_id: orderId,
+                                    order_item_id: orderItemId,
+                                    addon_id: addon.id,
+                                    addon_name: addon.name,
+                                    quantity: addon.quantity || 1,
+                                    addon_price: parseFloat(addon.price)
+                                });
+                            }
+                        }
+                    }
+
+                    if (addonsToInsert.length > 0) {
+                        const { data: addonsData, error: addonsError } = await supabase
+                            .from('order_item_addons')
+                            .insert(addonsToInsert)
+                            .select();
+                            
+                        if (addonsError) throw addonsError;
+                        return addonsData;
+                    }
+
+                    return [];
+                } catch (error) {
+                    console.error('❌ Error in handleOrderItemAddons:', error);
+                    throw error;
+                }
+            }
+
+            showOrderConfirmation(orderNumber) {
+                document.getElementById('confirmationOrderNumber').textContent = orderNumber;
+                document.getElementById('orderConfirmationModal').classList.remove('hidden');
+            }
+
+            closeConfirmationModal() {
+                document.getElementById('orderConfirmationModal').classList.add('hidden');
+            }
+
+            showToast(message, type = 'info') {
+                const bgColor = type === 'error' ? 'bg-red-500' : 
+                              type === 'success' ? 'bg-green-500' : 
+                              type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500';
+                
+                const toast = document.createElement('div');
+                toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full ${bgColor} text-white`;
+                toast.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">
+                            ${type === 'success' ? 'check_circle' : 
+                              type === 'error' ? 'error' : 
+                              type === 'warning' ? 'warning' : 'info'}
+                        </span>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            isValidTableId(tableId) {
+                const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                return uuidRegex.test(tableId);
+            }
+
+            showError(message) {
+                document.getElementById('errorMessage').textContent = message;
+                document.getElementById('errorState').classList.remove('hidden');
+            }
+        }
+
+        // Initialize customer menu
+        new CustomerMenu();
+    </script>
+</body>
+</html>
