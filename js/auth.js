@@ -5,10 +5,17 @@ export const AuthService = {
     async checkAuth() {
         try {
             const { data: { user }, error } = await supabase.auth.getUser();
-            if (error) throw error;
+            if (error) {
+                console.error('Auth check error:', error);
+                // Clear stale session on auth error
+                await this.clearStaleSession();
+                window.location.href = 'login.html';
+                return null;
+            }
             return user;
         } catch (error) {
-            console.error('Auth check error:', error);
+            console.error('Auth check exception:', error);
+            await this.clearStaleSession();
             window.location.href = 'login.html';
             return null;
         }
@@ -16,6 +23,9 @@ export const AuthService = {
 
     async register({ restaurantName, ownerName, email, password }) {
         try {
+            // Clear any stale sessions before registration
+            await this.clearStaleSession();
+
             // Step 1: Sign up the user with Supabase Auth
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email,
@@ -47,6 +57,8 @@ export const AuthService = {
 
                 if (restaurantError) {
                     console.error('Restaurant creation error:', restaurantError);
+                    // If restaurant creation fails, delete the auth user
+                    await supabase.auth.admin.deleteUser(authData.user.id);
                     throw restaurantError;
                 }
 
@@ -63,44 +75,95 @@ export const AuthService = {
             console.error('Registration error:', error);
             return { 
                 success: false, 
-                error: error.message 
+                error: this.getUserFriendlyError(error)
             };
         }
     },
 
     async login(email, password) {
         try {
+            // Clear any stale sessions before login
+            await this.clearStaleSession();
+            
             const { data, error } = await supabase.auth.signInWithPassword({
                 email,
                 password
             });
 
-            if (error) throw error;
+            if (error) {
+                console.error('Login auth error:', error);
+                throw error;
+            }
 
             return { success: true, user: data.user };
         } catch (error) {
-            console.error('Login error:', error);
-            return { success: false, error: error.message };
+            console.error('Login service error:', error);
+            // Clear session on login error
+            await this.clearStaleSession();
+            return { 
+                success: false, 
+                error: this.getUserFriendlyError(error)
+            };
         }
     },
 
     async logout() {
         try {
             const { error } = await supabase.auth.signOut();
-            if (error) throw error;
+            if (error) {
+                console.error('Logout error:', error);
+                // Even if signOut fails, clear local storage
+                await this.clearStaleSession();
+                throw error;
+            }
+            // Clear local storage after successful signout
+            await this.clearStaleSession();
             return { success: true };
         } catch (error) {
-            console.error('Logout error:', error);
+            console.error('Logout exception:', error);
+            // Force clear local storage on any error
+            await this.clearStaleSession();
             return { success: false, error: error.message };
         }
     },
 
     async getCurrentUser() {
         try {
-            const { data: { user } } = await supabase.auth.getUser();
+            // First, check if we have a valid session
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            
+            if (sessionError) {
+                console.error('Session error:', sessionError);
+                await this.clearStaleSession();
+                return null;
+            }
+
+            if (!session) {
+                return null;
+            }
+
+            // Verify the session is still valid
+            const now = Math.floor(Date.now() / 1000);
+            if (session.expires_at && session.expires_at < now) {
+                console.log('Session expired, clearing...');
+                await this.clearStaleSession();
+                return null;
+            }
+
+            // Now get the user
+            const { data: { user }, error: userError } = await supabase.auth.getUser();
+            
+            if (userError) {
+                console.error('Get user error:', userError);
+                await this.clearStaleSession();
+                return null;
+            }
+
             return user;
+            
         } catch (error) {
-            console.error('Get current user error:', error);
+            console.error('Get current user exception:', error);
+            await this.clearStaleSession();
             return null;
         }
     },
@@ -126,12 +189,71 @@ export const AuthService = {
 
     async resetPassword(email) {
         try {
-            const { error } = await supabase.auth.resetPasswordForEmail(email);
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/reset-password.html`,
+            });
+
             if (error) throw error;
             return { success: true };
         } catch (error) {
             console.error('Password reset error:', error);
-            return { success: false, error: error.message };
+            return { 
+                success: false, 
+                error: this.getUserFriendlyError(error)
+            };
+        }
+    },
+
+    // New method to clear stale sessions and tokens
+    async clearStaleSession() {
+        try {
+            // Clear all auth-related storage
+            const storageKeys = [
+                'supabase.auth.token',
+                'sb-auth-token',
+                'supabase.auth.refresh-token',
+                'sb-refresh-token'
+            ];
+
+            storageKeys.forEach(key => {
+                localStorage.removeItem(key);
+                sessionStorage.removeItem(key);
+            });
+
+            // Clear any other auth-related keys
+            const allKeys = [...Array(localStorage.length).keys()].map(i => localStorage.key(i));
+            allKeys.forEach(key => {
+                if (key && (key.includes('auth') || key.includes('token') || key.includes('supabase'))) {
+                    localStorage.removeItem(key);
+                }
+            });
+
+            console.log('Stale auth session cleared');
+        } catch (error) {
+            console.log('Session cleanup completed with warnings:', error);
+        }
+    },
+
+    // Helper method for user-friendly error messages
+    getUserFriendlyError(error) {
+        const message = error.message || 'An unknown error occurred';
+        
+        if (message.includes('Invalid login credentials')) {
+            return 'Invalid email or password. Please try again.';
+        } else if (message.includes('Email not confirmed')) {
+            return 'Please confirm your email address before logging in.';
+        } else if (message.includes('Refresh Token') || message.includes('AuthSessionMissingError')) {
+            return 'Session expired. Please log in again.';
+        } else if (message.includes('User already registered')) {
+            return 'An account with this email already exists.';
+        } else if (message.includes('Password should be at least')) {
+            return 'Password is too weak. Please use a stronger password.';
+        } else if (message.includes('Invalid email')) {
+            return 'Please enter a valid email address.';
+        } else if (message.includes('Network') || message.includes('fetch')) {
+            return 'Network error. Please check your internet connection.';
+        } else {
+            return 'An error occurred. Please try again.';
         }
     }
 };
