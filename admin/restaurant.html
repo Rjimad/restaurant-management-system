@@ -44,6 +44,10 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .variant-option.selected {
+            border-color: #ff7b00;
+            background-color: rgba(255, 123, 0, 0.05);
+        }
     </style>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark text-[#181410] dark:text-[#f5f2f0]">
@@ -326,7 +330,6 @@
                 this.categories = [];
                 this.menuItems = [];
                 this.menuItemVariants = {};
-                this.addonGroups = {};
                 this.cart = [];
                 this.currentCategory = 'all';
                 this.currentMenuItem = null;
@@ -444,9 +447,6 @@
                     // Load variants for all menu items
                     await this.loadAllVariants();
 
-                    // Load addon groups
-                    await this.loadAddonGroups();
-
                     this.displayCategories();
                     this.displayMenuItems();
 
@@ -465,7 +465,7 @@
                         .from('menu_item_variants')
                         .select('*')
                         .in('menu_item_id', menuItemIds)
-                        .order('created_at');
+                        .order('display_order');
 
                     if (error) throw error;
 
@@ -482,25 +482,52 @@
                 }
             }
 
-            async loadAddonGroups() {
+            async loadAddonsForMenuItem(menuItemId) {
                 try {
-                    const { data: addonGroups, error } = await supabase
-                        .from('addon_groups')
+                    // Get addon groups linked to this menu item through menu_item_addons
+                    const { data: menuItemAddons, error } = await supabase
+                        .from('menu_item_addons')
                         .select(`
-                            *,
-                            addons(*)
+                            addon_groups (
+                                id,
+                                name,
+                                description,
+                                is_required,
+                                max_selections,
+                                addons (
+                                    id,
+                                    name,
+                                    price,
+                                    is_available
+                                )
+                            )
                         `)
-                        .eq('restaurant_id', this.restaurantId);
+                        .eq('menu_item_id', menuItemId);
 
-                    if (error) throw error;
+                    if (error) {
+                        console.error('Error loading menu item addons:', error);
+                        return [];
+                    }
 
-                    this.addonGroups = {};
-                    addonGroups.forEach(group => {
-                        this.addonGroups[group.id] = group;
-                    });
+                    // Process the data to get addon groups with their addons
+                    const addonGroups = (menuItemAddons || [])
+                        .map(item => item.addon_groups)
+                        .filter(group => group !== null)
+                        .map(group => ({
+                            id: group.id,
+                            name: group.name,
+                            description: group.description || '',
+                            is_required: group.is_required || false,
+                            max_selections: group.max_selections || 1,
+                            addons: (group.addons || []).filter(addon => addon.is_available)
+                        }))
+                        .filter(group => group.addons.length > 0);
+
+                    return addonGroups;
 
                 } catch (error) {
-                    console.error('Error loading addon groups:', error);
+                    console.error('Error loading addons:', error);
+                    return [];
                 }
             }
 
@@ -551,7 +578,6 @@
                 container.innerHTML = filteredItems.map(item => {
                     const variants = this.menuItemVariants[item.id] || [];
                     const hasVariants = variants.length > 0;
-                    const hasAddons = this.hasAddonsForItem(item.id);
                     
                     // Calculate price range if there are variants
                     let priceDisplay = `$${parseFloat(item.price).toFixed(2)}`;
@@ -564,11 +590,18 @@
                         }
                     }
 
-                    const displayImage = item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
+                    // Use actual item image from database, fallback to a generic placeholder if none exists
+                    const displayImage = item.image_url || '/api/placeholder/300/200';
 
                     return `
                     <div class="flex flex-col gap-3 rounded-xl bg-white dark:bg-[#1c140d] p-4 border border-[#e7e0da]/60 dark:border-[#2f241a]/60 shadow-sm hover:shadow-md transition-shadow">
-                        <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg" style="background-image: url('${displayImage}')"></div>
+                        ${item.image_url ? `
+                            <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg" style="background-image: url('${item.image_url}')"></div>
+                        ` : `
+                            <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg bg-gray-200 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-4xl text-gray-400">restaurant</span>
+                            </div>
+                        `}
                         <div class="flex-grow">
                             <p class="text-base font-bold leading-normal dark:text-white">${item.name}</p>
                             <p class="text-[#8d755e] dark:text-gray-400 text-sm font-normal leading-normal">${item.description || 'Delicious menu item'}</p>
@@ -579,10 +612,9 @@
                                 Add
                             </button>
                         </div>
-                        ${hasVariants || hasAddons ? `
+                        ${hasVariants ? `
                             <div class="flex items-center gap-2 text-xs text-gray-500">
-                                ${hasVariants ? '<span class="material-symbols-outlined text-xs">layers</span>' : ''}
-                                ${hasAddons ? '<span class="material-symbols-outlined text-xs">extension</span>' : ''}
+                                <span class="material-symbols-outlined text-xs">layers</span>
                                 <span>Customizable</span>
                             </div>
                         ` : ''}
@@ -597,13 +629,6 @@
                         this.showAddToCartModal(itemId);
                     });
                 });
-            }
-
-            hasAddonsForItem(itemId) {
-                // Check if item has addon groups linked
-                // This would require a separate query to menu_item_addons table
-                // For now, return false - you can implement this based on your schema
-                return false;
             }
 
             filterByCategory(categoryId) {
@@ -629,6 +654,9 @@
                 if (!item) return;
 
                 this.currentMenuItem = item;
+                this.selectedVariant = null;
+                this.selectedAddons = [];
+
                 const variants = this.menuItemVariants[itemId] || [];
                 const hasVariants = variants.length > 0;
 
@@ -638,22 +666,39 @@
                 
                 if (hasVariants) {
                     modalContent = `
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium mb-2 dark:text-white">Select Option</label>
-                            <div class="space-y-2">
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-3 dark:text-white">Select Option</label>
+                            <div class="space-y-3">
                                 ${variants.map(variant => {
                                     const finalPrice = (parseFloat(item.price) + parseFloat(variant.additional_price || 0)).toFixed(2);
+                                    // Use variant image if available, otherwise use item image, otherwise show placeholder
+                                    const imageUrl = variant.image_url || item.image_url;
+                                    
                                     return `
-                                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:border-primary transition-colors">
-                                        <input type="radio" name="variant" value="${variant.id}" class="variant-radio">
-                                        <div class="flex-1">
-                                            <div class="flex justify-between">
-                                                <span class="font-medium">${variant.name}</span>
-                                                <span class="font-semibold text-primary">+$${parseFloat(variant.additional_price || 0).toFixed(2)}</span>
+                                    <label class="variant-option flex items-start gap-4 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-colors">
+                                        <input type="radio" name="variant" value="${variant.id}" class="mt-1 variant-radio">
+                                        <div class="flex items-start gap-3 flex-1">
+                                            <!-- Variant Image -->
+                                            <div class="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center">
+                                                ${imageUrl ? `
+                                                    <img src="${imageUrl}" alt="${variant.name}" class="w-full h-full object-cover">
+                                                ` : `
+                                                    <span class="material-symbols-outlined text-gray-400">restaurant</span>
+                                                `}
                                             </div>
-                                            ${variant.additional_price > 0 ? `
-                                                <p class="text-sm text-gray-500">Total: $${finalPrice}</p>
-                                            ` : ''}
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex justify-between items-start">
+                                                    <span class="font-medium text-gray-900 dark:text-white">${variant.name}</span>
+                                                    <span class="font-semibold text-primary whitespace-nowrap ml-2">
+                                                        $${finalPrice}
+                                                    </span>
+                                                </div>
+                                                ${variant.additional_price > 0 ? `
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                                        +$${parseFloat(variant.additional_price).toFixed(2)} additional
+                                                    </p>
+                                                ` : ''}
+                                            </div>
                                         </div>
                                     </label>
                                     `;
@@ -665,32 +710,93 @@
 
                 // Add quantity selector
                 modalContent += `
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2 dark:text-white">Quantity</label>
-                        <div class="flex items-center gap-3">
-                            <button id="decreaseQuantity" class="flex items-center justify-center size-8 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">-</button>
-                            <span id="quantityDisplay" class="w-8 text-center font-medium">1</span>
-                            <button id="increaseQuantity" class="flex items-center justify-center size-8 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">+</button>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-3 dark:text-white">Quantity</label>
+                        <div class="flex items-center gap-4">
+                            <button id="decreaseQuantity" class="flex items-center justify-center size-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                                <span class="material-symbols-outlined text-lg">remove</span>
+                            </button>
+                            <span id="quantityDisplay" class="w-12 text-center text-lg font-medium dark:text-white">1</span>
+                            <button id="increaseQuantity" class="flex items-center justify-center size-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                                <span class="material-symbols-outlined text-lg">add</span>
+                            </button>
                         </div>
                     </div>
                 `;
 
+                // Add addons section - only if there are addons for this item
+                const addonGroups = await this.loadAddonsForMenuItem(itemId);
+                if (addonGroups.length > 0) {
+                    modalContent += `
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-3 dark:text-white">Customize with Add-ons</label>
+                            <div class="space-y-4">
+                                ${addonGroups.map(group => `
+                                    <div class="border rounded-lg p-4 dark:border-gray-700">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div>
+                                                <h4 class="font-semibold text-gray-900 dark:text-white">${group.name}</h4>
+                                                ${group.description ? `<p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${group.description}</p>` : ''}
+                                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                    ${group.is_required ? 'Required • ' : 'Optional • '}
+                                                    ${group.max_selections ? `Max ${group.max_selections} selections` : 'Multiple selections allowed'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            ${group.addons.map(addon => `
+                                                <label class="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary cursor-pointer transition-colors">
+                                                    <div class="flex items-center gap-3">
+                                                        <input type="${group.max_selections === 1 ? 'radio' : 'checkbox'}" 
+                                                               name="addon-group-${group.id}" 
+                                                               value="${addon.id}" 
+                                                               class="addon-checkbox"
+                                                               data-addon='${JSON.stringify(addon).replace(/'/g, "&#39;")}'
+                                                               ${group.is_required && group.max_selections === 1 ? 'required' : ''}>
+                                                        <span class="font-medium text-gray-900 dark:text-white">${addon.name}</span>
+                                                    </div>
+                                                    <span class="text-primary font-semibold">+$${parseFloat(addon.price).toFixed(2)}</span>
+                                                </label>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
                 document.getElementById('modalContent').innerHTML = modalContent;
                 
                 // Setup event listeners for the modal
-                this.setupAddToCartModalEvents(variants);
+                this.setupAddToCartModalEvents(variants, addonGroups);
                 
                 document.getElementById('addToCartModal').classList.remove('hidden');
             }
 
-            setupAddToCartModalEvents(variants) {
+            setupAddToCartModalEvents(variants, addonGroups) {
                 let quantity = 1;
                 let selectedVariant = variants.length > 0 ? variants[0] : null;
+                this.selectedAddons = [];
 
                 // Variant selection
-                document.querySelectorAll('.variant-radio').forEach((radio, index) => {
-                    radio.addEventListener('change', (e) => {
-                        if (e.target.checked) {
+                document.querySelectorAll('.variant-option').forEach((option, index) => {
+                    option.addEventListener('click', (e) => {
+                        // Remove selection from other options
+                        document.querySelectorAll('.variant-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                            opt.classList.remove('border-primary', 'bg-primary/5');
+                            opt.classList.add('border-gray-200');
+                        });
+                        
+                        // Select this option
+                        option.classList.remove('border-gray-200');
+                        option.classList.add('border-primary', 'bg-primary/5', 'selected');
+                        
+                        const radio = option.querySelector('.variant-radio');
+                        radio.checked = true;
+                        
+                        if (variants[index]) {
                             selectedVariant = variants[index];
                         }
                     });
@@ -698,7 +804,7 @@
 
                 // Auto-select first variant if available
                 if (variants.length > 0) {
-                    document.querySelector('.variant-radio').checked = true;
+                    document.querySelector('.variant-option').click();
                 }
 
                 // Quantity controls
@@ -714,14 +820,31 @@
                     document.getElementById('quantityDisplay').textContent = quantity;
                 });
 
+                // Addon selection
+                document.querySelectorAll('.addon-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => {
+                        const addonData = JSON.parse(checkbox.getAttribute('data-addon').replace(/&#39;/g, "'"));
+                        
+                        if (checkbox.checked) {
+                            this.selectedAddons.push({
+                                id: addonData.id,
+                                name: addonData.name,
+                                price: parseFloat(addonData.price)
+                            });
+                        } else {
+                            this.selectedAddons = this.selectedAddons.filter(addon => addon.id !== addonData.id);
+                        }
+                    });
+                });
+
                 // Confirm add to cart
                 document.getElementById('confirmAddToCart').addEventListener('click', () => {
-                    this.addToCart(quantity, selectedVariant);
+                    this.addToCart(quantity, selectedVariant, this.selectedAddons);
                     this.hideAddToCartModal();
                 });
             }
 
-            addToCart(quantity, variant = null) {
+            addToCart(quantity, variant = null, addons = []) {
                 if (!this.currentMenuItem) return;
 
                 const item = this.currentMenuItem;
@@ -737,7 +860,11 @@
                     };
                 }
 
-                const cartItemKey = this.generateCartItemKey(item.id, variantInfo);
+                // Add addons price
+                const addonsTotal = addons.reduce((sum, addon) => sum + parseFloat(addon.price), 0);
+                finalPrice += addonsTotal;
+
+                const cartItemKey = this.generateCartItemKey(item.id, variantInfo, addons);
 
                 const existingItemIndex = this.cart.findIndex(cartItem => 
                     cartItem.key === cartItemKey
@@ -754,6 +881,7 @@
                         final_price: finalPrice,
                         quantity: quantity,
                         variant: variantInfo,
+                        selectedAddons: addons,
                         image_url: item.image_url
                     });
                 }
@@ -762,9 +890,10 @@
                 this.showToast(`Added ${item.name} to cart`, 'success');
             }
 
-            generateCartItemKey(itemId, variant) {
+            generateCartItemKey(itemId, variant, addons) {
                 const variantId = variant ? variant.id : 'no-variant';
-                return `${itemId}-${variantId}`;
+                const addonIds = addons.map(addon => addon.id).sort().join(',');
+                return `${itemId}-${variantId}-${addonIds}`;
             }
 
             updateCartUI() {
@@ -798,20 +927,31 @@
 
                 container.innerHTML = this.cart.map((item, index) => {
                     const itemTotal = item.final_price * item.quantity;
-                    const imageUrl = item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80';
+                    const imageUrl = item.image_url;
 
                     return `
                     <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <div class="flex-shrink-0 w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
-                            <img src="${imageUrl}" alt="${item.name}" class="w-full h-full object-cover">
+                        <div class="flex-shrink-0 w-12 h-12 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center">
+                            ${imageUrl ? `
+                                <img src="${imageUrl}" alt="${item.name}" class="w-full h-full object-cover">
+                            ` : `
+                                <span class="material-symbols-outlined text-gray-400">restaurant</span>
+                            `}
                         </div>
                         
                         <div class="flex-1 min-w-0">
-                            <h4 class="font-medium text-gray-900 dark:text-white text-sm truncate">${item.name}</h4>
+                            <h4 class="font-medium text-gray-900 dark:text-white text-sm">${item.name}</h4>
                             ${item.variant ? `
                                 <p class="text-xs text-orange-600 mt-1">${item.variant.name}</p>
                             ` : ''}
-                            <p class="text-orange-500 font-semibold text-sm">$${item.final_price.toFixed(2)} × ${item.quantity}</p>
+                            
+                            ${item.selectedAddons && item.selectedAddons.length > 0 ? `
+                                <div class="mt-1">
+                                    <p class="text-xs text-gray-500">Add-ons: ${item.selectedAddons.map(addon => addon.name).join(', ')}</p>
+                                </div>
+                            ` : ''}
+                            
+                            <p class="text-orange-500 font-semibold text-sm mt-1">$${item.final_price.toFixed(2)} × ${item.quantity}</p>
                         </div>
                         
                         <div class="flex flex-col items-center gap-1">
@@ -984,11 +1124,15 @@
                         }) : null
                     }));
 
-                    const { error: orderItemsError } = await supabase
+                    const { data: orderItemsData, error: orderItemsError } = await supabase
                         .from('order_items')
-                        .insert(orderItems);
+                        .insert(orderItems)
+                        .select();
 
                     if (orderItemsError) throw orderItemsError;
+
+                    // Handle addons for each order item
+                    await this.handleOrderItemAddons(order.id, orderItemsData);
 
                     this.showOrderConfirmation(order.order_number);
                     this.cart = [];
@@ -1001,6 +1145,52 @@
                 } finally {
                     checkoutButton.disabled = false;
                     checkoutButton.textContent = `Checkout - $${this.calculateTotal().toFixed(2)}`;
+                }
+            }
+
+            async handleOrderItemAddons(orderId, orderItemsData) {
+                try {
+                    const addonsToInsert = [];
+                    
+                    // Create a mapping from cart item key to order item ID
+                    const cartItemToOrderItemMap = {};
+                    orderItemsData.forEach((orderItem, index) => {
+                        if (index < this.cart.length) {
+                            const cartItem = this.cart[index];
+                            cartItemToOrderItemMap[cartItem.key] = orderItem.id;
+                        }
+                    });
+
+                    // Process each cart item to add its addons
+                    for (const cartItem of this.cart) {
+                        const orderItemId = cartItemToOrderItemMap[cartItem.key];
+                        
+                        if (orderItemId && cartItem.selectedAddons && cartItem.selectedAddons.length > 0) {
+                            for (const addon of cartItem.selectedAddons) {
+                                addonsToInsert.push({
+                                    order_id: orderId,
+                                    order_item_id: orderItemId,
+                                    addon_id: addon.id,
+                                    addon_name: addon.name,
+                                    addon_price: parseFloat(addon.price),
+                                    quantity: 1
+                                });
+                            }
+                        }
+                    }
+
+                    if (addonsToInsert.length > 0) {
+                        const { error: addonsError } = await supabase
+                            .from('order_item_addons')
+                            .insert(addonsToInsert);
+
+                        if (addonsError) throw addonsError;
+                    }
+
+                    return addonsToInsert;
+                } catch (error) {
+                    console.error('Error handling order item addons:', error);
+                    throw error;
                 }
             }
 
@@ -1089,6 +1279,7 @@
                 document.getElementById('addToCartModal').classList.add('hidden');
                 this.currentMenuItem = null;
                 this.selectedVariant = null;
+                this.selectedAddons = [];
             }
 
             showToast(message, type = 'info') {
