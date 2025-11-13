@@ -189,14 +189,43 @@ export const AuthService = {
 
     async resetPassword(email) {
         try {
+            // Clear any existing sessions first
+            await this.clearStaleSession();
+            
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/admin/reset-password.html`,
+                redirectTo: `${window.location.origin}/reset-password.html`,
             });
     
-            if (error) throw error;
+            if (error) {
+                console.error('Password reset email error:', error);
+                throw error;
+            }
+            
             return { success: true };
         } catch (error) {
             console.error('Password reset error:', error);
+            return { 
+                success: false, 
+                error: this.getUserFriendlyError(error)
+            };
+        }
+    },
+    
+    // Add this new method for direct password updates
+    async updatePassword(newPassword) {
+        try {
+            const { data, error } = await supabase.auth.updateUser({
+                password: newPassword
+            });
+    
+            if (error) throw error;
+    
+            // Force sign out after password change to clear all sessions
+            await this.logout();
+            
+            return { success: true, user: data.user };
+        } catch (error) {
+            console.error('Update password error:', error);
             return { 
                 success: false, 
                 error: this.getUserFriendlyError(error)
