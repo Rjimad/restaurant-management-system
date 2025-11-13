@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title id="restaurantTitle">DineFlow - Restaurant</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff7b00",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#23190f",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .loading-spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #ff7b00;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-[#181410] dark:text-[#f5f2f0]">
+    <div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <!-- TopNavBar -->
+        <header class="sticky top-0 z-50 flex items-center justify-center border-b border-solid border-[#e7e0da]/60 dark:border-[#2f241a]/60 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+            <div class="flex items-center justify-between whitespace-nowrap px-4 sm:px-10 py-3 w-full max-w-7xl">
+                <div class="flex items-center gap-4 text-[#181410] dark:text-white">
+                    <div class="size-6 text-primary">
+                        <svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <g clip-path="url(#clip0_6_330)">
+                                <path clip-rule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fill-rule="evenodd"></path>
+                            </g>
+                            <defs>
+                                <clippath id="clip0_6_330"><rect fill="white" height="48" width="48"></rect></clippath>
+                            </defs>
+                        </svg>
+                    </div>
+                    <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]" id="restaurantName">The Gourmet Kitchen</h2>
+                </div>
+                <div class="hidden md:flex flex-1 justify-end">
+                    <div class="flex items-center gap-9">
+                        <a class="text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors" href="#menu">Menu</a>
+                        <a class="text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors" href="#about">About Us</a>
+                        <a class="text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors" href="#contact">Contact</a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 ml-auto md:ml-8">
+                    <button id="cartButton" class="relative flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f5f2f0] dark:bg-background-dark dark:border dark:border-[#2f241a] text-[#181410] dark:text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5 hover:bg-[#e7e0da] dark:hover:bg-[#2f241a] transition-colors">
+                        <span class="material-symbols-outlined text-xl">shopping_cart</span>
+                        <div id="cartCount" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white hidden">0</div>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-grow">
+            <!-- HeroSection -->
+            <section class="flex justify-center w-full px-4 py-10 md:py-20">
+                <div class="w-full max-w-7xl">
+                    <div id="heroSection" class="flex min-h-[480px] flex-col gap-6 bg-cover bg-center bg-no-repeat rounded-xl items-center justify-center p-4 text-center">
+                        <!-- Hero content will be loaded dynamically -->
+                        <div class="text-center">
+                            <h1 class="text-white text-4xl font-black leading-tight tracking-[-0.033em] md:text-6xl mb-4">
+                                Order Your Favorites Online
+                            </h1>
+                            <h2 class="text-white/90 text-base font-normal leading-normal md:text-lg mb-6">
+                                Freshly prepared, authentic dishes delivered right to your door.
+                            </h2>
+                            <a class="inline-flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity" href="#menu">
+                                <span class="truncate">View Menu</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Menu & Cart Section -->
+            <section class="flex justify-center w-full px-4 pb-10 md:pb-20" id="menu">
+                <div class="w-full max-w-7xl flex flex-col lg:flex-row gap-8">
+                    <!-- Menu -->
+                    <div class="flex-grow">
+                        <!-- SectionHeader -->
+                        <h2 class="text-[#181410] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Our Menu</h2>
+                        
+                        <!-- Categories Tabs -->
+                        <div class="pb-3 sticky top-[65px] z-40 bg-background-light dark:bg-background-dark">
+                            <div id="categoriesTabs" class="flex border-b border-[#e7e0da] dark:border-[#2f241a] px-4 gap-8 overflow-x-auto">
+                                <!-- Categories will be loaded here -->
+                                <div class="flex flex-col shrink-0 items-center justify-center border-b-[3px] border-b-primary text-primary pb-[13px] pt-4">
+                                    <p class="text-sm font-bold leading-normal tracking-[0.015em]">Loading...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Menu Items Grid -->
+                        <div id="menuItemsGrid" class="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-6 p-4">
+                            <!-- Menu items will be loaded here -->
+                            <div class="col-span-full text-center py-12">
+                                <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">restaurant</span>
+                                <p class="text-gray-500">Loading menu items...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shopping Cart Sidebar -->
+                    <aside class="w-full lg:w-80 lg:min-w-[320px] lg:sticky lg:top-24 h-fit">
+                        <div class="bg-white dark:bg-[#1c140d] rounded-xl border border-[#e7e0da]/60 dark:border-[#2f241a]/60 shadow-sm p-6">
+                            <h3 class="text-xl font-bold mb-4 dark:text-white">Your Order</h3>
+                            
+                            <!-- Cart Items -->
+                            <div id="cartItems" class="space-y-4 max-h-96 overflow-y-auto">
+                                <!-- Cart items will be loaded here -->
+                                <div class="text-center py-8 text-gray-500">
+                                    <span class="material-symbols-outlined text-4xl mb-2">shopping_cart</span>
+                                    <p>Your cart is empty</p>
+                                </div>
+                            </div>
+
+                            <!-- Order Type Selection -->
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium mb-2 dark:text-white">Order Type</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button id="deliveryBtn" class="p-3 border rounded-lg text-center hover:border-primary hover:bg-primary/5 transition-colors border-primary bg-primary/10 text-primary">
+                                        <span class="material-symbols-outlined text-lg mb-1">delivery_dining</span>
+                                        <p class="text-sm font-medium">Delivery</p>
+                                    </button>
+                                    <button id="pickupBtn" class="p-3 border border-gray-300 rounded-lg text-center hover:border-primary hover:bg-primary/5 transition-colors">
+                                        <span class="material-symbols-outlined text-lg mb-1">takeout_dining</span>
+                                        <p class="text-sm font-medium">Pickup</p>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Customer Information -->
+                            <div id="customerInfo" class="mt-4 space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-white">Name *</label>
+                                    <input type="text" id="customerName" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f241a]" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-white">Phone *</label>
+                                    <input type="tel" id="customerPhone" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f241a]" required>
+                                </div>
+                                <div id="deliveryAddressField" class="hidden">
+                                    <label class="block text-sm font-medium mb-1 dark:text-white">Delivery Address *</label>
+                                    <textarea id="deliveryAddress" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f241a]" rows="2" placeholder="Enter your full address"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-white">Special Instructions</label>
+                                    <textarea id="orderNotes" class="w-full p-2 border rounded-lg dark:bg-background-dark dark:border-[#2f241a]" rows="2" placeholder="Any special requests?"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Totals -->
+                            <div class="mt-6 pt-6 border-t border-[#e7e0da] dark:border-[#2f241a] space-y-2">
+                                <div class="flex justify-between text-sm text-[#8d755e] dark:text-gray-400">
+                                    <span>Subtotal</span>
+                                    <span id="cartSubtotal">$0.00</span>
+                                </div>
+                                <div id="deliveryFeeItem" class="flex justify-between text-sm text-[#8d755e] dark:text-gray-400 hidden">
+                                    <span>Delivery Fee</span>
+                                    <span id="deliveryFee">$3.99</span>
+                                </div>
+                                <div class="flex justify-between text-sm text-[#8d755e] dark:text-gray-400">
+                                    <span>Taxes</span>
+                                    <span id="cartTaxes">$0.00</span>
+                                </div>
+                                <div class="flex justify-between text-base font-bold dark:text-white">
+                                    <span>Total</span>
+                                    <span id="cartTotal">$0.00</span>
+                                </div>
+                            </div>
+
+                            <!-- Checkout Button -->
+                            <button id="checkoutButton" class="w-full mt-6 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <span class="truncate">Checkout</span>
+                            </button>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section id="about" class="py-16 bg-white dark:bg-[#1c140d] border-t border-[#e7e0da] dark:border-[#2f241a]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-bold text-[#181410] dark:text-white mb-8">About Our Restaurant</h2>
+                        <div id="aboutContent" class="max-w-3xl mx-auto text-[#8d755e] dark:text-gray-400 text-lg leading-relaxed">
+                            <!-- About content will be loaded dynamically -->
+                            <p>We are committed to serving the finest quality food made with fresh, locally-sourced ingredients. Our chefs bring years of experience and passion to every dish.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="py-16 bg-background-light dark:bg-background-dark">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-bold text-[#181410] dark:text-white mb-8">Contact Us</h2>
+                        <div id="contactContent" class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                            <!-- Contact info will be loaded dynamically -->
+                            <div>
+                                <h3 class="text-base font-bold text-[#181410] dark:text-white mb-2">Address</h3>
+                                <p class="text-sm text-[#8d755e] dark:text-gray-400" id="restaurantAddress">123 Culinary Lane, Foodie City, 12345</p>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-bold text-[#181410] dark:text-white mb-2">Phone</h3>
+                                <p class="text-sm text-[#8d755e] dark:text-gray-400" id="restaurantPhone">(123) 456-7890</p>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-bold text-[#181410] dark:text-white mb-2">Hours</h3>
+                                <p class="text-sm text-[#8d755e] dark:text-gray-400" id="restaurantHours">Mon-Sun: 11am - 10pm</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white dark:bg-[#1c140d] border-t border-[#e7e0da] dark:border-[#2f241a]">
+            <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                    <div>
+                        <h3 class="text-base font-bold text-[#181410] dark:text-white" id="footerRestaurantName">The Gourmet Kitchen</h3>
+                        <p class="mt-2 text-sm text-[#8d755e] dark:text-gray-400" id="footerAddress">123 Culinary Lane, Foodie City, 12345</p>
+                        <p class="mt-1 text-sm text-[#8d755e] dark:text-gray-400" id="footerPhone">(123) 456-7890</p>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-[#181410] dark:text-white">Hours of Operation</h3>
+                        <p class="mt-2 text-sm text-[#8d755e] dark:text-gray-400" id="footerHours">Mon - Fri: 11am - 10pm</p>
+                        <p class="mt-1 text-sm text-[#8d755e] dark:text-gray-400">Sat - Sun: 10am - 11pm</p>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-[#181410] dark:text-white">Follow Us</h3>
+                        <div class="mt-2 flex justify-center md:justify-start space-x-4">
+                            <a class="text-[#8d755e] dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Facebook</a>
+                            <a class="text-[#8d755e] dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Instagram</a>
+                            <a class="text-[#8d755e] dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Twitter</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 border-t border-[#e7e0da] dark:border-[#2f241a] pt-8 text-center text-sm text-[#8d755e] dark:text-gray-400">
+                    <p>Powered by <a class="font-bold text-primary" href="#">DineFlow</a></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div id="orderConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="text-center">
+                <span class="material-symbols-outlined text-6xl text-green-500 mb-4">check_circle</span>
+                <h3 class="text-xl font-semibold mb-2">Order Placed Successfully!</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Your order has been received and is being prepared.</p>
+                <div class="space-y-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    <p>Order #: <span id="confirmationOrderNumber" class="font-semibold">-</span></p>
+                    <p>Estimated wait time: <span id="estimatedWaitTime" class="font-semibold">30-45 minutes</span></p>
+                </div>
+                <button id="closeConfirmation" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add to Cart Modal (for variants and addons) -->
+    <div id="addToCartModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold" id="modalItemName">Customize Item</h3>
+                <button id="closeAddToCartModal" class="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <div id="modalContent">
+                <!-- Content will be loaded dynamically based on item -->
+            </div>
+            
+            <div class="flex gap-3 justify-end mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button id="cancelAddToCart" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">Cancel</button>
+                <button id="confirmAddToCart" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from '../js/supabase.js';
+
+        class RestaurantWebsite {
+            constructor() {
+                this.restaurantId = null;
+                this.restaurantData = null;
+                this.categories = [];
+                this.menuItems = [];
+                this.menuItemVariants = {};
+                this.addonGroups = {};
+                this.cart = [];
+                this.currentCategory = 'all';
+                this.currentMenuItem = null;
+                this.selectedVariant = null;
+                this.selectedAddons = [];
+                this.orderType = 'delivery'; // Default to delivery
+                this.init();
+            }
+
+            async init() {
+                // Get restaurant ID from URL or use default
+                const urlParams = new URLSearchParams(window.location.search);
+                this.restaurantId = urlParams.get('restaurant') || await this.getDefaultRestaurantId();
+                
+                if (!this.restaurantId) {
+                    this.showError('No restaurant specified');
+                    return;
+                }
+
+                await this.loadRestaurantData();
+                await this.loadMenuData();
+                this.setupEventListeners();
+                this.updateCartUI();
+            }
+
+            async getDefaultRestaurantId() {
+                // Try to get the first restaurant from the database
+                try {
+                    const { data: restaurants, error } = await supabase
+                        .from('restaurants')
+                        .select('id')
+                        .limit(1);
+
+                    if (error) throw error;
+                    return restaurants[0]?.id || null;
+                } catch (error) {
+                    console.error('Error getting default restaurant:', error);
+                    return null;
+                }
+            }
+
+            async loadRestaurantData() {
+                try {
+                    const { data: restaurant, error } = await supabase
+                        .from('restaurants')
+                        .select('*')
+                        .eq('id', this.restaurantId)
+                        .single();
+
+                    if (error) throw error;
+
+                    this.restaurantData = restaurant;
+                    this.updateRestaurantUI();
+                } catch (error) {
+                    console.error('Error loading restaurant data:', error);
+                    this.showError('Error loading restaurant information');
+                }
+            }
+
+            updateRestaurantUI() {
+                if (!this.restaurantData) return;
+
+                // Update page title and headers
+                document.getElementById('restaurantTitle').textContent = `${this.restaurantData.name} - DineFlow`;
+                document.getElementById('restaurantName').textContent = this.restaurantData.name;
+                document.getElementById('footerRestaurantName').textContent = this.restaurantData.name;
+
+                // Update hero section if restaurant has a background image
+                const heroSection = document.getElementById('heroSection');
+                if (this.restaurantData.background_image) {
+                    heroSection.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url('${this.restaurantData.background_image}')`;
+                }
+
+                // Update contact information
+                if (this.restaurantData.address) {
+                    document.getElementById('restaurantAddress').textContent = this.restaurantData.address;
+                    document.getElementById('footerAddress').textContent = this.restaurantData.address;
+                }
+                if (this.restaurantData.phone) {
+                    document.getElementById('restaurantPhone').textContent = this.restaurantData.phone;
+                    document.getElementById('footerPhone').textContent = this.restaurantData.phone;
+                }
+                if (this.restaurantData.hours) {
+                    document.getElementById('restaurantHours').textContent = this.restaurantData.hours;
+                    document.getElementById('footerHours').textContent = this.restaurantData.hours;
+                }
+                if (this.restaurantData.about) {
+                    document.getElementById('aboutContent').innerHTML = `<p>${this.restaurantData.about}</p>`;
+                }
+            }
+
+            async loadMenuData() {
+                try {
+                    // Load categories
+                    const { data: categories, error: categoriesError } = await supabase
+                        .from('categories')
+                        .select('*')
+                        .eq('restaurant_id', this.restaurantId)
+                        .order('display_order');
+
+                    if (categoriesError) throw categoriesError;
+                    this.categories = categories || [];
+
+                    // Load menu items
+                    const { data: menuItems, error: itemsError } = await supabase
+                        .from('menu_items')
+                        .select('*')
+                        .eq('restaurant_id', this.restaurantId)
+                        .eq('is_available', true)
+                        .order('created_at');
+
+                    if (itemsError) throw itemsError;
+                    this.menuItems = menuItems || [];
+
+                    // Load variants for all menu items
+                    await this.loadAllVariants();
+
+                    // Load addon groups
+                    await this.loadAddonGroups();
+
+                    this.displayCategories();
+                    this.displayMenuItems();
+
+                } catch (error) {
+                    console.error('Error loading menu data:', error);
+                    this.showError('Error loading menu. Please try again.');
+                }
+            }
+
+            async loadAllVariants() {
+                try {
+                    const menuItemIds = this.menuItems.map(item => item.id);
+                    if (menuItemIds.length === 0) return;
+
+                    const { data: variants, error } = await supabase
+                        .from('menu_item_variants')
+                        .select('*')
+                        .in('menu_item_id', menuItemIds)
+                        .order('created_at');
+
+                    if (error) throw error;
+
+                    this.menuItemVariants = {};
+                    variants.forEach(variant => {
+                        if (!this.menuItemVariants[variant.menu_item_id]) {
+                            this.menuItemVariants[variant.menu_item_id] = [];
+                        }
+                        this.menuItemVariants[variant.menu_item_id].push(variant);
+                    });
+
+                } catch (error) {
+                    console.error('Error loading variants:', error);
+                }
+            }
+
+            async loadAddonGroups() {
+                try {
+                    const { data: addonGroups, error } = await supabase
+                        .from('addon_groups')
+                        .select(`
+                            *,
+                            addons(*)
+                        `)
+                        .eq('restaurant_id', this.restaurantId);
+
+                    if (error) throw error;
+
+                    this.addonGroups = {};
+                    addonGroups.forEach(group => {
+                        this.addonGroups[group.id] = group;
+                    });
+
+                } catch (error) {
+                    console.error('Error loading addon groups:', error);
+                }
+            }
+
+            displayCategories() {
+                const container = document.getElementById('categoriesTabs');
+                
+                const categoriesHtml = [
+                    `<a class="category-tab flex flex-col shrink-0 items-center justify-center border-b-[3px] ${this.currentCategory === 'all' ? 'border-b-primary text-primary' : 'border-b-transparent text-[#8d755e] dark:text-gray-400'} hover:text-primary dark:hover:text-primary transition-colors pb-[13px] pt-4 cursor-pointer" data-category="all">
+                        <p class="text-sm font-bold leading-normal tracking-[0.015em]">All Items</p>
+                    </a>`,
+                    ...this.categories.map(category => `
+                        <a class="category-tab flex flex-col shrink-0 items-center justify-center border-b-[3px] ${this.currentCategory === category.id ? 'border-b-primary text-primary' : 'border-b-transparent text-[#8d755e] dark:text-gray-400'} hover:text-primary dark:hover:text-primary transition-colors pb-[13px] pt-4 cursor-pointer" data-category="${category.id}">
+                            <p class="text-sm font-bold leading-normal tracking-[0.015em]">${category.name}</p>
+                        </a>
+                    `)
+                ].join('');
+
+                container.innerHTML = categoriesHtml;
+
+                // Add event listeners
+                container.querySelectorAll('.category-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const category = tab.getAttribute('data-category');
+                        this.filterByCategory(category);
+                    });
+                });
+            }
+
+            displayMenuItems() {
+                const container = document.getElementById('menuItemsGrid');
+                
+                let filteredItems = this.menuItems;
+                if (this.currentCategory !== 'all') {
+                    filteredItems = this.menuItems.filter(item => item.category_id === this.currentCategory);
+                }
+
+                if (filteredItems.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">restaurant</span>
+                            <p class="text-gray-500">No items found in this category</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = filteredItems.map(item => {
+                    const variants = this.menuItemVariants[item.id] || [];
+                    const hasVariants = variants.length > 0;
+                    const hasAddons = this.hasAddonsForItem(item.id);
+                    
+                    // Calculate price range if there are variants
+                    let priceDisplay = `$${parseFloat(item.price).toFixed(2)}`;
+                    if (hasVariants) {
+                        const prices = variants.map(v => parseFloat(item.price) + parseFloat(v.additional_price || 0));
+                        const minPrice = Math.min(...prices);
+                        const maxPrice = Math.max(...prices);
+                        if (minPrice !== maxPrice) {
+                            priceDisplay = `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
+                        }
+                    }
+
+                    const displayImage = item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
+
+                    return `
+                    <div class="flex flex-col gap-3 rounded-xl bg-white dark:bg-[#1c140d] p-4 border border-[#e7e0da]/60 dark:border-[#2f241a]/60 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg" style="background-image: url('${displayImage}')"></div>
+                        <div class="flex-grow">
+                            <p class="text-base font-bold leading-normal dark:text-white">${item.name}</p>
+                            <p class="text-[#8d755e] dark:text-gray-400 text-sm font-normal leading-normal">${item.description || 'Delicious menu item'}</p>
+                        </div>
+                        <div class="flex items-center justify-between mt-2">
+                            <p class="text-[#181410] dark:text-white text-base font-bold leading-normal">${priceDisplay}</p>
+                            <button class="add-to-cart-btn flex items-center justify-center rounded-lg h-9 px-3 bg-primary/20 text-primary text-sm font-bold hover:bg-primary/30 transition-colors" data-item-id="${item.id}">
+                                Add
+                            </button>
+                        </div>
+                        ${hasVariants || hasAddons ? `
+                            <div class="flex items-center gap-2 text-xs text-gray-500">
+                                ${hasVariants ? '<span class="material-symbols-outlined text-xs">layers</span>' : ''}
+                                ${hasAddons ? '<span class="material-symbols-outlined text-xs">extension</span>' : ''}
+                                <span>Customizable</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    `;
+                }).join('');
+
+                // Add event listeners to add buttons
+                container.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const itemId = e.target.getAttribute('data-item-id');
+                        this.showAddToCartModal(itemId);
+                    });
+                });
+            }
+
+            hasAddonsForItem(itemId) {
+                // Check if item has addon groups linked
+                // This would require a separate query to menu_item_addons table
+                // For now, return false - you can implement this based on your schema
+                return false;
+            }
+
+            filterByCategory(categoryId) {
+                this.currentCategory = categoryId;
+                
+                // Update active tab
+                document.querySelectorAll('.category-tab').forEach(tab => {
+                    const tabCategory = tab.getAttribute('data-category');
+                    if (tabCategory === categoryId) {
+                        tab.classList.remove('border-b-transparent', 'text-[#8d755e]', 'dark:text-gray-400');
+                        tab.classList.add('border-b-primary', 'text-primary');
+                    } else {
+                        tab.classList.remove('border-b-primary', 'text-primary');
+                        tab.classList.add('border-b-transparent', 'text-[#8d755e]', 'dark:text-gray-400');
+                    }
+                });
+
+                this.displayMenuItems();
+            }
+
+            async showAddToCartModal(itemId) {
+                const item = this.menuItems.find(i => i.id === itemId);
+                if (!item) return;
+
+                this.currentMenuItem = item;
+                const variants = this.menuItemVariants[itemId] || [];
+                const hasVariants = variants.length > 0;
+
+                document.getElementById('modalItemName').textContent = item.name;
+                
+                let modalContent = '';
+                
+                if (hasVariants) {
+                    modalContent = `
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2 dark:text-white">Select Option</label>
+                            <div class="space-y-2">
+                                ${variants.map(variant => {
+                                    const finalPrice = (parseFloat(item.price) + parseFloat(variant.additional_price || 0)).toFixed(2);
+                                    return `
+                                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:border-primary transition-colors">
+                                        <input type="radio" name="variant" value="${variant.id}" class="variant-radio">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between">
+                                                <span class="font-medium">${variant.name}</span>
+                                                <span class="font-semibold text-primary">+$${parseFloat(variant.additional_price || 0).toFixed(2)}</span>
+                                            </div>
+                                            ${variant.additional_price > 0 ? `
+                                                <p class="text-sm text-gray-500">Total: $${finalPrice}</p>
+                                            ` : ''}
+                                        </div>
+                                    </label>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Add quantity selector
+                modalContent += `
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2 dark:text-white">Quantity</label>
+                        <div class="flex items-center gap-3">
+                            <button id="decreaseQuantity" class="flex items-center justify-center size-8 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">-</button>
+                            <span id="quantityDisplay" class="w-8 text-center font-medium">1</span>
+                            <button id="increaseQuantity" class="flex items-center justify-center size-8 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">+</button>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('modalContent').innerHTML = modalContent;
+                
+                // Setup event listeners for the modal
+                this.setupAddToCartModalEvents(variants);
+                
+                document.getElementById('addToCartModal').classList.remove('hidden');
+            }
+
+            setupAddToCartModalEvents(variants) {
+                let quantity = 1;
+                let selectedVariant = variants.length > 0 ? variants[0] : null;
+
+                // Variant selection
+                document.querySelectorAll('.variant-radio').forEach((radio, index) => {
+                    radio.addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            selectedVariant = variants[index];
+                        }
+                    });
+                });
+
+                // Auto-select first variant if available
+                if (variants.length > 0) {
+                    document.querySelector('.variant-radio').checked = true;
+                }
+
+                // Quantity controls
+                document.getElementById('decreaseQuantity').addEventListener('click', () => {
+                    if (quantity > 1) {
+                        quantity--;
+                        document.getElementById('quantityDisplay').textContent = quantity;
+                    }
+                });
+
+                document.getElementById('increaseQuantity').addEventListener('click', () => {
+                    quantity++;
+                    document.getElementById('quantityDisplay').textContent = quantity;
+                });
+
+                // Confirm add to cart
+                document.getElementById('confirmAddToCart').addEventListener('click', () => {
+                    this.addToCart(quantity, selectedVariant);
+                    this.hideAddToCartModal();
+                });
+            }
+
+            addToCart(quantity, variant = null) {
+                if (!this.currentMenuItem) return;
+
+                const item = this.currentMenuItem;
+                let finalPrice = parseFloat(item.price);
+                let variantInfo = null;
+
+                if (variant) {
+                    finalPrice += parseFloat(variant.additional_price || 0);
+                    variantInfo = {
+                        id: variant.id,
+                        name: variant.name,
+                        additional_price: parseFloat(variant.additional_price || 0)
+                    };
+                }
+
+                const cartItemKey = this.generateCartItemKey(item.id, variantInfo);
+
+                const existingItemIndex = this.cart.findIndex(cartItem => 
+                    cartItem.key === cartItemKey
+                );
+
+                if (existingItemIndex !== -1) {
+                    this.cart[existingItemIndex].quantity += quantity;
+                } else {
+                    this.cart.push({
+                        key: cartItemKey,
+                        id: item.id,
+                        name: item.name,
+                        base_price: parseFloat(item.price),
+                        final_price: finalPrice,
+                        quantity: quantity,
+                        variant: variantInfo,
+                        image_url: item.image_url
+                    });
+                }
+
+                this.updateCartUI();
+                this.showToast(`Added ${item.name} to cart`, 'success');
+            }
+
+            generateCartItemKey(itemId, variant) {
+                const variantId = variant ? variant.id : 'no-variant';
+                return `${itemId}-${variantId}`;
+            }
+
+            updateCartUI() {
+                const totalItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+                const cartCount = document.getElementById('cartCount');
+                
+                if (totalItems > 0) {
+                    cartCount.textContent = totalItems;
+                    cartCount.classList.remove('hidden');
+                } else {
+                    cartCount.classList.add('hidden');
+                }
+
+                this.displayCartItems();
+                this.updateCartTotals();
+                this.updateCheckoutButton();
+            }
+
+            displayCartItems() {
+                const container = document.getElementById('cartItems');
+                
+                if (this.cart.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <span class="material-symbols-outlined text-4xl mb-2">shopping_cart</span>
+                            <p>Your cart is empty</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.cart.map((item, index) => {
+                    const itemTotal = item.final_price * item.quantity;
+                    const imageUrl = item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80';
+
+                    return `
+                    <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div class="flex-shrink-0 w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
+                            <img src="${imageUrl}" alt="${item.name}" class="w-full h-full object-cover">
+                        </div>
+                        
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-medium text-gray-900 dark:text-white text-sm truncate">${item.name}</h4>
+                            ${item.variant ? `
+                                <p class="text-xs text-orange-600 mt-1">${item.variant.name}</p>
+                            ` : ''}
+                            <p class="text-orange-500 font-semibold text-sm">$${item.final_price.toFixed(2)} × ${item.quantity}</p>
+                        </div>
+                        
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="flex items-center gap-1">
+                                <button class="decrease-quantity p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" data-item-index="${index}">
+                                    <span class="material-symbols-outlined text-sm">remove</span>
+                                </button>
+                                <span class="w-6 text-center text-sm font-medium">${item.quantity}</span>
+                                <button class="increase-quantity p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" data-item-index="${index}">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                </button>
+                            </div>
+                            <button class="remove-item p-1 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 transition-colors" data-item-index="${index}">
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+
+                // Add event listeners for quantity buttons
+                container.querySelectorAll('.increase-quantity').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
+                        this.updateQuantity(index, 1);
+                    });
+                });
+
+                container.querySelectorAll('.decrease-quantity').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
+                        this.updateQuantity(index, -1);
+                    });
+                });
+
+                container.querySelectorAll('.remove-item').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.closest('button').getAttribute('data-item-index'));
+                        this.removeFromCart(index);
+                    });
+                });
+            }
+
+            updateQuantity(index, change) {
+                const item = this.cart[index];
+                if (!item) return;
+
+                item.quantity += change;
+
+                if (item.quantity <= 0) {
+                    this.removeFromCart(index);
+                } else {
+                    this.updateCartUI();
+                }
+            }
+
+            removeFromCart(index) {
+                this.cart.splice(index, 1);
+                this.updateCartUI();
+            }
+
+            updateCartTotals() {
+                const subtotal = this.cart.reduce((sum, item) => sum + (item.final_price * item.quantity), 0);
+                const taxRate = 0.08; // 8% tax
+                const taxes = subtotal * taxRate;
+                const deliveryFee = this.orderType === 'delivery' ? 3.99 : 0;
+                const total = subtotal + taxes + deliveryFee;
+
+                document.getElementById('cartSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+                document.getElementById('cartTaxes').textContent = `$${taxes.toFixed(2)}`;
+                document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+
+                // Show/hide delivery fee
+                const deliveryFeeItem = document.getElementById('deliveryFeeItem');
+                if (this.orderType === 'delivery') {
+                    deliveryFeeItem.classList.remove('hidden');
+                    document.getElementById('deliveryFee').textContent = `$${deliveryFee.toFixed(2)}`;
+                } else {
+                    deliveryFeeItem.classList.add('hidden');
+                }
+            }
+
+            updateCheckoutButton() {
+                const checkoutButton = document.getElementById('checkoutButton');
+                const hasItems = this.cart.length > 0;
+                
+                checkoutButton.disabled = !hasItems;
+                
+                if (hasItems) {
+                    checkoutButton.textContent = `Checkout - $${this.calculateTotal().toFixed(2)}`;
+                } else {
+                    checkoutButton.textContent = 'Checkout';
+                }
+            }
+
+            calculateTotal() {
+                const subtotal = this.cart.reduce((sum, item) => sum + (item.final_price * item.quantity), 0);
+                const taxRate = 0.08;
+                const taxes = subtotal * taxRate;
+                const deliveryFee = this.orderType === 'delivery' ? 3.99 : 0;
+                return subtotal + taxes + deliveryFee;
+            }
+
+            async placeOrder() {
+                if (this.cart.length === 0) {
+                    this.showToast('Your cart is empty', 'error');
+                    return;
+                }
+
+                const customerName = document.getElementById('customerName').value;
+                const customerPhone = document.getElementById('customerPhone').value;
+                const orderNotes = document.getElementById('orderNotes').value;
+                let deliveryAddress = '';
+
+                if (this.orderType === 'delivery') {
+                    deliveryAddress = document.getElementById('deliveryAddress').value;
+                    if (!deliveryAddress.trim()) {
+                        this.showToast('Please enter delivery address', 'error');
+                        return;
+                    }
+                }
+
+                if (!customerName.trim() || !customerPhone.trim()) {
+                    this.showToast('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                const checkoutButton = document.getElementById('checkoutButton');
+                checkoutButton.disabled = true;
+                checkoutButton.innerHTML = '<span class="loading-spinner"></span> Placing Order...';
+
+                try {
+                    const finalTotal = this.calculateTotal();
+                    const orderTime = new Date().toISOString();
+                    const estimatedCompletionTime = new Date(Date.now() + 45 * 60000).toISOString();
+
+                    const orderData = {
+                        restaurant_id: this.restaurantId,
+                        order_type: this.orderType,
+                        order_number: 'ONL-' + new Date().getTime(),
+                        status: 'pending',
+                        total_amount: finalTotal,
+                        customer_notes: orderNotes,
+                        customer_name: customerName,
+                        customer_phone: customerPhone,
+                        delivery_address: this.orderType === 'delivery' ? deliveryAddress : null,
+                        order_time: orderTime,
+                        estimated_completion_time: estimatedCompletionTime
+                    };
+
+                    const { data: order, error: orderError } = await supabase
+                        .from('orders')
+                        .insert([orderData])
+                        .select()
+                        .single();
+
+                    if (orderError) throw orderError;
+
+                    // Insert order items
+                    const orderItems = this.cart.map(cartItem => ({
+                        order_id: order.id,
+                        menu_item_id: cartItem.id,
+                        quantity: cartItem.quantity,
+                        special_instructions: '',
+                        item_price: cartItem.final_price,
+                        selected_variant: cartItem.variant ? JSON.stringify({
+                            id: cartItem.variant.id,
+                            name: cartItem.variant.name,
+                            additional_price: cartItem.variant.additional_price
+                        }) : null
+                    }));
+
+                    const { error: orderItemsError } = await supabase
+                        .from('order_items')
+                        .insert(orderItems);
+
+                    if (orderItemsError) throw orderItemsError;
+
+                    this.showOrderConfirmation(order.order_number);
+                    this.cart = [];
+                    this.updateCartUI();
+                    this.clearCustomerForm();
+
+                } catch (error) {
+                    console.error('Error placing order:', error);
+                    this.showToast('Error placing order. Please try again.', 'error');
+                } finally {
+                    checkoutButton.disabled = false;
+                    checkoutButton.textContent = `Checkout - $${this.calculateTotal().toFixed(2)}`;
+                }
+            }
+
+            clearCustomerForm() {
+                document.getElementById('customerName').value = '';
+                document.getElementById('customerPhone').value = '';
+                document.getElementById('deliveryAddress').value = '';
+                document.getElementById('orderNotes').value = '';
+            }
+
+            showOrderConfirmation(orderNumber) {
+                document.getElementById('confirmationOrderNumber').textContent = orderNumber;
+                document.getElementById('orderConfirmationModal').classList.remove('hidden');
+            }
+
+            setupEventListeners() {
+                // Cart button
+                document.getElementById('cartButton').addEventListener('click', () => {
+                    // Scroll to cart section
+                    document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
+                });
+
+                // Order type buttons
+                document.getElementById('deliveryBtn').addEventListener('click', () => {
+                    this.setOrderType('delivery');
+                });
+
+                document.getElementById('pickupBtn').addEventListener('click', () => {
+                    this.setOrderType('pickup');
+                });
+
+                // Checkout button
+                document.getElementById('checkoutButton').addEventListener('click', () => {
+                    this.placeOrder();
+                });
+
+                // Modal events
+                document.getElementById('closeAddToCartModal').addEventListener('click', () => {
+                    this.hideAddToCartModal();
+                });
+
+                document.getElementById('cancelAddToCart').addEventListener('click', () => {
+                    this.hideAddToCartModal();
+                });
+
+                document.getElementById('closeConfirmation').addEventListener('click', () => {
+                    document.getElementById('orderConfirmationModal').classList.add('hidden');
+                });
+
+                // Modal backdrop clicks
+                document.getElementById('addToCartModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'addToCartModal') {
+                        this.hideAddToCartModal();
+                    }
+                });
+
+                document.getElementById('orderConfirmationModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'orderConfirmationModal') {
+                        document.getElementById('orderConfirmationModal').classList.add('hidden');
+                    }
+                });
+            }
+
+            setOrderType(type) {
+                this.orderType = type;
+                
+                const deliveryBtn = document.getElementById('deliveryBtn');
+                const pickupBtn = document.getElementById('pickupBtn');
+                const deliveryAddressField = document.getElementById('deliveryAddressField');
+
+                if (type === 'delivery') {
+                    deliveryBtn.classList.add('border-primary', 'bg-primary/10', 'text-primary');
+                    pickupBtn.classList.remove('border-primary', 'bg-primary/10', 'text-primary');
+                    deliveryAddressField.classList.remove('hidden');
+                } else {
+                    pickupBtn.classList.add('border-primary', 'bg-primary/10', 'text-primary');
+                    deliveryBtn.classList.remove('border-primary', 'bg-primary/10', 'text-primary');
+                    deliveryAddressField.classList.add('hidden');
+                }
+
+                this.updateCartTotals();
+                this.updateCheckoutButton();
+            }
+
+            hideAddToCartModal() {
+                document.getElementById('addToCartModal').classList.add('hidden');
+                this.currentMenuItem = null;
+                this.selectedVariant = null;
+            }
+
+            showToast(message, type = 'info') {
+                // Create toast notification
+                const toast = document.createElement('div');
+                toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${
+                    type === 'error' ? 'bg-red-500' : 
+                    type === 'success' ? 'bg-green-500' : 'bg-blue-500'
+                } text-white`;
+                toast.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">
+                            ${type === 'success' ? 'check_circle' : 
+                              type === 'error' ? 'error' : 'info'}
+                        </span>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            showError(message) {
+                // You can implement a more sophisticated error display
+                console.error(message);
+                this.showToast(message, 'error');
+            }
+        }
+
+        // Initialize the restaurant website
+        new RestaurantWebsite();
+    </script>
+</body>
+</html>

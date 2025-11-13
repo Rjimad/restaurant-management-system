@@ -95,6 +95,11 @@
                         <span class="material-symbols-outlined">extension</span>
                         <p class="text-sm font-medium leading-normal">Add-ons</p>
                     </a>
+                    <!-- New Website Settings Button -->
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="#website-settings">
+                        <span class="material-symbols-outlined">language</span>
+                        <p class="text-sm font-medium leading-normal">Website</p>
+                    </a>
                 </nav>
             </div>
             <div class="mt-auto flex flex-col gap-1">
@@ -135,10 +140,137 @@
                         <p class="text-[#181410] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Menu Management</p>
                         <p class="text-[#8d755e] dark:text-[#a1907c] text-base font-normal leading-normal">Manage your categories, items, and variants.</p>
                     </div>
-                    <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 hover:bg-primary/90">
-                        <span class="material-symbols-outlined text-xl">visibility</span>
-                        <span class="truncate">Preview Menu</span>
-                    </button>
+                    <div class="flex gap-3">
+                        <button id="previewWebsiteBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-blue-600 text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 hover:bg-blue-700">
+                            <span class="material-symbols-outlined text-xl">language</span>
+                            <span class="truncate">Preview Website</span>
+                        </button>
+                        <button id="previewMenuBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 hover:bg-primary/90">
+                            <span class="material-symbols-outlined text-xl">visibility</span>
+                            <span class="truncate">Preview Menu</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Website Settings Section -->
+                <div id="website-settings" class="bg-white dark:bg-[#2a2116] rounded-xl border border-[#f5f2f0] dark:border-[#2f271f] shadow-sm p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-[#181410] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em]">Website Settings</h2>
+                        <span class="material-symbols-outlined text-primary text-2xl">language</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Current Website Info -->
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white">Your Online Ordering Website</h3>
+                            <p class="text-[#8d755e] dark:text-[#a1907c]">Set up your custom domain and configure your online ordering website.</p>
+                            
+                            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">info</span>
+                                    <h4 class="font-semibold text-blue-800 dark:text-blue-300">Current Website</h4>
+                                </div>
+                                <p class="text-blue-700 dark:text-blue-300 text-sm mb-2">Your website is currently available at:</p>
+                                <div class="flex items-center gap-2">
+                                    <code id="currentWebsiteUrl" class="bg-white dark:bg-blue-800/30 px-3 py-2 rounded text-sm font-mono border border-blue-200 dark:border-blue-700 flex-1 truncate">
+                                        https://dineflow.com/restaurant/your-restaurant
+                                    </code>
+                                    <button id="copyWebsiteUrl" class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800/30 rounded">
+                                        <span class="material-symbols-outlined text-lg">content_copy</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Domain Settings -->
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white">Custom Domain</h3>
+                            <p class="text-[#8d755e] dark:text-[#a1907c]">Connect your own domain to your restaurant website.</p>
+                            
+                            <form id="domainSettingsForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Your Domain</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="customDomain" 
+                                               class="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent"
+                                               placeholder="your-restaurant.com"
+                                               value="">
+                                        <button type="button" id="verifyDomainBtn" class="px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium">
+                                            Verify
+                                        </button>
+                                    </div>
+                                    <p class="text-sm text-[#8d755e] dark:text-[#a1907c] mt-2">
+                                        Enter your domain without http:// or https://
+                                    </p>
+                                </div>
+
+                                <div id="dnsSettings" class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 hidden">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400">warning</span>
+                                        <h4 class="font-semibold text-yellow-800 dark:text-yellow-300">DNS Configuration Required</h4>
+                                    </div>
+                                    <p class="text-yellow-700 dark:text-yellow-300 text-sm mb-3">
+                                        To connect your domain, please add the following DNS records:
+                                    </p>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between items-center p-2 bg-white dark:bg-yellow-800/30 rounded">
+                                            <span class="font-mono">CNAME</span>
+                                            <span class="font-mono">www → dineflow.com</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-2 bg-white dark:bg-yellow-800/30 rounded">
+                                            <span class="font-mono">A</span>
+                                            <span class="font-mono">@ → 192.0.2.1</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="domainStatus" class="hidden">
+                                    <!-- Domain status will be shown here -->
+                                </div>
+
+                                <div class="flex gap-3 pt-2">
+                                    <button type="submit" id="saveDomainBtn" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Save Domain Settings
+                                    </button>
+                                    <button type="button" id="testDomainBtn" class="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 font-medium hidden">
+                                        Test Domain
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Website Preview Section -->
+                    <div class="mt-8 pt-6 border-t border-[#f5f2f0] dark:border-[#2f271f]">
+                        <h3 class="text-lg font-semibold text-[#181410] dark:text-white mb-4">Website Preview & Testing</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="material-symbols-outlined text-green-600 dark:text-green-400">smartphone</span>
+                                    <h4 class="font-semibold text-green-800 dark:text-green-300">Customer Menu (QR Code)</h4>
+                                </div>
+                                <p class="text-green-700 dark:text-green-300 text-sm mb-3">
+                                    Preview how customers will see your menu when scanning table QR codes.
+                                </p>
+                                <button id="previewCustomerMenu" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 font-medium">
+                                    Preview Customer Menu
+                                </button>
+                            </div>
+
+                            <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="material-symbols-outlined text-purple-600 dark:text-purple-400">desktop_windows</span>
+                                    <h4 class="font-semibold text-purple-800 dark:text-purple-300">Online Ordering Website</h4>
+                                </div>
+                                <p class="text-purple-700 dark:text-purple-300 text-sm mb-3">
+                                    Preview your full online ordering website for delivery and pickup orders.
+                                </p>
+                                <button id="previewOrderingWebsite" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 font-medium">
+                                    Preview Ordering Website
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -392,6 +524,9 @@
 
             // Set up logout
             document.getElementById('logoutBtn').addEventListener('click', this.logout.bind(this));
+
+            // Update website URL display
+            this.updateWebsiteUrlDisplay();
         }
 
         async loadRestaurantData() {
@@ -402,6 +537,12 @@
                 if (this.restaurant) {
                     console.log('Restaurant loaded:', this.restaurant);
                     document.getElementById('restaurantName').textContent = this.restaurant.name;
+                    
+                    // Load custom domain if exists
+                    if (this.restaurant.custom_domain) {
+                        document.getElementById('customDomain').value = this.restaurant.custom_domain;
+                        this.showDnsSettings();
+                    }
                 } else {
                     console.error('No restaurant found for user:', this.user.id);
                     this.showNotification('No restaurant found. Please contact support.', 'error');
@@ -409,6 +550,19 @@
             } catch (error) {
                 console.error('Error loading restaurant data:', error);
                 this.showNotification('Error loading restaurant data: ' + error.message, 'error');
+            }
+        }
+
+        updateWebsiteUrlDisplay() {
+            const currentUrlElement = document.getElementById('currentWebsiteUrl');
+            if (this.restaurant) {
+                const restaurantSlug = this.restaurant.name.toLowerCase().replace(/\s+/g, '-');
+                currentUrlElement.textContent = `https://dineflow.com/restaurant/${restaurantSlug}`;
+                
+                // If custom domain is set, show it as primary
+                if (this.restaurant.custom_domain) {
+                    currentUrlElement.textContent = `https://${this.restaurant.custom_domain}`;
+                }
             }
         }
 
@@ -665,6 +819,183 @@
             document.getElementById('addVariantBtn').addEventListener('click', () => {
                 this.addVariantField();
             });
+
+            // Website Preview Events
+            document.getElementById('previewMenuBtn').addEventListener('click', () => {
+                this.previewCustomerMenu();
+            });
+
+            document.getElementById('previewWebsiteBtn').addEventListener('click', () => {
+                this.previewOrderingWebsite();
+            });
+
+            document.getElementById('previewCustomerMenu').addEventListener('click', () => {
+                this.previewCustomerMenu();
+            });
+
+            document.getElementById('previewOrderingWebsite').addEventListener('click', () => {
+                this.previewOrderingWebsite();
+            });
+
+            // Domain Settings Events
+            document.getElementById('verifyDomainBtn').addEventListener('click', () => {
+                this.verifyDomain();
+            });
+
+            document.getElementById('saveDomainBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                this.saveDomainSettings();
+            });
+
+            document.getElementById('copyWebsiteUrl').addEventListener('click', () => {
+                this.copyWebsiteUrl();
+            });
+
+            document.getElementById('testDomainBtn').addEventListener('click', () => {
+                this.testDomain();
+            });
+
+            // Domain input change
+            document.getElementById('customDomain').addEventListener('input', () => {
+                this.handleDomainInputChange();
+            });
+        }
+
+        // Website Preview Methods
+        previewCustomerMenu() {
+            if (!this.restaurant) {
+                this.showNotification('Please wait while restaurant data loads', 'error');
+                return;
+            }
+
+            // For preview, we'll use a demo table or create a temporary one
+            const restaurantSlug = this.restaurant.name.toLowerCase().replace(/\s+/g, '-');
+            const previewUrl = `customer-menu.html?restaurant=${this.restaurant.id}&preview=true`;
+            
+            window.open(previewUrl, '_blank', 'width=414,height=896,location=no,menubar=no,toolbar=no');
+            this.showNotification('Opening customer menu preview...', 'success');
+        }
+
+        previewOrderingWebsite() {
+            if (!this.restaurant) {
+                this.showNotification('Please wait while restaurant data loads', 'error');
+                return;
+            }
+
+            const restaurantSlug = this.restaurant.name.toLowerCase().replace(/\s+/g, '-');
+            let websiteUrl = `restaurant.html?restaurant=${this.restaurant.id}&preview=true`;
+            
+            // If custom domain is set, use it for preview
+            if (this.restaurant.custom_domain) {
+                websiteUrl = `https://${this.restaurant.custom_domain}?preview=true`;
+            }
+            
+            window.open(websiteUrl, '_blank', 'width=1200,height=800,location=no,menubar=no,toolbar=no');
+            this.showNotification('Opening website preview...', 'success');
+        }
+
+        // Domain Management Methods
+        verifyDomain() {
+            const domainInput = document.getElementById('customDomain');
+            const domain = domainInput.value.trim();
+            
+            if (!domain) {
+                this.showNotification('Please enter a domain name', 'error');
+                return;
+            }
+
+            // Basic domain validation
+            const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+            if (!domainRegex.test(domain)) {
+                this.showNotification('Please enter a valid domain name', 'error');
+                return;
+            }
+
+            this.showNotification('Verifying domain availability...', 'info');
+            
+            // Simulate domain verification
+            setTimeout(() => {
+                this.showDnsSettings();
+                this.showNotification('Domain is available! Please configure DNS settings.', 'success');
+            }, 1500);
+        }
+
+        showDnsSettings() {
+            document.getElementById('dnsSettings').classList.remove('hidden');
+            document.getElementById('testDomainBtn').classList.remove('hidden');
+            document.getElementById('saveDomainBtn').disabled = false;
+        }
+
+        async saveDomainSettings() {
+            const domain = document.getElementById('customDomain').value.trim();
+            
+            if (!domain) {
+                this.showNotification('Please enter a domain name', 'error');
+                return;
+            }
+
+            try {
+                this.showNotification('Saving domain settings...', 'info');
+                
+                // Update restaurant with custom domain
+                const { data: updatedRestaurant, error } = await supabase
+                    .from('restaurants')
+                    .update({ 
+                        custom_domain: domain,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', this.restaurant.id)
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                this.restaurant = updatedRestaurant;
+                this.updateWebsiteUrlDisplay();
+                this.showNotification('Domain settings saved successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error saving domain settings:', error);
+                this.showNotification('Error saving domain settings: ' + error.message, 'error');
+            }
+        }
+
+        copyWebsiteUrl() {
+            const urlElement = document.getElementById('currentWebsiteUrl');
+            const url = urlElement.textContent;
+            
+            navigator.clipboard.writeText(url).then(() => {
+                this.showNotification('Website URL copied to clipboard!', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                this.showNotification('Website URL copied to clipboard!', 'success');
+            });
+        }
+
+        testDomain() {
+            const domain = document.getElementById('customDomain').value.trim();
+            if (!domain) {
+                this.showNotification('Please enter a domain first', 'error');
+                return;
+            }
+
+            const testUrl = `https://${domain}`;
+            window.open(testUrl, '_blank');
+            this.showNotification('Opening domain for testing...', 'info');
+        }
+
+        handleDomainInputChange() {
+            const domain = document.getElementById('customDomain').value.trim();
+            const saveBtn = document.getElementById('saveDomainBtn');
+            
+            // Enable save button only if domain has changed
+            saveBtn.disabled = !domain || domain === (this.restaurant?.custom_domain || '');
         }
 
         setupImageUploadEvents() {
@@ -1613,119 +1944,120 @@
         }
 
         async loadAndDisplayItemAddonGroups(itemId) {
-    try {
-        const item = this.menuItems.find(item => item.id === itemId);
-        if (!item) return;
-
-        const container = document.getElementById(`addonBadges-${itemId}`);
-        if (!container) return;
-
-        // Check if item has variants
-        if (item.variants && item.variants.length > 0) {
-            // For items with variants, show variant-level addon groups
-            await this.loadAndDisplayVariantAddonGroups(itemId, container);
-        } else {
-            // For items without variants, show item-level addon groups
-            await this.loadAndDisplayItemLevelAddonGroups(itemId, container);
-        }
-    } catch (error) {
-        console.error('Error loading item addon groups:', error);
-        const container = document.getElementById(`addonBadges-${itemId}`);
-        if (container) {
-            container.innerHTML = '<span class="text-xs text-gray-500">Error loading addons</span>';
-        }
-    }
-}
-
-// New method to load and display variant-level addon groups
-async loadAndDisplayVariantAddonGroups(itemId, container) {
-    try {
-        // Get all variants for this item
-        const variants = await MenuService.getMenuItemVariants(itemId);
-        
-        if (!variants || variants.length === 0) {
-            container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
-            return;
-        }
-
-        // Collect all unique addon groups from all variants
-        const allAddonGroups = new Set();
-        
-        for (const variant of variants) {
             try {
-                if (MenuService.getVariantAddonGroups) {
-                    const variantAddonGroups = await MenuService.getVariantAddonGroups(variant.id);
-                    variantAddonGroups.forEach(group => {
-                        allAddonGroups.add(group.addon_group_id);
-                    });
+                const item = this.menuItems.find(item => item.id === itemId);
+                if (!item) return;
+
+                const container = document.getElementById(`addonBadges-${itemId}`);
+                if (!container) return;
+
+                // Check if item has variants
+                if (item.variants && item.variants.length > 0) {
+                    // For items with variants, show variant-level addon groups
+                    await this.loadAndDisplayVariantAddonGroups(itemId, container);
+                } else {
+                    // For items without variants, show item-level addon groups
+                    await this.loadAndDisplayItemLevelAddonGroups(itemId, container);
                 }
             } catch (error) {
-                console.error(`Error loading addon groups for variant ${variant.id}:`, error);
-                // Continue with other variants
+                console.error('Error loading item addon groups:', error);
+                const container = document.getElementById(`addonBadges-${itemId}`);
+                if (container) {
+                    container.innerHTML = '<span class="text-xs text-gray-500">Error loading addons</span>';
+                }
             }
         }
 
-        // If no addon groups found
-        if (allAddonGroups.size === 0) {
-            container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
-            return;
+        // New method to load and display variant-level addon groups
+        async loadAndDisplayVariantAddonGroups(itemId, container) {
+            try {
+                // Get all variants for this item
+                const variants = await MenuService.getMenuItemVariants(itemId);
+                
+                if (!variants || variants.length === 0) {
+                    container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
+                    return;
+                }
+
+                // Collect all unique addon groups from all variants
+                const allAddonGroups = new Set();
+                
+                for (const variant of variants) {
+                    try {
+                        if (MenuService.getVariantAddonGroups) {
+                            const variantAddonGroups = await MenuService.getVariantAddonGroups(variant.id);
+                            variantAddonGroups.forEach(group => {
+                                allAddonGroups.add(group.addon_group_id);
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Error loading addon groups for variant ${variant.id}:`, error);
+                        // Continue with other variants
+                    }
+                }
+
+                // If no addon groups found
+                if (allAddonGroups.size === 0) {
+                    container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
+                    return;
+                }
+
+                // Get addon group details
+                const groupDetails = Array.from(allAddonGroups).map(groupId => {
+                    return this.addonGroups.find(g => g.id === groupId);
+                }).filter(Boolean);
+
+                if (groupDetails.length === 0) {
+                    container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
+                    return;
+                }
+
+                // Display addon groups
+                container.innerHTML = groupDetails.map(group => `
+                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                        <span class="material-symbols-outlined text-xs">extension</span>
+                        ${group.name}
+                    </span>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading variant addon groups:', error);
+                container.innerHTML = '<span class="text-xs text-gray-500">Error loading addons</span>';
+            }
         }
 
-        // Get addon group details
-        const groupDetails = Array.from(allAddonGroups).map(groupId => {
-            return this.addonGroups.find(g => g.id === groupId);
-        }).filter(Boolean);
+        // Updated method for item-level addon groups (existing logic)
+        async loadAndDisplayItemLevelAddonGroups(itemId, container) {
+            try {
+                const linkedGroups = await MenuService.getMenuItemAddonGroups(itemId);
+                
+                if (linkedGroups.length === 0) {
+                    container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
+                    return;
+                }
 
-        if (groupDetails.length === 0) {
-            container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
-            return;
+                // Get the actual group details from our loaded addon groups
+                const groupDetails = linkedGroups.map(link => {
+                    return this.addonGroups.find(g => g.id === link.addon_group_id);
+                }).filter(Boolean);
+
+                if (groupDetails.length === 0) {
+                    container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
+                    return;
+                }
+
+                container.innerHTML = groupDetails.map(group => `
+                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                        <span class="material-symbols-outlined text-xs">extension</span>
+                        ${group.name}
+                    </span>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading item-level addon groups:', error);
+                container.innerHTML = '<span class="text-xs text-gray-500">Error loading addons</span>';
+            }
         }
 
-        // Display addon groups
-        container.innerHTML = groupDetails.map(group => `
-            <span class="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
-                <span class="material-symbols-outlined text-xs">extension</span>
-                ${group.name}
-            </span>
-        `).join('');
-
-    } catch (error) {
-        console.error('Error loading variant addon groups:', error);
-        container.innerHTML = '<span class="text-xs text-gray-500">Error loading addons</span>';
-    }
-}
-
-// Updated method for item-level addon groups (existing logic)
-async loadAndDisplayItemLevelAddonGroups(itemId, container) {
-    try {
-        const linkedGroups = await MenuService.getMenuItemAddonGroups(itemId);
-        
-        if (linkedGroups.length === 0) {
-            container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
-            return;
-        }
-
-        // Get the actual group details from our loaded addon groups
-        const groupDetails = linkedGroups.map(link => {
-            return this.addonGroups.find(g => g.id === link.addon_group_id);
-        }).filter(Boolean);
-
-        if (groupDetails.length === 0) {
-            container.innerHTML = '<span class="text-xs text-gray-500">No addon groups</span>';
-            return;
-        }
-
-        container.innerHTML = groupDetails.map(group => `
-            <span class="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
-                <span class="material-symbols-outlined text-xs">extension</span>
-                ${group.name}
-            </span>
-        `).join('');
-    } catch (error) {
-        console.error('Error loading item-level addon groups:', error);
-        container.innerHTML = '<span class="text-xs text-gray-500">Error loading addons</span>';
-    }
-}
         async logout() {
             try {
                 await AuthService.logout();
