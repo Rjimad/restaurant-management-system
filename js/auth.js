@@ -225,7 +225,7 @@ export const AuthService = {
     // Helper method to get the correct redirect URL for current environment
     getRedirectUrl() {
         const baseUrl = window.location.origin;
-        return `${baseUrl}/reset-password.html`;
+        return `${baseUrl}/admin/reset-password.html`;
     },
 
     // Clear stale sessions and tokens
