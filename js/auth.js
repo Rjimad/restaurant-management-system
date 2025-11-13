@@ -7,7 +7,6 @@ export const AuthService = {
             const { data: { user }, error } = await supabase.auth.getUser();
             if (error) {
                 console.error('Auth check error:', error);
-                // Clear stale session on auth error
                 await this.clearStaleSession();
                 window.location.href = 'login.html';
                 return null;
@@ -23,10 +22,8 @@ export const AuthService = {
 
     async register({ restaurantName, ownerName, email, password }) {
         try {
-            // Clear any stale sessions before registration
             await this.clearStaleSession();
 
-            // Step 1: Sign up the user with Supabase Auth
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email,
                 password,
@@ -34,13 +31,13 @@ export const AuthService = {
                     data: {
                         restaurant_name: restaurantName,
                         owner_name: ownerName
-                    }
+                    },
+                    emailRedirectTo: this.getRedirectUrl()
                 }
             });
 
             if (authError) throw authError;
 
-            // Step 2: Create restaurant record linked to the user
             if (authData.user) {
                 const { data: restaurantData, error: restaurantError } = await supabase
                     .from('restaurants')
@@ -57,8 +54,6 @@ export const AuthService = {
 
                 if (restaurantError) {
                     console.error('Restaurant creation error:', restaurantError);
-                    // If restaurant creation fails, delete the auth user
-                    await supabase.auth.admin.deleteUser(authData.user.id);
                     throw restaurantError;
                 }
 
@@ -82,7 +77,6 @@ export const AuthService = {
 
     async login(email, password) {
         try {
-            // Clear any stale sessions before login
             await this.clearStaleSession();
             
             const { data, error } = await supabase.auth.signInWithPassword({
@@ -90,15 +84,11 @@ export const AuthService = {
                 password
             });
 
-            if (error) {
-                console.error('Login auth error:', error);
-                throw error;
-            }
+            if (error) throw error;
 
             return { success: true, user: data.user };
         } catch (error) {
             console.error('Login service error:', error);
-            // Clear session on login error
             await this.clearStaleSession();
             return { 
                 success: false, 
@@ -110,18 +100,12 @@ export const AuthService = {
     async logout() {
         try {
             const { error } = await supabase.auth.signOut();
-            if (error) {
-                console.error('Logout error:', error);
-                // Even if signOut fails, clear local storage
-                await this.clearStaleSession();
-                throw error;
-            }
-            // Clear local storage after successful signout
             await this.clearStaleSession();
+            
+            if (error) throw error;
             return { success: true };
         } catch (error) {
             console.error('Logout exception:', error);
-            // Force clear local storage on any error
             await this.clearStaleSession();
             return { success: false, error: error.message };
         }
@@ -129,7 +113,6 @@ export const AuthService = {
 
     async getCurrentUser() {
         try {
-            // First, check if we have a valid session
             const { data: { session }, error: sessionError } = await supabase.auth.getSession();
             
             if (sessionError) {
@@ -138,11 +121,9 @@ export const AuthService = {
                 return null;
             }
 
-            if (!session) {
-                return null;
-            }
+            if (!session) return null;
 
-            // Verify the session is still valid
+            // Verify session is still valid
             const now = Math.floor(Date.now() / 1000);
             if (session.expires_at && session.expires_at < now) {
                 console.log('Session expired, clearing...');
@@ -150,7 +131,6 @@ export const AuthService = {
                 return null;
             }
 
-            // Now get the user
             const { data: { user }, error: userError } = await supabase.auth.getUser();
             
             if (userError) {
@@ -189,18 +169,21 @@ export const AuthService = {
 
     async resetPassword(email) {
         try {
-            // Clear any existing sessions first
             await this.clearStaleSession();
             
-            const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/admin/reset-password.html`,
+            const redirectUrl = this.getRedirectUrl();
+            console.log('Sending reset password to:', email, 'with redirect:', redirectUrl);
+            
+            const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: redirectUrl,
             });
-    
+
             if (error) {
                 console.error('Password reset email error:', error);
                 throw error;
             }
             
+            console.log('Password reset email sent successfully');
             return { success: true };
         } catch (error) {
             console.error('Password reset error:', error);
@@ -210,22 +193,28 @@ export const AuthService = {
             };
         }
     },
-    
-    // Add this new method for direct password updates
+
     async updatePassword(newPassword) {
         try {
+            console.log('Updating password...');
+            
             const { data, error } = await supabase.auth.updateUser({
                 password: newPassword
             });
-    
-            if (error) throw error;
-    
-            // Force sign out after password change to clear all sessions
+
+            if (error) {
+                console.error('Update password error:', error);
+                throw error;
+            }
+
+            console.log('Password updated successfully, signing out...');
+            
+            // Force sign out after password change
             await this.logout();
             
             return { success: true, user: data.user };
         } catch (error) {
-            console.error('Update password error:', error);
+            console.error('Update password service error:', error);
             return { 
                 success: false, 
                 error: this.getUserFriendlyError(error)
@@ -233,10 +222,15 @@ export const AuthService = {
         }
     },
 
-    // New method to clear stale sessions and tokens
+    // Helper method to get the correct redirect URL for current environment
+    getRedirectUrl() {
+        const baseUrl = window.location.origin;
+        return `${baseUrl}/reset-password.html`;
+    },
+
+    // Clear stale sessions and tokens
     async clearStaleSession() {
         try {
-            // Clear all auth-related storage
             const storageKeys = [
                 'supabase.auth.token',
                 'sb-auth-token',
@@ -263,7 +257,7 @@ export const AuthService = {
         }
     },
 
-    // Helper method for user-friendly error messages
+    // User-friendly error messages
     getUserFriendlyError(error) {
         const message = error.message || 'An unknown error occurred';
         
@@ -281,6 +275,8 @@ export const AuthService = {
             return 'Please enter a valid email address.';
         } else if (message.includes('Network') || message.includes('fetch')) {
             return 'Network error. Please check your internet connection.';
+        } else if (message.includes('rate limit')) {
+            return 'Too many attempts. Please try again in a few minutes.';
         } else {
             return 'An error occurred. Please try again.';
         }
