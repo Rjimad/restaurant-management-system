@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>DineFlow - Website Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#ff8000",
+                "background-light": "#f8f7f5",
+                "background-dark": "#23190f",
+              },
+              fontFamily: {
+                "display": ["Inter", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+        }
+        .material-symbols-outlined.fill {
+          font-variation-settings: 'FILL' 1;
+        }
+        .loading-spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #ff8000;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-[#181410] dark:text-background-light">
+    <div class="flex h-screen w-full">
+        <!-- SideNavBar -->
+        <aside class="flex w-64 flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark p-4">
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-3 px-3 py-2">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="DineFlow company logo" style='background-image: url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80");'></div>
+                    <div class="flex flex-col">
+                        <h1 class="text-gray-900 dark:text-white text-base font-medium leading-normal">DineFlow</h1>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal" id="restaurantName">Restaurant Admin</p>
+                    </div>
+                </div>
+                <nav class="flex flex-col gap-2 mt-4">
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="dashboard.html">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <p class="text-sm font-medium leading-normal">Dashboard</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="order-management.html">
+                        <span class="material-symbols-outlined">receipt_long</span>
+                        <p class="text-sm font-medium leading-normal">Orders</p>
+                    </a>
+                    <!-- Menu Button -->
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="menu-management.html">
+                        <span class="material-symbols-outlined">menu_book</span>
+                        <p class="text-sm font-medium leading-normal">Menu</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="table-management.html">
+                        <span class="material-symbols-outlined">table_restaurant</span>
+                        <p class="text-sm font-medium leading-normal">Tables</p>
+                    </a>
+                    <!-- Analytics Button -->
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="analytics.html">
+                        <span class="material-symbols-outlined">analytics</span>
+                        <p class="text-sm font-medium leading-normal">Analytics</p>
+                    </a>
+                    <!-- Add-ons Button -->
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="addon-management.html">
+                        <span class="material-symbols-outlined">extension</span>
+                        <p class="text-sm font-medium leading-normal">Add-ons</p>
+                    </a>
+                    <!-- Website Settings Button - Active -->
+                    <a class="flex items-center gap-3 px-3 py-2 text-gray-900 dark:text-white rounded-lg bg-primary/10 dark:bg-primary/20 ring-1 ring-primary/20" href="website-settings.html">
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">language</span>
+                        <p class="text-sm font-medium leading-normal text-primary">Website</p>
+                    </a>
+                </nav>
+            </div>
+            <div class="mt-auto flex flex-col gap-1">
+                <button id="logoutBtn" class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
+                    <span class="material-symbols-outlined">logout</span>
+                    <p class="text-sm font-medium leading-normal">Logout</p>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+            <!-- TopNavBar -->
+            <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#f5f2f0] dark:border-[#2f271f] bg-white dark:bg-background-dark px-10 py-3 sticky top-0 z-10">
+                <div class="flex items-center gap-8">
+                    <label class="flex flex-col w-80 !h-10">
+                        <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                            <div class="text-[#8d755e] flex bg-[#f5f2f0] dark:bg-[#2f271f] items-center justify-center pl-4 rounded-l-lg">
+                                <span class="material-symbols-outlined text-2xl">search</span>
+                            </div>
+                            <input id="searchInput" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#181410] dark:text-white focus:outline-0 focus:ring-0 border-none bg-[#f5f2f0] dark:bg-[#2f271f] h-full placeholder:text-[#8d755e] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search website settings..." value=""/>
+                        </div>
+                    </label>
+                </div>
+                <div class="flex flex-1 justify-end items-center gap-4">
+                    <button class="flex cursor-pointer items-center justify-center rounded-lg h-10 w-10 bg-white dark:bg-background-dark text-[#8d755e] hover:bg-[#f5f2f0] dark:hover:bg-[#2f271f]">
+                        <span class="material-symbols-outlined text-2xl">notifications</span>
+                    </button>
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User profile avatar" style='background-image: url("https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80");'></div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="flex flex-col gap-6 p-10">
+                <!-- PageHeading -->
+                <div class="flex flex-wrap justify-between gap-4 items-center">
+                    <div class="flex flex-col gap-1">
+                        <p class="text-[#181410] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Website Settings</p>
+                        <p class="text-[#8d755e] dark:text-[#a1907c] text-base font-normal leading-normal">Manage your custom domain and website configuration.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="previewWebsiteBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-blue-600 text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 hover:bg-blue-700">
+                            <span class="material-symbols-outlined text-xl">language</span>
+                            <span class="truncate">Preview Website</span>
+                        </button>
+                        <button id="previewMenuBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 hover:bg-primary/90">
+                            <span class="material-symbols-outlined text-xl">visibility</span>
+                            <span class="truncate">Preview Menu</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Website Settings Section -->
+                <div class="bg-white dark:bg-[#2a2116] rounded-xl border border-[#f5f2f0] dark:border-[#2f271f] shadow-sm p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-[#181410] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em]">Website Configuration</h2>
+                        <span class="material-symbols-outlined text-primary text-2xl">language</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Current Website Info -->
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white">Your Online Ordering Website</h3>
+                            <p class="text-[#8d755e] dark:text-[#a1907c]">Set up your custom domain and configure your online ordering website.</p>
+                            
+                            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">info</span>
+                                    <h4 class="font-semibold text-blue-800 dark:text-blue-300">Current Website</h4>
+                                </div>
+                                <p class="text-blue-700 dark:text-blue-300 text-sm mb-2">Your website is currently available at:</p>
+                                <div class="flex items-center gap-2">
+                                    <code id="currentWebsiteUrl" class="bg-white dark:bg-blue-800/30 px-3 py-2 rounded text-sm font-mono border border-blue-200 dark:border-blue-700 flex-1 truncate">
+                                        https://dineflow.com/restaurant/your-restaurant
+                                    </code>
+                                    <button id="copyWebsiteUrl" class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800/30 rounded">
+                                        <span class="material-symbols-outlined text-lg">content_copy</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Domain Settings -->
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white">Custom Domain</h3>
+                            <p class="text-[#8d755e] dark:text-[#a1907c]">Connect your own domain to your restaurant website.</p>
+                            
+                            <form id="domainSettingsForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Your Domain</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="customDomain" 
+                                               class="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent"
+                                               placeholder="your-restaurant.com"
+                                               value="">
+                                        <button type="button" id="verifyDomainBtn" class="px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium">
+                                            Verify
+                                        </button>
+                                    </div>
+                                    <p class="text-sm text-[#8d755e] dark:text-[#a1907c] mt-2">
+                                        Enter your domain without http:// or https://
+                                    </p>
+                                </div>
+
+                                <div id="dnsSettings" class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 hidden">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400">warning</span>
+                                        <h4 class="font-semibold text-yellow-800 dark:text-yellow-300">DNS Configuration Required</h4>
+                                    </div>
+                                    <p class="text-yellow-700 dark:text-yellow-300 text-sm mb-3">
+                                        To connect your domain, please add the following DNS records:
+                                    </p>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between items-center p-2 bg-white dark:bg-yellow-800/30 rounded">
+                                            <span class="font-mono">CNAME</span>
+                                            <span class="font-mono">www → dineflow.com</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-2 bg-white dark:bg-yellow-800/30 rounded">
+                                            <span class="font-mono">A</span>
+                                            <span class="font-mono">@ → 192.0.2.1</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="domainStatus" class="hidden">
+                                    <!-- Domain status will be shown here -->
+                                </div>
+
+                                <div class="flex gap-3 pt-2">
+                                    <button type="submit" id="saveDomainBtn" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Save Domain Settings
+                                    </button>
+                                    <button type="button" id="testDomainBtn" class="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 font-medium hidden">
+                                        Test Domain
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Website Preview Section -->
+                    <div class="mt-8 pt-6 border-t border-[#f5f2f0] dark:border-[#2f271f]">
+                        <h3 class="text-lg font-semibold text-[#181410] dark:text-white mb-4">Website Preview & Testing</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="material-symbols-outlined text-green-600 dark:text-green-400">smartphone</span>
+                                    <h4 class="font-semibold text-green-800 dark:text-green-300">Customer Menu (QR Code)</h4>
+                                </div>
+                                <p class="text-green-700 dark:text-green-300 text-sm mb-3">
+                                    Preview how customers will see your menu when scanning table QR codes.
+                                </p>
+                                <button id="previewCustomerMenu" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 font-medium">
+                                    Preview Customer Menu
+                                </button>
+                            </div>
+
+                            <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="material-symbols-outlined text-purple-600 dark:text-purple-400">desktop_windows</span>
+                                    <h4 class="font-semibold text-purple-800 dark:text-purple-300">Online Ordering Website</h4>
+                                </div>
+                                <p class="text-purple-700 dark:text-purple-300 text-sm mb-3">
+                                    Preview your full online ordering website for delivery and pickup orders.
+                                </p>
+                                <button id="previewOrderingWebsite" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 font-medium">
+                                    Preview Ordering Website
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Website Appearance Section -->
+                <div class="bg-white dark:bg-[#2a2116] rounded-xl border border-[#f5f2f0] dark:border-[#2f271f] shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-[#181410] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em]">Website Appearance</h2>
+                        <span class="material-symbols-outlined text-primary text-2xl">palette</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Color Scheme -->
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white">Color Scheme</h3>
+                            <p class="text-[#8d755e] dark:text-[#a1907c]">Customize the colors of your website to match your brand.</p>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Primary Color</label>
+                                    <div class="flex items-center gap-3">
+                                        <input type="color" id="primaryColor" value="#ff8000" class="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer">
+                                        <div class="flex-1">
+                                            <input type="text" id="primaryColorHex" value="#ff8000" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark font-mono text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Background Color</label>
+                                    <div class="flex items-center gap-3">
+                                        <input type="color" id="backgroundColor" value="#f8f7f5" class="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer">
+                                        <div class="flex-1">
+                                            <input type="text" id="backgroundColorHex" value="#f8f7f5" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark font-mono text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logo & Branding -->
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white">Logo & Branding</h3>
+                            <p class="text-[#8d755e] dark:text-[#a1907c]">Upload your restaurant logo and set your brand name.</p>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Restaurant Logo</label>
+                                    <div class="flex items-center gap-4">
+                                        <div id="logoPreview" class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
+                                            <span class="material-symbols-outlined text-gray-400">restaurant</span>
+                                        </div>
+                                        <div class="flex-1">
+                                            <input type="file" id="logoUpload" class="hidden" accept="image/*">
+                                            <button type="button" id="uploadLogoBtn" class="w-full p-3 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                                <span class="material-symbols-outlined text-lg mr-2">cloud_upload</span>
+                                                Upload Logo
+                                            </button>
+                                            <p class="text-xs text-[#8d755e] dark:text-[#a1907c] mt-1">Recommended: 200x200px PNG or JPG</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Restaurant Name</label>
+                                    <input type="text" id="restaurantNameInput" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Enter your restaurant name">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t border-[#f5f2f0] dark:border-[#2f271f]">
+                        <button id="saveAppearanceBtn" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium">
+                            Save Appearance Settings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SEO Settings Section -->
+                <div class="bg-white dark:bg-[#2a2116] rounded-xl border border-[#f5f2f0] dark:border-[#2f271f] shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-[#181410] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em]">SEO & Social Media</h2>
+                        <span class="material-symbols-outlined text-primary text-2xl">search</span>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white mb-2">Search Engine Optimization</h3>
+                            <p class="text-[#8d755e] dark:text-[#a1907c] mb-4">Optimize your website for search engines to help customers find you online.</p>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Meta Title</label>
+                                    <input type="text" id="metaTitle" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Your Restaurant - Best Food in City">
+                                    <p class="text-xs text-[#8d755e] dark:text-[#a1907c] mt-1">Recommended: 50-60 characters</p>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Meta Description</label>
+                                    <textarea id="metaDescription" rows="3" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Describe your restaurant and what makes it special"></textarea>
+                                    <p class="text-xs text-[#8d755e] dark:text-[#a1907c] mt-1">Recommended: 150-160 characters</p>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Keywords</label>
+                                    <input type="text" id="metaKeywords" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="restaurant, food, delivery, takeout">
+                                    <p class="text-xs text-[#8d755e] dark:text-[#a1907c] mt-1">Separate keywords with commas</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-[#f5f2f0] dark:border-[#2f271f]">
+                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white mb-2">Social Media Sharing</h3>
+                            <p class="text-[#8d755e] dark:text-[#a1907c] mb-4">Customize how your website appears when shared on social media.</p>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Social Media Image</label>
+                                    <div class="flex items-center gap-4">
+                                        <div id="socialImagePreview" class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
+                                            <span class="material-symbols-outlined text-gray-400">image</span>
+                                        </div>
+                                        <div class="flex-1">
+                                            <input type="file" id="socialImageUpload" class="hidden" accept="image/*">
+                                            <button type="button" id="uploadSocialImageBtn" class="w-full p-3 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                                <span class="material-symbols-outlined text-lg mr-2">cloud_upload</span>
+                                                Upload Social Media Image
+                                            </button>
+                                            <p class="text-xs text-[#8d755e] dark:text-[#a1907c] mt-1">Recommended: 1200x630px PNG or JPG</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t border-[#f5f2f0] dark:border-[#2f271f]">
+                        <button id="saveSeoBtn" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium">
+                            Save SEO Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-xl p-6 w-full max-w-md">
+            <div class="flex flex-col items-center text-center">
+                <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-3xl">check_circle</span>
+                </div>
+                <h3 class="text-lg font-bold mb-2" id="successModalTitle">Settings Saved</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-6" id="successModalMessage">Your website settings have been updated successfully.</p>
+                <button id="closeSuccessModal" class="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+    import { AuthService } from '../js/auth.js';
+    import { StorageService } from '../js/storage.js';
+
+    class WebsiteSettings {
+        constructor() {
+            this.user = null;
+            this.restaurant = null;
+            this.init();
+        }
+
+        async init() {
+            console.log('Initializing website settings...');
+            
+            // Check authentication
+            this.user = await AuthService.getCurrentUser();
+            if (!this.user) {
+                console.log('No user, redirecting to login...');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            console.log('User authenticated:', this.user);
+
+            // Initialize storage bucket
+            await StorageService.initializeBucket();
+
+            // Load restaurant data
+            await this.loadRestaurantData();
+
+            // Set up event listeners
+            this.setupEventListeners();
+
+            // Set up logout
+            document.getElementById('logoutBtn').addEventListener('click', this.logout.bind(this));
+
+            // Update website URL display
+            this.updateWebsiteUrlDisplay();
+        }
+
+        async loadRestaurantData() {
+            try {
+                console.log('Loading restaurant data...');
+                this.restaurant = await AuthService.getRestaurant();
+                
+                if (this.restaurant) {
+                    console.log('Restaurant loaded:', this.restaurant);
+                    document.getElementById('restaurantName').textContent = this.restaurant.name;
+                    document.getElementById('restaurantNameInput').value = this.restaurant.name;
+                    
+                    // Load custom domain if exists
+                    if (this.restaurant.custom_domain) {
+                        document.getElementById('customDomain').value = this.restaurant.custom_domain;
+                        this.showDnsSettings();
+                    }
+                    
+                    // Load appearance settings if they exist
+                    if (this.restaurant.website_settings) {
+                        this.loadAppearanceSettings(this.restaurant.website_settings);
+                    }
+                    
+                    // Load SEO settings if they exist
+                    if (this.restaurant.seo_settings) {
+                        this.loadSeoSettings(this.restaurant.seo_settings);
+                    }
+                } else {
+                    console.error('No restaurant found for user:', this.user.id);
+                    this.showNotification('No restaurant found. Please contact support.', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading restaurant data:', error);
+                this.showNotification('Error loading restaurant data: ' + error.message, 'error');
+            }
+        }
+
+        loadAppearanceSettings(settings) {
+            if (settings.primary_color) {
+                document.getElementById('primaryColor').value = settings.primary_color;
+                document.getElementById('primaryColorHex').value = settings.primary_color;
+            }
+            
+            if (settings.background_color) {
+                document.getElementById('backgroundColor').value = settings.background_color;
+                document.getElementById('backgroundColorHex').value = settings.background_color;
+            }
+            
+            if (settings.logo_url) {
+                this.updateLogoPreview(settings.logo_url);
+            }
+        }
+
+        loadSeoSettings(settings) {
+            if (settings.meta_title) {
+                document.getElementById('metaTitle').value = settings.meta_title;
+            }
+            
+            if (settings.meta_description) {
+                document.getElementById('metaDescription').value = settings.meta_description;
+            }
+            
+            if (settings.meta_keywords) {
+                document.getElementById('metaKeywords').value = settings.meta_keywords;
+            }
+            
+            if (settings.social_image_url) {
+                this.updateSocialImagePreview(settings.social_image_url);
+            }
+        }
+
+        updateWebsiteUrlDisplay() {
+            const currentUrlElement = document.getElementById('currentWebsiteUrl');
+            if (this.restaurant) {
+                const restaurantSlug = this.restaurant.name.toLowerCase().replace(/\s+/g, '-');
+                currentUrlElement.textContent = `https://dineflow.com/restaurant/${restaurantSlug}`;
+                
+                // If custom domain is set, show it as primary
+                if (this.restaurant.custom_domain) {
+                    currentUrlElement.textContent = `https://${this.restaurant.custom_domain}`;
+                }
+            }
+        }
+
+        setupEventListeners() {
+            // Website Preview Events
+            document.getElementById('previewMenuBtn').addEventListener('click', () => {
+                this.previewCustomerMenu();
+            });
+
+            document.getElementById('previewWebsiteBtn').addEventListener('click', () => {
+                this.previewOrderingWebsite();
+            });
+
+            document.getElementById('previewCustomerMenu').addEventListener('click', () => {
+                this.previewCustomerMenu();
+            });
+
+            document.getElementById('previewOrderingWebsite').addEventListener('click', () => {
+                this.previewOrderingWebsite();
+            });
+
+            // Domain Settings Events
+            document.getElementById('verifyDomainBtn').addEventListener('click', () => {
+                this.verifyDomain();
+            });
+
+            document.getElementById('saveDomainBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                this.saveDomainSettings();
+            });
+
+            document.getElementById('copyWebsiteUrl').addEventListener('click', () => {
+                this.copyWebsiteUrl();
+            });
+
+            document.getElementById('testDomainBtn').addEventListener('click', () => {
+                this.testDomain();
+            });
+
+            // Domain input change
+            document.getElementById('customDomain').addEventListener('input', () => {
+                this.handleDomainInputChange();
+            });
+
+            // Appearance Settings Events
+            document.getElementById('primaryColor').addEventListener('input', (e) => {
+                document.getElementById('primaryColorHex').value = e.target.value;
+            });
+
+            document.getElementById('primaryColorHex').addEventListener('input', (e) => {
+                if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                    document.getElementById('primaryColor').value = e.target.value;
+                }
+            });
+
+            document.getElementById('backgroundColor').addEventListener('input', (e) => {
+                document.getElementById('backgroundColorHex').value = e.target.value;
+            });
+
+            document.getElementById('backgroundColorHex').addEventListener('input', (e) => {
+                if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                    document.getElementById('backgroundColor').value = e.target.value;
+                }
+            });
+
+            document.getElementById('uploadLogoBtn').addEventListener('click', () => {
+                document.getElementById('logoUpload').click();
+            });
+
+            document.getElementById('logoUpload').addEventListener('change', (e) => {
+                this.handleLogoUpload(e.target.files[0]);
+            });
+
+            document.getElementById('saveAppearanceBtn').addEventListener('click', () => {
+                this.saveAppearanceSettings();
+            });
+
+            // SEO Settings Events
+            document.getElementById('uploadSocialImageBtn').addEventListener('click', () => {
+                document.getElementById('socialImageUpload').click();
+            });
+
+            document.getElementById('socialImageUpload').addEventListener('change', (e) => {
+                this.handleSocialImageUpload(e.target.files[0]);
+            });
+
+            document.getElementById('saveSeoBtn').addEventListener('click', () => {
+                this.saveSeoSettings();
+            });
+
+            // Success Modal
+            document.getElementById('closeSuccessModal').addEventListener('click', () => {
+                this.hideSuccessModal();
+            });
+
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                this.searchSettings(e.target.value);
+            });
+        }
+
+        // Website Preview Methods
+        previewCustomerMenu() {
+            if (!this.restaurant) {
+                this.showNotification('Please wait while restaurant data loads', 'error');
+                return;
+            }
+
+            // For preview, we'll use a demo table or create a temporary one
+            const restaurantSlug = this.restaurant.name.toLowerCase().replace(/\s+/g, '-');
+            const previewUrl = `customer-menu.html?restaurant=${this.restaurant.id}&preview=true`;
+            
+            window.open(previewUrl, '_blank', 'width=414,height=896,location=no,menubar=no,toolbar=no');
+            this.showNotification('Opening customer menu preview...', 'success');
+        }
+
+        previewOrderingWebsite() {
+            if (!this.restaurant) {
+                this.showNotification('Please wait while restaurant data loads', 'error');
+                return;
+            }
+
+            const restaurantSlug = this.restaurant.name.toLowerCase().replace(/\s+/g, '-');
+            let websiteUrl = `restaurant.html?restaurant=${this.restaurant.id}&preview=true`;
+            
+            // If custom domain is set, use it for preview
+            if (this.restaurant.custom_domain) {
+                websiteUrl = `https://${this.restaurant.custom_domain}?preview=true`;
+            }
+            
+            window.open(websiteUrl, '_blank', 'width=1200,height=800,location=no,menubar=no,toolbar=no');
+            this.showNotification('Opening website preview...', 'success');
+        }
+
+        // Domain Management Methods
+        verifyDomain() {
+            const domainInput = document.getElementById('customDomain');
+            const domain = domainInput.value.trim();
+            
+            if (!domain) {
+                this.showNotification('Please enter a domain name', 'error');
+                return;
+            }
+
+            // Basic domain validation
+            const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+            if (!domainRegex.test(domain)) {
+                this.showNotification('Please enter a valid domain name', 'error');
+                return;
+            }
+
+            this.showNotification('Verifying domain availability...', 'info');
+            
+            // Simulate domain verification
+            setTimeout(() => {
+                this.showDnsSettings();
+                this.showNotification('Domain is available! Please configure DNS settings.', 'success');
+            }, 1500);
+        }
+
+        showDnsSettings() {
+            document.getElementById('dnsSettings').classList.remove('hidden');
+            document.getElementById('testDomainBtn').classList.remove('hidden');
+            document.getElementById('saveDomainBtn').disabled = false;
+        }
+
+        async saveDomainSettings() {
+            const domain = document.getElementById('customDomain').value.trim();
+            
+            if (!domain) {
+                this.showNotification('Please enter a domain name', 'error');
+                return;
+            }
+
+            try {
+                this.showNotification('Saving domain settings...', 'info');
+                
+                // Update restaurant with custom domain
+                const { data: updatedRestaurant, error } = await supabase
+                    .from('restaurants')
+                    .update({ 
+                        custom_domain: domain,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', this.restaurant.id)
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                this.restaurant = updatedRestaurant;
+                this.updateWebsiteUrlDisplay();
+                this.showSuccessModal('Domain Settings Saved', 'Your custom domain has been configured successfully.');
+                
+            } catch (error) {
+                console.error('Error saving domain settings:', error);
+                this.showNotification('Error saving domain settings: ' + error.message, 'error');
+            }
+        }
+
+        copyWebsiteUrl() {
+            const urlElement = document.getElementById('currentWebsiteUrl');
+            const url = urlElement.textContent;
+            
+            navigator.clipboard.writeText(url).then(() => {
+                this.showNotification('Website URL copied to clipboard!', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                this.showNotification('Website URL copied to clipboard!', 'success');
+            });
+        }
+
+        testDomain() {
+            const domain = document.getElementById('customDomain').value.trim();
+            if (!domain) {
+                this.showNotification('Please enter a domain first', 'error');
+                return;
+            }
+
+            const testUrl = `https://${domain}`;
+            window.open(testUrl, '_blank');
+            this.showNotification('Opening domain for testing...', 'info');
+        }
+
+        handleDomainInputChange() {
+            const domain = document.getElementById('customDomain').value.trim();
+            const saveBtn = document.getElementById('saveDomainBtn');
+            
+            // Enable save button only if domain has changed
+            saveBtn.disabled = !domain || domain === (this.restaurant?.custom_domain || '');
+        }
+
+        // Appearance Settings Methods
+        async handleLogoUpload(file) {
+            if (!file) return;
+            
+            try {
+                StorageService.validateFile(file);
+                this.showNotification('Uploading logo...', 'info');
+                
+                const logoUrl = await StorageService.uploadImage(
+                    file, 
+                    `restaurant-${this.restaurant.id}/branding`
+                );
+                
+                this.updateLogoPreview(logoUrl);
+                this.showNotification('Logo uploaded successfully!', 'success');
+            } catch (error) {
+                this.showNotification(error.message, 'error');
+            }
+        }
+
+        updateLogoPreview(logoUrl) {
+            const preview = document.getElementById('logoPreview');
+            preview.innerHTML = `<img src="${logoUrl}" class="w-full h-full object-cover" alt="Restaurant Logo">`;
+        }
+
+        async handleSocialImageUpload(file) {
+            if (!file) return;
+            
+            try {
+                StorageService.validateFile(file);
+                this.showNotification('Uploading social media image...', 'info');
+                
+                const imageUrl = await StorageService.uploadImage(
+                    file, 
+                    `restaurant-${this.restaurant.id}/seo`
+                );
+                
+                this.updateSocialImagePreview(imageUrl);
+                this.showNotification('Social media image uploaded successfully!', 'success');
+            } catch (error) {
+                this.showNotification(error.message, 'error');
+            }
+        }
+
+        updateSocialImagePreview(imageUrl) {
+            const preview = document.getElementById('socialImagePreview');
+            preview.innerHTML = `<img src="${imageUrl}" class="w-full h-full object-cover" alt="Social Media Image">`;
+        }
+
+        async saveAppearanceSettings() {
+            const primaryColor = document.getElementById('primaryColor').value;
+            const backgroundColor = document.getElementById('backgroundColor').value;
+            const restaurantName = document.getElementById('restaurantNameInput').value;
+            
+            // Get logo URL from preview if available
+            const logoPreview = document.getElementById('logoPreview');
+            const logoUrl = logoPreview.querySelector('img') ? logoPreview.querySelector('img').src : null;
+
+            try {
+                this.showNotification('Saving appearance settings...', 'info');
+                
+                // Update restaurant with appearance settings
+                const { data: updatedRestaurant, error } = await supabase
+                    .from('restaurants')
+                    .update({ 
+                        name: restaurantName,
+                        website_settings: {
+                            primary_color: primaryColor,
+                            background_color: backgroundColor,
+                            logo_url: logoUrl
+                        },
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', this.restaurant.id)
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                this.restaurant = updatedRestaurant;
+                document.getElementById('restaurantName').textContent = restaurantName;
+                this.showSuccessModal('Appearance Settings Saved', 'Your website appearance has been updated successfully.');
+                
+            } catch (error) {
+                console.error('Error saving appearance settings:', error);
+                this.showNotification('Error saving appearance settings: ' + error.message, 'error');
+            }
+        }
+
+        async saveSeoSettings() {
+            const metaTitle = document.getElementById('metaTitle').value;
+            const metaDescription = document.getElementById('metaDescription').value;
+            const metaKeywords = document.getElementById('metaKeywords').value;
+            
+            // Get social image URL from preview if available
+            const socialImagePreview = document.getElementById('socialImagePreview');
+            const socialImageUrl = socialImagePreview.querySelector('img') ? socialImagePreview.querySelector('img').src : null;
+
+            try {
+                this.showNotification('Saving SEO settings...', 'info');
+                
+                // Update restaurant with SEO settings
+                const { data: updatedRestaurant, error } = await supabase
+                    .from('restaurants')
+                    .update({ 
+                        seo_settings: {
+                            meta_title: metaTitle,
+                            meta_description: metaDescription,
+                            meta_keywords: metaKeywords,
+                            social_image_url: socialImageUrl
+                        },
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', this.restaurant.id)
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                this.restaurant = updatedRestaurant;
+                this.showSuccessModal('SEO Settings Saved', 'Your SEO and social media settings have been updated successfully.');
+                
+            } catch (error) {
+                console.error('Error saving SEO settings:', error);
+                this.showNotification('Error saving SEO settings: ' + error.message, 'error');
+            }
+        }
+
+        // Search functionality
+        searchSettings(query) {
+            if (!query.trim()) return;
+            
+            // This would typically filter settings sections based on the query
+            // For now, we'll just show a notification
+            this.showNotification(`Searching for "${query}"...`, 'info');
+        }
+
+        // Modal Management
+        showSuccessModal(title, message) {
+            document.getElementById('successModalTitle').textContent = title;
+            document.getElementById('successModalMessage').textContent = message;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        hideSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        showNotification(message, type = 'info') {
+            // Remove existing notification
+            const existingNotification = document.querySelector('.notification-toast');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            // Create notification
+            const notification = document.createElement('div');
+            notification.className = `notification-toast fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        async logout() {
+            try {
+                await AuthService.logout();
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+    }
+
+    // Initialize website settings
+    const websiteSettings = new WebsiteSettings();
+    window.websiteSettings = websiteSettings;
+</script>
+</body>
+</html>
