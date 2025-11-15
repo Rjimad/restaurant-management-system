@@ -1,44 +1,48 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>DineFlow - Website Settings</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <title>DineFlow - Website Management</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     <script>
         tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              colors: {
-                "primary": "#ff8000",
-                "background-light": "#f8f7f5",
-                "background-dark": "#23190f",
-              },
-              fontFamily: {
-                "display": ["Inter", "sans-serif"]
-              },
-              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff7b00",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#23190f",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
             },
-          },
         }
     </script>
     <style>
         .material-symbols-outlined {
-          font-variation-settings:
-          'FILL' 0,
-          'wght' 400,
-          'GRAD' 0,
-          'opsz' 24
-        }
-        .material-symbols-outlined.fill {
-          font-variation-settings: 'FILL' 1;
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
         }
         .loading-spinner {
             border: 2px solid #f3f3f3;
-            border-top: 2px solid #ff8000;
+            border-top: 2px solid #ff7b00;
             border-radius: 50%;
             width: 16px;
             height: 16px;
@@ -52,375 +56,424 @@
         }
     </style>
 </head>
-<body class="font-display bg-background-light dark:bg-background-dark text-[#181410] dark:text-background-light">
-    <div class="flex h-screen w-full">
-        <!-- SideNavBar -->
-        <aside class="flex w-64 flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark p-4">
-            <div class="flex flex-col gap-4">
-                <div class="flex items-center gap-3 px-3 py-2">
-                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="DineFlow company logo" style='background-image: url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80");'></div>
-                    <div class="flex flex-col">
-                        <h1 class="text-gray-900 dark:text-white text-base font-medium leading-normal">DineFlow</h1>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal" id="restaurantName">Restaurant Admin</p>
-                    </div>
-                </div>
-                <nav class="flex flex-col gap-2 mt-4">
-                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="dashboard.html">
-                        <span class="material-symbols-outlined">dashboard</span>
-                        <p class="text-sm font-medium leading-normal">Dashboard</p>
-                    </a>
-                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="order-management.html">
-                        <span class="material-symbols-outlined">receipt_long</span>
-                        <p class="text-sm font-medium leading-normal">Orders</p>
-                    </a>
-                    <!-- Menu Button -->
-                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="menu-management.html">
-                        <span class="material-symbols-outlined">menu_book</span>
-                        <p class="text-sm font-medium leading-normal">Menu</p>
-                    </a>
-                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="table-management.html">
-                        <span class="material-symbols-outlined">table_restaurant</span>
-                        <p class="text-sm font-medium leading-normal">Tables</p>
-                    </a>
-                    <!-- Analytics Button -->
-                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="analytics.html">
-                        <span class="material-symbols-outlined">analytics</span>
-                        <p class="text-sm font-medium leading-normal">Analytics</p>
-                    </a>
-                    <!-- Add-ons Button -->
-                    <a class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" href="addon-management.html">
-                        <span class="material-symbols-outlined">extension</span>
-                        <p class="text-sm font-medium leading-normal">Add-ons</p>
-                    </a>
-                    <!-- Website Settings Button - Active -->
-                    <a class="flex items-center gap-3 px-3 py-2 text-gray-900 dark:text-white rounded-lg bg-primary/10 dark:bg-primary/20 ring-1 ring-primary/20" href="website-settings.html">
-                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">language</span>
-                        <p class="text-sm font-medium leading-normal text-primary">Website</p>
-                    </a>
-                </nav>
-            </div>
-            <div class="mt-auto flex flex-col gap-1">
-                <button id="logoutBtn" class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
-                    <span class="material-symbols-outlined">logout</span>
-                    <p class="text-sm font-medium leading-normal">Logout</p>
-                </button>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 flex flex-col h-screen overflow-y-auto">
-            <!-- TopNavBar -->
-            <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#f5f2f0] dark:border-[#2f271f] bg-white dark:bg-background-dark px-10 py-3 sticky top-0 z-10">
-                <div class="flex items-center gap-8">
-                    <label class="flex flex-col w-80 !h-10">
-                        <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
-                            <div class="text-[#8d755e] flex bg-[#f5f2f0] dark:bg-[#2f271f] items-center justify-center pl-4 rounded-l-lg">
-                                <span class="material-symbols-outlined text-2xl">search</span>
+<body class="font-display">
+    <div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root">
+        <div class="flex min-h-screen">
+            <!-- Sidebar -->
+            <aside class="sticky top-0 h-screen w-64 flex-shrink-0 bg-white dark:bg-[#1a1108] border-r border-stone-200 dark:border-stone-800">
+                <div class="flex h-full flex-col justify-between p-4">
+                    <div class="flex flex-col gap-4">
+                        <div class="flex gap-3 items-center px-3 py-2">
+                            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="DineFlow company logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDHNVEa2xzt6us1LNoNw3aKMHvz_YzhKdj8CEjebQMQJzYh29UL1ZVIlsOKXS4g0QSLfn1cD0wv9xcCkZYTU00AVPYId6lyLP-cu4E6caYYewiNx9gEGQUUetUCIcnbJeUipPtjofCIdQuWP74tiRX5TA_5d1CkFA2OZcXBiBY38NeSpiHCk-In_SZN6GO7VgAmp59FRruYSJEMek0or1owWB-zNfryUYtClMIgKyHk6qETm7VTNnL8DEPSz2wIftn7qq2-yLxCpI4");'></div>
+                            <div class="flex flex-col">
+                                <h1 class="text-stone-900 dark:text-stone-100 text-base font-bold leading-normal">DineFlow</h1>
+                                <p class="text-stone-500 dark:text-stone-400 text-sm font-normal leading-normal" id="restaurantName">Restaurant Admin</p>
                             </div>
-                            <input id="searchInput" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#181410] dark:text-white focus:outline-0 focus:ring-0 border-none bg-[#f5f2f0] dark:bg-[#2f271f] h-full placeholder:text-[#8d755e] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search website settings..." value=""/>
                         </div>
-                    </label>
-                </div>
-                <div class="flex flex-1 justify-end items-center gap-4">
-                    <button class="flex cursor-pointer items-center justify-center rounded-lg h-10 w-10 bg-white dark:bg-background-dark text-[#8d755e] hover:bg-[#f5f2f0] dark:hover:bg-[#2f271f]">
-                        <span class="material-symbols-outlined text-2xl">notifications</span>
-                    </button>
-                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User profile avatar" style='background-image: url("https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80");'></div>
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <div class="flex flex-col gap-6 p-10">
-                <!-- PageHeading -->
-                <div class="flex flex-wrap justify-between gap-4 items-center">
-                    <div class="flex flex-col gap-1">
-                        <p class="text-[#181410] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Website Settings</p>
-                        <p class="text-[#8d755e] dark:text-[#a1907c] text-base font-normal leading-normal">Manage your custom domain and website configuration.</p>
+                        <nav class="flex flex-col gap-2 mt-4">
+                            <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-stone-100 dark:hover:bg-background-dark" href="dashboard.html">
+                                <span class="material-symbols-outlined text-stone-700 dark:text-stone-300">dashboard</span>
+                                <p class="text-stone-700 dark:text-stone-300 text-sm font-medium leading-normal">Dashboard</p>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-stone-100 dark:hover:bg-background-dark" href="order-management.html">
+                                <span class="material-symbols-outlined text-stone-700 dark:text-stone-300">receipt_long</span>
+                                <p class="text-stone-700 dark:text-stone-300 text-sm font-medium leading-normal">Orders</p>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-stone-100 dark:hover:bg-background-dark" href="menu-management.html">
+                                <span class="material-symbols-outlined text-stone-700 dark:text-stone-300">restaurant_menu</span>
+                                <p class="text-stone-700 dark:text-stone-300 text-sm font-medium leading-normal">Menus</p>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20" href="website-settings.html">
+                                <span class="material-symbols-outlined text-primary font-bold">public</span>
+                                <p class="text-primary text-sm font-bold leading-normal">Website</p>
+                            </a>
+                        </nav>
                     </div>
-                    <div class="flex gap-3">
-                        <button id="previewWebsiteBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-blue-600 text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 hover:bg-blue-700">
-                            <span class="material-symbols-outlined text-xl">language</span>
+                    <div class="flex flex-col gap-1">
+                        <button id="logoutBtn" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-stone-100 dark:hover:bg-background-dark w-full text-left">
+                            <span class="material-symbols-outlined text-stone-700 dark:text-stone-300">logout</span>
+                            <p class="text-stone-700 dark:text-stone-300 text-sm font-medium leading-normal">Logout</p>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1">
+                <!-- Header -->
+                <header class="sticky top-0 z-10 flex items-center justify-between whitespace-nowrap border-b border-solid border-stone-200 dark:border-stone-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm px-10 py-3">
+                    <div class="flex items-center gap-8">
+                        <h2 class="text-stone-900 dark:text-stone-100 text-lg font-bold leading-tight tracking-[-0.015em]">Website Management</h2>
+                        <label class="hidden md:flex flex-col min-w-40 !h-10 max-w-64">
+                            <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
+                                <div class="text-stone-500 dark:text-stone-400 flex border-none bg-white dark:bg-[#1a1108] items-center justify-center pl-4 rounded-l-xl border-r-0">
+                                    <span class="material-symbols-outlined">search</span>
+                                </div>
+                                <input id="searchInput" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-stone-900 dark:text-stone-100 focus:outline-0 focus:ring-0 border-none bg-white dark:bg-[#1a1108] focus:border-none h-full placeholder:text-stone-500 dark:placeholder:text-stone-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search website settings..." value=""/>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="flex flex-1 justify-end items-center gap-4">
+                        <button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 w-10 bg-white dark:bg-[#1a1108] text-stone-900 dark:text-stone-100 gap-2 text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="material-symbols-outlined">notifications</span>
+                        </button>
+                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAp7ePZbqZh4SUgpXZ9YRcq29l-COjZrCSp503HPQPzFiwGM6E-Cr6e03eiaQOX5XlMIysWbWJGbAkcaiPGQGFM0N1kPQ3kydl9DPDMpx2Y3HYbKD3x-P4-dDdrMX_x7EwCJltHmoqDVKw1ZSZVp_E4lFhbOnqpJ-UCl7MXLhYRHe9V1bW6DX6RCtemgUtxY463_wnjEyrYw4iY1-Fk0_t2JrDvjQGXEv9pxXZW1TIN3DZ5e2JFuACgqKdHxZVyDuQKdrhmqeeb-A0");'></div>
+                    </div>
+                </header>
+
+                <!-- Page Content -->
+                <div class="p-6 lg:p-10">
+                    <!-- Page Heading -->
+                    <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+                        <h1 class="text-stone-900 dark:text-stone-100 text-4xl font-black leading-tight tracking-[-0.033em] min-w-72">Website Management</h1>
+                        <button id="previewWebsiteBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2">
+                            <span class="material-symbols-outlined">visibility</span>
                             <span class="truncate">Preview Website</span>
                         </button>
-                        <button id="previewMenuBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2 hover:bg-primary/90">
-                            <span class="material-symbols-outlined text-xl">visibility</span>
-                            <span class="truncate">Preview Menu</span>
-                        </button>
                     </div>
-                </div>
 
-                <!-- Website Settings Section -->
-                <div class="bg-white dark:bg-[#2a2116] rounded-xl border border-[#f5f2f0] dark:border-[#2f271f] shadow-sm p-6 mb-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-[#181410] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em]">Website Configuration</h2>
-                        <span class="material-symbols-outlined text-primary text-2xl">language</span>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Current Website Info -->
-                        <div class="space-y-4">
-                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white">Your Online Ordering Website</h3>
-                            <p class="text-[#8d755e] dark:text-[#a1907c]">Set up your custom domain and configure your online ordering website.</p>
-                            
-                            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">info</span>
-                                    <h4 class="font-semibold text-blue-800 dark:text-blue-300">Current Website</h4>
-                                </div>
-                                <p class="text-blue-700 dark:text-blue-300 text-sm mb-2">Your website is currently available at:</p>
-                                <div class="flex items-center gap-2">
-                                    <code id="currentWebsiteUrl" class="bg-white dark:bg-blue-800/30 px-3 py-2 rounded text-sm font-mono border border-blue-200 dark:border-blue-700 flex-1 truncate">
-                                        https://dineflow.com/restaurant/your-restaurant
-                                    </code>
-                                    <button id="copyWebsiteUrl" class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800/30 rounded">
-                                        <span class="material-symbols-outlined text-lg">content_copy</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Custom Domain Settings -->
-                        <div class="space-y-4">
-                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white">Custom Domain</h3>
-                            <p class="text-[#8d755e] dark:text-[#a1907c]">Connect your own domain to your restaurant website.</p>
-                            
-                            <form id="domainSettingsForm" class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Your Domain</label>
-                                    <div class="flex gap-2">
-                                        <input type="text" id="customDomain" 
-                                               class="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent"
-                                               placeholder="your-restaurant.com"
-                                               value="">
-                                        <button type="button" id="verifyDomainBtn" class="px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium">
-                                            Verify
+                    <!-- Website Templates Section -->
+                    <section class="mb-8">
+                        <h2 class="text-stone-900 dark:text-stone-100 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Website Templates</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            <!-- Template 1 -->
+                            <div class="flex flex-col rounded-xl shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800 overflow-hidden">
+                                <div class="bg-stone-100 dark:bg-stone-900 aspect-[4/3] bg-center bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCx-ZUEoLkPI3jAL7_IGvRNDeC4_U23gRX6X78Kcj2IS_28Tw-iuNEgYJkH9Zdtc1FXYpkM4727I0KbHsVDm6T9UsS23HgST1eVuhC0Ifyy_Qrhc2lnGDUAFDIwLNcOELIceL7QfNGOmDluTiyXlQl72ESa8uj-4Yugh1OrIuQ5SyOgtIp2dSUTB6yGZNL9l0I497zDtpuumdnYo6jK-cwus6JOSbe9vZ_2Z-aIr6P8rmB0LtruPK7_ytqBCRImtO92S7hG4NkxN9o');"></div>
+                                <div class="p-4 flex flex-col flex-grow">
+                                    <h3 class="text-stone-900 dark:text-stone-100 font-bold">Modern Diner</h3>
+                                    <div class="mt-auto pt-4 flex gap-2">
+                                        <button class="flex-1 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-primary text-white text-sm font-bold leading-normal">
+                                            <span class="truncate">Apply</span>
+                                        </button>
+                                        <button class="flex-1 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-stone-200 dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-sm font-medium leading-normal">
+                                            <span class="truncate">Preview</span>
                                         </button>
                                     </div>
-                                    <p class="text-sm text-[#8d755e] dark:text-[#a1907c] mt-2">
-                                        Enter your domain without http:// or https://
-                                    </p>
                                 </div>
-
-                                <div id="dnsSettings" class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 hidden">
-                                    <div class="flex items-center gap-3 mb-3">
-                                        <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400">warning</span>
-                                        <h4 class="font-semibold text-yellow-800 dark:text-yellow-300">DNS Configuration Required</h4>
-                                    </div>
-                                    <p class="text-yellow-700 dark:text-yellow-300 text-sm mb-3">
-                                        To connect your domain, please add the following DNS records:
-                                    </p>
-                                    <div class="space-y-2 text-sm">
-                                        <div class="flex justify-between items-center p-2 bg-white dark:bg-yellow-800/30 rounded">
-                                            <span class="font-mono">CNAME</span>
-                                            <span class="font-mono">www → dineflow.com</span>
-                                        </div>
-                                        <div class="flex justify-between items-center p-2 bg-white dark:bg-yellow-800/30 rounded">
-                                            <span class="font-mono">A</span>
-                                            <span class="font-mono">@ → 192.0.2.1</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div id="domainStatus" class="hidden">
-                                    <!-- Domain status will be shown here -->
-                                </div>
-
-                                <div class="flex gap-3 pt-2">
-                                    <button type="submit" id="saveDomainBtn" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
-                                        Save Domain Settings
-                                    </button>
-                                    <button type="button" id="testDomainBtn" class="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 font-medium hidden">
-                                        Test Domain
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Website Preview Section -->
-                    <div class="mt-8 pt-6 border-t border-[#f5f2f0] dark:border-[#2f271f]">
-                        <h3 class="text-lg font-semibold text-[#181410] dark:text-white mb-4">Website Preview & Testing</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <span class="material-symbols-outlined text-green-600 dark:text-green-400">smartphone</span>
-                                    <h4 class="font-semibold text-green-800 dark:text-green-300">Customer Menu (QR Code)</h4>
-                                </div>
-                                <p class="text-green-700 dark:text-green-300 text-sm mb-3">
-                                    Preview how customers will see your menu when scanning table QR codes.
-                                </p>
-                                <button id="previewCustomerMenu" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 font-medium">
-                                    Preview Customer Menu
-                                </button>
                             </div>
 
-                            <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <span class="material-symbols-outlined text-purple-600 dark:text-purple-400">desktop_windows</span>
-                                    <h4 class="font-semibold text-purple-800 dark:text-purple-300">Online Ordering Website</h4>
-                                </div>
-                                <p class="text-purple-700 dark:text-purple-300 text-sm mb-3">
-                                    Preview your full online ordering website for delivery and pickup orders.
-                                </p>
-                                <button id="previewOrderingWebsite" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 font-medium">
-                                    Preview Ordering Website
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Website Appearance Section -->
-                <div class="bg-white dark:bg-[#2a2116] rounded-xl border border-[#f5f2f0] dark:border-[#2f271f] shadow-sm p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-[#181410] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em]">Website Appearance</h2>
-                        <span class="material-symbols-outlined text-primary text-2xl">palette</span>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Color Scheme -->
-                        <div class="space-y-4">
-                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white">Color Scheme</h3>
-                            <p class="text-[#8d755e] dark:text-[#a1907c]">Customize the colors of your website to match your brand.</p>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Primary Color</label>
-                                    <div class="flex items-center gap-3">
-                                        <input type="color" id="primaryColor" value="#ff8000" class="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer">
-                                        <div class="flex-1">
-                                            <input type="text" id="primaryColorHex" value="#ff8000" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark font-mono text-sm">
-                                        </div>
+                            <!-- Template 2 -->
+                            <div class="flex flex-col rounded-xl shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800 overflow-hidden">
+                                <div class="bg-stone-100 dark:bg-stone-900 aspect-[4/3] bg-center bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCx-ZUEoLkPI3jAL7_IGvRNDeC4_U23gRX6X78Kcj2IS_28Tw-iuNEgYJkH9Zdtc1FXYpkM4727I0KbHsVDm6T9UsS23HgST1eVuhC0Ifyy_Qrhc2lnGDUAFDIwLNcOELIceL7QfNGOmDluTiyXlQl72ESa8uj-4Yugh1OrIuQ5SyOgtIp2dSUTB6yGZNL9l0I497zDtpuumdnYo6jK-cwus6JOSbe9vZ_2Z-aIr6P8rmB0LtruPK7_ytqBCRImtO92S7hG4NkxN9o');"></div>
+                                <div class="p-4 flex flex-col flex-grow">
+                                    <h3 class="text-stone-900 dark:text-stone-100 font-bold">Classic Bistro</h3>
+                                    <div class="mt-auto pt-4 flex gap-2">
+                                        <button class="flex-1 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-primary text-white text-sm font-bold leading-normal">
+                                            <span class="truncate">Apply</span>
+                                        </button>
+                                        <button class="flex-1 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-stone-200 dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-sm font-medium leading-normal">
+                                            <span class="truncate">Preview</span>
+                                        </button>
                                     </div>
                                 </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Background Color</label>
-                                    <div class="flex items-center gap-3">
-                                        <input type="color" id="backgroundColor" value="#f8f7f5" class="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer">
-                                        <div class="flex-1">
-                                            <input type="text" id="backgroundColorHex" value="#f8f7f5" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark font-mono text-sm">
-                                        </div>
+                            </div>
+
+                            <!-- Template 3 -->
+                            <div class="flex flex-col rounded-xl shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800 overflow-hidden">
+                                <div class="bg-stone-100 dark:bg-stone-900 aspect-[4/3] bg-center bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCx-ZUEoLkPI3jAL7_IGvRNDeC4_U23gRX6X78Kcj2IS_28Tw-iuNEgYJkH9Zdtc1FXYpkM4727I0KbHsVDm6T9UsS23HgST1eVuhC0Ifyy_Qrhc2lnGDUAFDIwLNcOELIceL7QfNGOmDluTiyXlQl72ESa8uj-4Yugh1OrIuQ5SyOgtIp2dSUTB6yGZNL9l0I497zDtpuumdnYo6jK-cwus6JOSbe9vZ_2Z-aIr6P8rmB0LtruPK7_ytqBCRImtO92S7hG4NkxN9o');"></div>
+                                <div class="p-4 flex flex-col flex-grow">
+                                    <h3 class="text-stone-900 dark:text-stone-100 font-bold">Minimalist Cafe</h3>
+                                    <div class="mt-auto pt-4 flex gap-2">
+                                        <button class="flex-1 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-primary text-white text-sm font-bold leading-normal">
+                                            <span class="truncate">Apply</span>
+                                        </button>
+                                        <button class="flex-1 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-stone-200 dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-sm font-medium leading-normal">
+                                            <span class="truncate">Preview</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </section>
 
-                        <!-- Logo & Branding -->
-                        <div class="space-y-4">
-                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white">Logo & Branding</h3>
-                            <p class="text-[#8d755e] dark:text-[#a1907c]">Upload your restaurant logo and set your brand name.</p>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Restaurant Logo</label>
-                                    <div class="flex items-center gap-4">
-                                        <div id="logoPreview" class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
-                                            <span class="material-symbols-outlined text-gray-400">restaurant</span>
+                    <!-- Main Content Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Left Column -->
+                        <div class="lg:col-span-2 flex flex-col gap-8">
+                            <!-- Domain & Website Settings Section -->
+                            <section>
+                                <h2 class="text-stone-900 dark:text-stone-100 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Domain & Website Settings</h2>
+                                <div class="space-y-6">
+                                    <!-- Current Website Info -->
+                                    <div class="p-4">
+                                        <div class="rounded-xl p-6 shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800">
+                                            <div class="flex items-center gap-3 mb-3">
+                                                <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">info</span>
+                                                <h4 class="font-semibold text-blue-800 dark:text-blue-300">Current Website</h4>
+                                            </div>
+                                            <p class="text-stone-700 dark:text-stone-300 text-sm mb-2">Your website is currently available at:</p>
+                                            <div class="flex items-center gap-2">
+                                                <code id="currentWebsiteUrl" class="bg-stone-100 dark:bg-stone-900 px-3 py-2 rounded text-sm font-mono border border-stone-200 dark:border-stone-700 flex-1 truncate">
+                                                    https://dineflow.com/restaurant/your-restaurant
+                                                </code>
+                                                <button id="copyWebsiteUrl" class="p-2 text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded">
+                                                    <span class="material-symbols-outlined text-lg">content_copy</span>
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="flex-1">
-                                            <input type="file" id="logoUpload" class="hidden" accept="image/*">
-                                            <button type="button" id="uploadLogoBtn" class="w-full p-3 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                                <span class="material-symbols-outlined text-lg mr-2">cloud_upload</span>
-                                                Upload Logo
+                                    </div>
+
+                                    <!-- Custom Domain Settings -->
+                                    <div class="p-4">
+                                        <div class="rounded-xl p-6 shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800">
+                                            <h3 class="text-lg font-semibold text-stone-900 dark:text-stone-100 mb-3">Custom Domain</h3>
+                                            <p class="text-stone-500 dark:text-stone-400 mb-4">Connect your own domain to your restaurant website.</p>
+                                            
+                                            <form id="domainSettingsForm" class="space-y-4">
+                                                <div>
+                                                    <label class="block text-sm font-medium mb-2 text-stone-900 dark:text-stone-100">Your Domain</label>
+                                                    <div class="flex gap-2">
+                                                        <input type="text" id="customDomain" 
+                                                               class="flex-1 p-3 border border-stone-300 dark:border-stone-700 rounded-lg dark:bg-[#1a1108] focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                               placeholder="your-restaurant.com"
+                                                               value="">
+                                                        <button type="button" id="verifyDomainBtn" class="px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium">
+                                                            Verify
+                                                        </button>
+                                                    </div>
+                                                    <p class="text-sm text-stone-500 dark:text-stone-400 mt-2">
+                                                        Enter your domain without http:// or https://
+                                                    </p>
+                                                </div>
+
+                                                <div id="dnsSettings" class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 hidden">
+                                                    <div class="flex items-center gap-3 mb-3">
+                                                        <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400">warning</span>
+                                                        <h4 class="font-semibold text-yellow-800 dark:text-yellow-300">DNS Configuration Required</h4>
+                                                    </div>
+                                                    <p class="text-yellow-700 dark:text-yellow-300 text-sm mb-3">
+                                                        To connect your domain, please add the following DNS records:
+                                                    </p>
+                                                    <div class="space-y-2 text-sm">
+                                                        <div class="flex justify-between items-center p-2 bg-white dark:bg-yellow-800/30 rounded">
+                                                            <span class="font-mono">CNAME</span>
+                                                            <span class="font-mono">www → dineflow.com</span>
+                                                        </div>
+                                                        <div class="flex justify-between items-center p-2 bg-white dark:bg-yellow-800/30 rounded">
+                                                            <span class="font-mono">A</span>
+                                                            <span class="font-mono">@ → 192.0.2.1</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div id="domainStatus" class="hidden">
+                                                    <!-- Domain status will be shown here -->
+                                                </div>
+
+                                                <div class="flex gap-3 pt-2">
+                                                    <button type="submit" id="saveDomainBtn" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                                                        Save Domain Settings
+                                                    </button>
+                                                    <button type="button" id="testDomainBtn" class="px-6 py-3 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-800 font-medium hidden">
+                                                        Test Domain
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- Branding & Appearance Section -->
+                            <section>
+                                <h2 class="text-stone-900 dark:text-stone-100 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Branding & Appearance</h2>
+                                <div class="space-y-6">
+                                    <!-- Logo -->
+                                    <div class="p-4 @container">
+                                        <div class="flex flex-col items-stretch justify-start rounded-xl @xl:flex-row @xl:items-center shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800">
+                                            <div class="p-6 flex-shrink-0 flex justify-center items-center">
+                                                <div id="logoPreview" class="w-40 h-40 bg-center bg-no-repeat bg-contain rounded-lg bg-stone-100 dark:bg-stone-900 flex items-center justify-center" data-alt="Current company logo">
+                                                    <span class="material-symbols-outlined text-stone-400">restaurant</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 p-6 border-t @xl:border-t-0 @xl:border-l border-stone-200 dark:border-stone-800">
+                                                <p class="text-stone-900 dark:text-stone-100 text-lg font-bold leading-tight tracking-[-0.015em]">Company Logo</p>
+                                                <div class="flex items-end gap-3 justify-between">
+                                                    <p class="text-stone-500 dark:text-stone-400 text-base font-normal leading-normal">Upload your restaurant's logo. Recommended format: PNG or SVG.</p>
+                                                    <div class="flex flex-col gap-2">
+                                                        <input type="file" id="logoUpload" class="hidden" accept="image/*">
+                                                        <button id="uploadLogoBtn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-stone-200 dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-sm font-medium leading-normal">
+                                                            <span class="truncate">Change Logo</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Primary Color -->
+                                    <div class="p-4 @container">
+                                        <div class="flex flex-col items-stretch justify-start rounded-xl shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800">
+                                            <div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 p-6">
+                                                <p class="text-stone-900 dark:text-stone-100 text-lg font-bold leading-tight tracking-[-0.015em]">Primary Color</p>
+                                                <div class="flex items-center gap-3 justify-between">
+                                                    <p class="text-stone-500 dark:text-stone-400 text-base font-normal leading-normal">Choose the main theme color for your website.</p>
+                                                    <div class="flex items-center gap-3">
+                                                        <input type="text" id="primaryColorHex" value="#ff7b00" class="w-20 p-2 border border-stone-300 dark:border-stone-700 rounded-lg dark:bg-[#1a1108] font-mono text-sm text-stone-900 dark:text-stone-100">
+                                                        <input class="w-10 h-10 rounded-lg border-none cursor-pointer p-0 bg-transparent" style="padding: 0; border: none;" type="color" id="primaryColor" value="#ff7b00"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- Page Content Section -->
+                            <section>
+                                <h2 class="text-stone-900 dark:text-stone-100 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Page Content</h2>
+                                <div class="p-4">
+                                    <div class="flex flex-col rounded-xl shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800">
+                                        <div class="p-6">
+                                            <div class="border-b border-stone-200 dark:border-stone-800 mb-4">
+                                                <nav aria-label="Tabs" class="-mb-px flex gap-6">
+                                                    <a class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-primary border-primary" href="#">About Us</a>
+                                                    <a class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-stone-500 dark:text-stone-400 border-transparent hover:text-stone-700 dark:hover:text-stone-200 hover:border-stone-300 dark:hover:border-stone-700" href="#">Contact</a>
+                                                    <a class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-stone-500 dark:text-stone-400 border-transparent hover:text-stone-700 dark:hover:text-stone-200 hover:border-stone-300 dark:hover:border-stone-700" href="#">Homepage</a>
+                                                </nav>
+                                            </div>
+                                            <textarea class="form-textarea w-full h-48 rounded-lg border-stone-300 dark:border-stone-700 bg-transparent text-stone-900 dark:text-stone-100 placeholder:text-stone-500 dark:placeholder:text-stone-400 focus:ring-primary focus:border-primary" placeholder="Tell your restaurant's story..."></textarea>
+                                            <div class="mt-4 flex justify-end">
+                                                <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm font-medium">
+                                                    Save Content
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="lg:col-span-1 flex flex-col gap-8">
+                            <!-- Online Ordering Section -->
+                            <section>
+                                <h2 class="text-stone-900 dark:text-stone-100 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Online Ordering</h2>
+                                <div class="space-y-6">
+                                    <div class="p-4">
+                                        <div class="rounded-xl p-6 shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <p class="text-stone-900 dark:text-stone-100 text-lg font-bold">Ordering Status</p>
+                                                    <p class="text-green-600 dark:text-green-400 text-sm font-medium">Online - Accepting Orders</p>
+                                                </div>
+                                                <button id="orderingStatusToggle" aria-checked="true" class="bg-primary relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" role="switch" type="button">
+                                                    <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <div class="rounded-xl p-6 shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800 space-y-4">
+                                            <p class="text-stone-900 dark:text-stone-100 text-lg font-bold">Service & Hours</p>
+                                            <div class="flex items-center justify-between">
+                                                <label class="font-medium text-stone-700 dark:text-stone-300" for="delivery-toggle">Delivery</label>
+                                                <button id="deliveryToggle" aria-checked="true" class="bg-primary relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" role="switch" type="button">
+                                                    <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5"></span>
+                                                </button>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <label class="font-medium text-stone-700 dark:text-stone-300" for="pickup-toggle">Pickup</label>
+                                                <button id="pickupToggle" aria-checked="false" class="bg-stone-200 dark:bg-stone-700 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" role="switch" type="button">
+                                                    <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0"></span>
+                                                </button>
+                                            </div>
+                                            <button class="w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 mt-2 bg-stone-200 dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-sm font-medium leading-normal">
+                                                <span class="truncate">Set Business Hours</span>
                                             </button>
-                                            <p class="text-xs text-[#8d755e] dark:text-[#a1907c] mt-1">Recommended: 200x200px PNG or JPG</p>
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Restaurant Name</label>
-                                    <input type="text" id="restaurantNameInput" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Enter your restaurant name">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6 pt-4 border-t border-[#f5f2f0] dark:border-[#2f271f]">
-                        <button id="saveAppearanceBtn" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium">
-                            Save Appearance Settings
-                        </button>
-                    </div>
-                </div>
+                            </section>
 
-                <!-- SEO Settings Section -->
-                <div class="bg-white dark:bg-[#2a2116] rounded-xl border border-[#f5f2f0] dark:border-[#2f271f] shadow-sm p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-[#181410] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em]">SEO & Social Media</h2>
-                        <span class="material-symbols-outlined text-primary text-2xl">search</span>
-                    </div>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white mb-2">Search Engine Optimization</h3>
-                            <p class="text-[#8d755e] dark:text-[#a1907c] mb-4">Optimize your website for search engines to help customers find you online.</p>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Meta Title</label>
-                                    <input type="text" id="metaTitle" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Your Restaurant - Best Food in City">
-                                    <p class="text-xs text-[#8d755e] dark:text-[#a1907c] mt-1">Recommended: 50-60 characters</p>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Meta Description</label>
-                                    <textarea id="metaDescription" rows="3" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Describe your restaurant and what makes it special"></textarea>
-                                    <p class="text-xs text-[#8d755e] dark:text-[#a1907c] mt-1">Recommended: 150-160 characters</p>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Keywords</label>
-                                    <input type="text" id="metaKeywords" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="restaurant, food, delivery, takeout">
-                                    <p class="text-xs text-[#8d755e] dark:text-[#a1907c] mt-1">Separate keywords with commas</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="pt-4 border-t border-[#f5f2f0] dark:border-[#2f271f]">
-                            <h3 class="text-lg font-semibold text-[#181410] dark:text-white mb-2">Social Media Sharing</h3>
-                            <p class="text-[#8d755e] dark:text-[#a1907c] mb-4">Customize how your website appears when shared on social media.</p>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-[#181410] dark:text-white">Social Media Image</label>
-                                    <div class="flex items-center gap-4">
-                                        <div id="socialImagePreview" class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
-                                            <span class="material-symbols-outlined text-gray-400">image</span>
+                            <!-- Payment Settings Section -->
+                            <section>
+                                <h2 class="text-stone-900 dark:text-stone-100 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Payment Settings</h2>
+                                <div class="p-4">
+                                    <div class="rounded-xl p-6 shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800 space-y-4">
+                                        <p class="text-stone-900 dark:text-stone-100 text-lg font-bold">Payment Gateway</p>
+                                        <div class="flex items-center gap-3">
+                                            <span class="material-symbols-outlined text-green-600 dark:text-green-400">check_circle</span>
+                                            <p class="text-stone-700 dark:text-stone-300">Stripe Connected</p>
                                         </div>
-                                        <div class="flex-1">
-                                            <input type="file" id="socialImageUpload" class="hidden" accept="image/*">
-                                            <button type="button" id="uploadSocialImageBtn" class="w-full p-3 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                                <span class="material-symbols-outlined text-lg mr-2">cloud_upload</span>
-                                                Upload Social Media Image
+                                        <button class="w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 mt-2 bg-stone-200 dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-sm font-medium leading-normal">
+                                            <span class="truncate">Manage Settings</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- SEO & Social Media Section -->
+                            <section>
+                                <h2 class="text-stone-900 dark:text-stone-100 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">SEO & Social Media</h2>
+                                <div class="p-4">
+                                    <div class="rounded-xl p-6 shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800 space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2 text-stone-900 dark:text-stone-100">Meta Title</label>
+                                            <input type="text" id="metaTitle" class="w-full p-3 border border-stone-300 dark:border-stone-700 rounded-lg dark:bg-[#1a1108] focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Your Restaurant - Best Food in City">
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2 text-stone-900 dark:text-stone-100">Meta Description</label>
+                                            <textarea id="metaDescription" rows="3" class="w-full p-3 border border-stone-300 dark:border-stone-700 rounded-lg dark:bg-[#1a1108] focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Describe your restaurant and what makes it special"></textarea>
+                                        </div>
+                                        
+                                        <button class="w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 mt-2 bg-primary text-white text-sm font-medium leading-normal">
+                                            <span class="truncate">Save SEO Settings</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- Website Preview Section -->
+                            <section>
+                                <h2 class="text-stone-900 dark:text-stone-100 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Website Preview</h2>
+                                <div class="p-4">
+                                    <div class="rounded-xl p-6 shadow-sm bg-white dark:bg-[#1a1108] border border-stone-200 dark:border-stone-800 space-y-4">
+                                        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <span class="material-symbols-outlined text-green-600 dark:text-green-400">smartphone</span>
+                                                <h4 class="font-semibold text-green-800 dark:text-green-300">Customer Menu</h4>
+                                            </div>
+                                            <p class="text-green-700 dark:text-green-300 text-sm mb-3">
+                                                Preview how customers will see your menu when scanning table QR codes.
+                                            </p>
+                                            <button id="previewCustomerMenu" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 font-medium text-sm">
+                                                Preview Customer Menu
                                             </button>
-                                            <p class="text-xs text-[#8d755e] dark:text-[#a1907c] mt-1">Recommended: 1200x630px PNG or JPG</p>
+                                        </div>
+
+                                        <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <span class="material-symbols-outlined text-purple-600 dark:text-purple-400">desktop_windows</span>
+                                                <h4 class="font-semibold text-purple-800 dark:text-purple-300">Ordering Website</h4>
+                                            </div>
+                                            <p class="text-purple-700 dark:text-purple-300 text-sm mb-3">
+                                                Preview your full online ordering website for delivery and pickup orders.
+                                            </p>
+                                            <button id="previewOrderingWebsite" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 font-medium text-sm">
+                                                Preview Ordering Website
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </section>
                         </div>
                     </div>
-                    
-                    <div class="mt-6 pt-4 border-t border-[#f5f2f0] dark:border-[#2f271f]">
-                        <button id="saveSeoBtn" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium">
-                            Save SEO Settings
-                        </button>
-                    </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
 
     <!-- Success Modal -->
     <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white dark:bg-background-dark rounded-xl p-6 w-full max-w-md">
+        <div class="bg-white dark:bg-[#1a1108] rounded-xl p-6 w-full max-w-md">
             <div class="flex flex-col items-center text-center">
                 <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
                     <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-3xl">check_circle</span>
                 </div>
-                <h3 class="text-lg font-bold mb-2" id="successModalTitle">Settings Saved</h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-6" id="successModalMessage">Your website settings have been updated successfully.</p>
+                <h3 class="text-lg font-bold mb-2 text-stone-900 dark:text-stone-100" id="successModalTitle">Settings Saved</h3>
+                <p class="text-stone-600 dark:text-stone-400 mb-6" id="successModalMessage">Your website settings have been updated successfully.</p>
                 <button id="closeSuccessModal" class="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">
                     Continue
                 </button>
@@ -476,7 +529,6 @@
                 if (this.restaurant) {
                     console.log('Restaurant loaded:', this.restaurant);
                     document.getElementById('restaurantName').textContent = this.restaurant.name;
-                    document.getElementById('restaurantNameInput').value = this.restaurant.name;
                     
                     // Load custom domain if exists
                     if (this.restaurant.custom_domain) {
@@ -509,11 +561,6 @@
                 document.getElementById('primaryColorHex').value = settings.primary_color;
             }
             
-            if (settings.background_color) {
-                document.getElementById('backgroundColor').value = settings.background_color;
-                document.getElementById('backgroundColorHex').value = settings.background_color;
-            }
-            
             if (settings.logo_url) {
                 this.updateLogoPreview(settings.logo_url);
             }
@@ -526,14 +573,6 @@
             
             if (settings.meta_description) {
                 document.getElementById('metaDescription').value = settings.meta_description;
-            }
-            
-            if (settings.meta_keywords) {
-                document.getElementById('metaKeywords').value = settings.meta_keywords;
-            }
-            
-            if (settings.social_image_url) {
-                this.updateSocialImagePreview(settings.social_image_url);
             }
         }
 
@@ -552,10 +591,6 @@
 
         setupEventListeners() {
             // Website Preview Events
-            document.getElementById('previewMenuBtn').addEventListener('click', () => {
-                this.previewCustomerMenu();
-            });
-
             document.getElementById('previewWebsiteBtn').addEventListener('click', () => {
                 this.previewOrderingWebsite();
             });
@@ -602,16 +637,6 @@
                 }
             });
 
-            document.getElementById('backgroundColor').addEventListener('input', (e) => {
-                document.getElementById('backgroundColorHex').value = e.target.value;
-            });
-
-            document.getElementById('backgroundColorHex').addEventListener('input', (e) => {
-                if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
-                    document.getElementById('backgroundColor').value = e.target.value;
-                }
-            });
-
             document.getElementById('uploadLogoBtn').addEventListener('click', () => {
                 document.getElementById('logoUpload').click();
             });
@@ -620,21 +645,17 @@
                 this.handleLogoUpload(e.target.files[0]);
             });
 
-            document.getElementById('saveAppearanceBtn').addEventListener('click', () => {
-                this.saveAppearanceSettings();
+            // Toggle switches
+            document.getElementById('orderingStatusToggle').addEventListener('click', (e) => {
+                this.toggleSwitch(e.currentTarget);
             });
 
-            // SEO Settings Events
-            document.getElementById('uploadSocialImageBtn').addEventListener('click', () => {
-                document.getElementById('socialImageUpload').click();
+            document.getElementById('deliveryToggle').addEventListener('click', (e) => {
+                this.toggleSwitch(e.currentTarget);
             });
 
-            document.getElementById('socialImageUpload').addEventListener('change', (e) => {
-                this.handleSocialImageUpload(e.target.files[0]);
-            });
-
-            document.getElementById('saveSeoBtn').addEventListener('click', () => {
-                this.saveSeoSettings();
+            document.getElementById('pickupToggle').addEventListener('click', (e) => {
+                this.toggleSwitch(e.currentTarget);
             });
 
             // Success Modal
@@ -646,6 +667,21 @@
             document.getElementById('searchInput').addEventListener('input', (e) => {
                 this.searchSettings(e.target.value);
             });
+
+            // Template buttons
+            document.querySelectorAll('.template-apply').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const templateName = e.target.closest('.template-card').querySelector('h3').textContent;
+                    this.applyTemplate(templateName);
+                });
+            });
+
+            document.querySelectorAll('.template-preview').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const templateName = e.target.closest('.template-card').querySelector('h3').textContent;
+                    this.previewTemplate(templateName);
+                });
+            });
         }
 
         // Website Preview Methods
@@ -655,10 +691,7 @@
                 return;
             }
 
-            // For preview, we'll use a demo table or create a temporary one
-            const restaurantSlug = this.restaurant.name.toLowerCase().replace(/\s+/g, '-');
             const previewUrl = `customer-menu.html?restaurant=${this.restaurant.id}&preview=true`;
-            
             window.open(previewUrl, '_blank', 'width=414,height=896,location=no,menubar=no,toolbar=no');
             this.showNotification('Opening customer menu preview...', 'success');
         }
@@ -669,7 +702,6 @@
                 return;
             }
 
-            const restaurantSlug = this.restaurant.name.toLowerCase().replace(/\s+/g, '-');
             let websiteUrl = `restaurant.html?restaurant=${this.restaurant.id}&preview=true`;
             
             // If custom domain is set, use it for preview
@@ -807,110 +839,47 @@
 
         updateLogoPreview(logoUrl) {
             const preview = document.getElementById('logoPreview');
-            preview.innerHTML = `<img src="${logoUrl}" class="w-full h-full object-cover" alt="Restaurant Logo">`;
+            preview.innerHTML = `<img src="${logoUrl}" class="w-full h-full object-cover rounded-lg" alt="Restaurant Logo">`;
         }
 
-        async handleSocialImageUpload(file) {
-            if (!file) return;
+        // Template Methods
+        applyTemplate(templateName) {
+            this.showNotification(`Applying ${templateName} template...`, 'info');
             
-            try {
-                StorageService.validateFile(file);
-                this.showNotification('Uploading social media image...', 'info');
-                
-                const imageUrl = await StorageService.uploadImage(
-                    file, 
-                    `restaurant-${this.restaurant.id}/seo`
-                );
-                
-                this.updateSocialImagePreview(imageUrl);
-                this.showNotification('Social media image uploaded successfully!', 'success');
-            } catch (error) {
-                this.showNotification(error.message, 'error');
-            }
+            // Simulate template application
+            setTimeout(() => {
+                this.showSuccessModal('Template Applied', `The ${templateName} template has been applied to your website successfully.`);
+            }, 1500);
         }
 
-        updateSocialImagePreview(imageUrl) {
-            const preview = document.getElementById('socialImagePreview');
-            preview.innerHTML = `<img src="${imageUrl}" class="w-full h-full object-cover" alt="Social Media Image">`;
-        }
-
-        async saveAppearanceSettings() {
-            const primaryColor = document.getElementById('primaryColor').value;
-            const backgroundColor = document.getElementById('backgroundColor').value;
-            const restaurantName = document.getElementById('restaurantNameInput').value;
+        previewTemplate(templateName) {
+            this.showNotification(`Opening ${templateName} preview...`, 'info');
             
-            // Get logo URL from preview if available
-            const logoPreview = document.getElementById('logoPreview');
-            const logoUrl = logoPreview.querySelector('img') ? logoPreview.querySelector('img').src : null;
-
-            try {
-                this.showNotification('Saving appearance settings...', 'info');
-                
-                // Update restaurant with appearance settings
-                const { data: updatedRestaurant, error } = await supabase
-                    .from('restaurants')
-                    .update({ 
-                        name: restaurantName,
-                        website_settings: {
-                            primary_color: primaryColor,
-                            background_color: backgroundColor,
-                            logo_url: logoUrl
-                        },
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', this.restaurant.id)
-                    .select()
-                    .single();
-
-                if (error) throw error;
-
-                this.restaurant = updatedRestaurant;
-                document.getElementById('restaurantName').textContent = restaurantName;
-                this.showSuccessModal('Appearance Settings Saved', 'Your website appearance has been updated successfully.');
-                
-            } catch (error) {
-                console.error('Error saving appearance settings:', error);
-                this.showNotification('Error saving appearance settings: ' + error.message, 'error');
-            }
+            // Open template preview in new window
+            const previewUrl = `template-preview.html?template=${encodeURIComponent(templateName)}`;
+            window.open(previewUrl, '_blank', 'width=1200,height=800,location=no,menubar=no,toolbar=no');
         }
 
-        async saveSeoSettings() {
-            const metaTitle = document.getElementById('metaTitle').value;
-            const metaDescription = document.getElementById('metaDescription').value;
-            const metaKeywords = document.getElementById('metaKeywords').value;
+        // Toggle switch method
+        toggleSwitch(switchElement) {
+            const isChecked = switchElement.getAttribute('aria-checked') === 'true';
+            switchElement.setAttribute('aria-checked', !isChecked);
             
-            // Get social image URL from preview if available
-            const socialImagePreview = document.getElementById('socialImagePreview');
-            const socialImageUrl = socialImagePreview.querySelector('img') ? socialImagePreview.querySelector('img').src : null;
-
-            try {
-                this.showNotification('Saving SEO settings...', 'info');
-                
-                // Update restaurant with SEO settings
-                const { data: updatedRestaurant, error } = await supabase
-                    .from('restaurants')
-                    .update({ 
-                        seo_settings: {
-                            meta_title: metaTitle,
-                            meta_description: metaDescription,
-                            meta_keywords: metaKeywords,
-                            social_image_url: socialImageUrl
-                        },
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', this.restaurant.id)
-                    .select()
-                    .single();
-
-                if (error) throw error;
-
-                this.restaurant = updatedRestaurant;
-                this.showSuccessModal('SEO Settings Saved', 'Your SEO and social media settings have been updated successfully.');
-                
-            } catch (error) {
-                console.error('Error saving SEO settings:', error);
-                this.showNotification('Error saving SEO settings: ' + error.message, 'error');
+            if (!isChecked) {
+                switchElement.classList.remove('bg-stone-200', 'dark:bg-stone-700');
+                switchElement.classList.add('bg-primary');
+                switchElement.querySelector('span').classList.add('translate-x-5');
+                switchElement.querySelector('span').classList.remove('translate-x-0');
+            } else {
+                switchElement.classList.remove('bg-primary');
+                switchElement.classList.add('bg-stone-200', 'dark:bg-stone-700');
+                switchElement.querySelector('span').classList.remove('translate-x-5');
+                switchElement.querySelector('span').classList.add('translate-x-0');
             }
+            
+            // Save toggle state (in a real app, this would be an API call)
+            const switchId = switchElement.id;
+            this.showNotification(`${switchId} ${!isChecked ? 'enabled' : 'disabled'}`, 'success');
         }
 
         // Search functionality
